@@ -1,18 +1,33 @@
 from pathlib import Path
+import environ
+import os
+
+# Config environment varaibles
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#xdi_ygpo)6lo-s*#ijjmlsv%h%5^+5hhixq-b8_z1c951+@9&"
+DEBUG = env("DEBUG")
+
+# Raises Django's ImproperlyConfigured
+# exception if SECRET_KEY not in os.environ
+SECRET_KEY = env("SECRET_KEY")
 
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
