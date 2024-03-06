@@ -30,7 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    def get_shotname(self):
+    def get_shortname(self):
         return self.username.title()
 
     @property
