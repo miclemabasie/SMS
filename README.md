@@ -1,6 +1,3 @@
-Certainly! Below is a template for a GitHub README page. You can customize it with specific details about your School Management System project:
-
-```markdown
 # School Management System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -81,5 +78,4 @@ We welcome contributions! Please follow our [Contribution Guidelines](CONTRIBUTI
 
 This project is licensed under the [MIT License](LICENSE).
 
-```
 
