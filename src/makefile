@@ -22,22 +22,22 @@ show-logs-follow:
 	docker compose logs --follow
 
 migrate:
-	docker compose exec api python manage.py migrate
+	docker compose exec web python manage.py migrate
 
 makemigrations:
-	docker compose exec api python manage.py makemigrations
+	docker compose exec web python manage.py makemigrations
 
 createsuperuser:
-	docker compose exec api python manage.py createsuperuser
+	docker compose exec web python manage.py createsuperuser
 
 collectstatic:
-	docker compose exec api python manage.py collectstatic --no-input --clear
+	docker compose exec web python manage.py collectstatic --no-input --clear
 
 django-check:
-	docker compose exec api python manage.py check
+	docker compose exec web python manage.py check
 
 shell:
-	docker compose exec api python manage.py shell_plus
+	docker compose exec web python manage.py shell_plus
 
 down-v:
 	docker compose down -v
@@ -49,35 +49,35 @@ lma_db:
 	docker compose exect postgres-db psql -U postgres -d lma
 
 test:
-	docker compose exec api pytest -p no:warnings --cov=.
+	docker compose exec web pytest -p no:warnings --cov=.
 
 test-html:
-	docker compose exec api pytest -p no:warnings --cov=. --cov-report html
+	docker compose exec web pytest -p no:warnings --cov=. --cov-report html
 
 flake8:
-	docker compose exec api flake8
+	docker compose exec web flake8
 
 black-check:
-	docker compose exec api black --check --exclude=migrations .
+	docker compose exec web black --check --exclude=migrations .
 
 blcak-diff:
-	docker compose exec api black --diff --exclude=migrations .
+	docker compose exec web black --diff --exclude=migrations .
 
 black: 
-	docker compose exec api black --exclude=migrations .
+	docker compose exec web black --exclude=migrations .
 
 
 isort-check:
-	docker compose exec api isort . --check-only --skip env --skip migrations
+	docker compose exec web isort . --check-only --skip env --skip migrations
 
 isort-diff:
-	docker compose exec api isort . --diff --skip env --skip  migrations
+	docker compose exec web isort . --diff --skip env --skip  migrations
 	
 isort:
-	docker compose exec api isort . --skip env --skip migrations
+	docker compose exec web isort . --skip env --skip migrations
 
 lint: 
 	flake8 black isort
 
 watch:
-	docker compose exec api watchmedo shell-command --patterns="*.py" --recursive --command='make lint test' .
+	docker compose exec web watchmedo shell-command --patterns="*.py" --recursive --command='make lint test' .

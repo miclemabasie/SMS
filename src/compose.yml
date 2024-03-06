@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  api:
+  web:
     build:
       context: .
       dockerfile: ./docker/local/django/Dockerfile
@@ -16,7 +16,7 @@ services:
     # depends_on:
     #   - postgres-db
     networks:
-      - lma
+      - sms
 
   postgres-db:
     image: postgres:16.2-alpine
@@ -29,10 +29,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     networks:
-      - lma
+      - sms
 
 networks:
-  lma:
+  sms:
     driver: bridge
 
 volumes:
