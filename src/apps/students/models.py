@@ -45,6 +45,7 @@ class StudentProfile(TimeStampedUUIDModel):
         verbose_name=_("Country"), default="CM", blank=False, null=False
     )
     address = models.CharField(verbose_name=_("Address"), max_length=200)
+    is_owing = models.BooleanField(default=True)
 
 
 class Attendance(TimeStampedUUIDModel):
