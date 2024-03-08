@@ -60,7 +60,7 @@ class Subject(TimeStampedUUIDModel):
     description = models.TextField(blank=True, null=True)
     
     # Add a ManyToManyField for teachers
-    teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught")
+    teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)
 
 class Mark(TimeStampedUUIDModel):
     score = models.IntegerField(default=0)
