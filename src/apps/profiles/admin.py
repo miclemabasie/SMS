@@ -1,5 +1,5 @@
 from django.contrib import admin
-# from .models import Profile
+from .models import ParentProfile
 
 
 # class ProfileAdmin(admin.ModelAdmin):
@@ -9,3 +9,9 @@ from django.contrib import admin
 
 
 # admin.site.register(Profile, ProfileAdmin)
+
+class ParentProfileAdmin(admin.ModelAdmin):
+    list_display = ["full_name", "address", "email", "role"]
+
+
+admin.site.register(ParentProfile, ParentProfileAdmin)

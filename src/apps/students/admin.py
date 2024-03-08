@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import StudentProfile, Subject, Mark, Class
+from .models import StudentProfile, Subject, Mark, Class, TeacherProfile
 
 class MarkAdmin(admin.TabularInline):
     model = Mark
@@ -29,11 +29,20 @@ class SubjectAdmin(admin.TabularInline):
     fields = ["name", "description", "teachers"]
 
 class ClassAdmin(admin.ModelAdmin):
-    list_display = ["id", "pkid", "class_name", "grade_level"]
+    list_display = ["id", "pkid", "grade_level"]
     list_filter = ["grade_level"]
-    list_display_links = ["id", "pkid", "class_name"]
+    list_display_links = ["id", "pkid"]
     inlines = [
         SubjectAdmin
     ]
 
 admin.site.register(Class, ClassAdmin)
+
+
+class TeacherProfileAdmin(admin.ModelAdmin):
+    list_display = ["id", "pkid", "user", "gender", "phone_number", "country"]
+    list_filter = ["gender", "country"]
+    list_display_links = ["id", "pkid", "user"]
+    
+
+admin.site.register(TeacherProfile, TeacherProfileAdmin)
