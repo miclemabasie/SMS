@@ -9,6 +9,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from apps.profiles.models import Gender
 from apps.students.models import Subject
 
+from apps.common.utils import auto_create_matricule
+
 User = get_user_model()
 
 
@@ -36,6 +38,16 @@ class AdminProfile(TimeStampedUUIDModel):
     address = models.CharField(verbose_name=_("Address"), max_length=200)
     responsibilities = models.TextField(verbose_name=_("Responsibility"), blank=True, null=True)
     can_manage = models.CharField(max_length=100)
+
+    is_admin = models.BooleanField(default=True)
+
+    matricule = models.CharField(blank=True, null=True, max_length=200, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.matricule = auto_create_matricule("student")
+        return super().save(*args, **kwargs)
+
+
 
 
 

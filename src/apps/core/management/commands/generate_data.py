@@ -9,6 +9,7 @@ from apps.staff.models import AdminProfile
 from apps.profiles.models import ParentProfile
 from apps.terms.models import AcademicYear, Term, ExaminationSession
 from datetime import date
+from termcolor import colored
 
 
 import random
@@ -21,18 +22,18 @@ faker = Faker()
     
 
 class Command(BaseCommand):
-    help = "Renames a django project"
+    help = "Auto Generate data for all the models in the system."
 
-    # def add_arguments(self, parser: CommandParser) -> None:
-    #     parser.add_argument(
-    #         "new_project_name", type=str, help="The new django project name"
-    #     )
-    #     # parser.add_argument("-p", "--prefix")
 
-    #     return super().add_arguments(parser)
+    def success_message(self, message):
+        self.stdout.write(colored(message, "green"))
+
+    def warning_message(self, message):
+        self.stderr.write(colored(message, "yellow"))
 
     def handle(self, *args: Any, **options: Any) -> str | None:
         # new_project_name = options["new_project_name"]
+        self.warning_message("=======================Starting to generate data =========================")
         self.create_fake_users()
         self.create_parent()
         self.create_class()
@@ -44,6 +45,8 @@ class Command(BaseCommand):
         self.create_academic_year()
         self.create_term()
         self.create_exam_session()
+        self.warning_message("=======================Done with generating data.=========================")
+
         
         # return super().handle(*args, **options)
 
@@ -61,6 +64,7 @@ class Command(BaseCommand):
 
     def create_fake_users(self):
         "Creating fake users"
+        self.warning_message("Creating Users...")
         for _ in range(50):
             username = faker.user_name()
             first_name = faker.first_name()
@@ -70,18 +74,21 @@ class Command(BaseCommand):
             date_joined = timezone.now()
             user = User.objects.create(username=username, first_name=first_name, last_name=last_name, email=email, date_joined=date_joined)
             user.save()
+        self.success_message("Users created.")
 
     def create_class(self):
+        self.warning_message("Creating Classes...")
         for i in range(7):
             klass = Class.objects.create(
                 class_name = faker.name(),
                 grade_level = f"Form {str(i+1)}"
             )
             klass.save()
+        self.success_message("Classes Created.")
     
     def create_students(self):
         """Create fake data for student models"""
-        print("This is to crate data about student")
+        self.warning_message("Creating Students.")
         for i in range(1, 31):
             student = StudentProfile.objects.create(
                 user=User.objects.get(pkid=i),
@@ -92,10 +99,11 @@ class Command(BaseCommand):
                 address = faker.address(),
             )
             student.save()
+        self.success_message("Students have been created.")
 
     def create_teachers(self):
         """Create fake data for student models"""
-        print("This is to crate data about student")
+        self.warning_message("Creating teachers.")
         for i in range(31, 46):
             teacher = TeacherProfile.objects.create(
                 user=User.objects.get(pkid=i),
@@ -105,8 +113,10 @@ class Command(BaseCommand):
                 address = faker.address(),
             )
             teacher.save()
+        self.success_message("Teachers, Created.")
 
     def create_subjects(self):
+        self.warning_message("Creating Subjects.")
         for _ in range(30):
             sub = Subject.objects.create(
                 klass = Class.objects.get(pkid=random.randint(1, 7)),
@@ -114,9 +124,11 @@ class Command(BaseCommand):
                 description=faker.text()
             )
             sub.save()
+        self.success_message("Subjects Created.")
 
     def create_attendance(self):
         """Create attendance data"""
+        self.warning_message("Creating attendance data.")
         for i in range(30):
             att = Attendance.objects.create(
                 is_present = random.choice([False, True]),
@@ -125,8 +137,10 @@ class Command(BaseCommand):
                 subject = Subject.objects.get(pkid=random.randint(1, 20)),
             )
             att.save()
+        self.success_message("Attendance data created.")
 
     def create_admin_staff(self):
+        self.warning_message("Creating Administrator Data")
         for i in range(47, 51):
             admin = AdminProfile.objects.create(
                 user = User.objects.get(pkid=i),
@@ -135,28 +149,33 @@ class Command(BaseCommand):
                 can_manage = faker.text()
             )
             admin.save()
+        self.success_message("Administor's data created.")
 
     def create_academic_year(self):
-
+        self.warning_message("Creating Academic Year.")
         academic_year_2024_2025 = AcademicYear.objects.create(
             name="2024-2025",
             start_date=date(2024, 9, 1),  # Set the appropriate start date
             end_date=date(2025, 8, 31),   # Set the appropriate end date
         )
         academic_year_2024_2025.save()
+        self.success_message("Done creating academic year")
 
     def create_term(self):
+        self.warning_message("Creating Terms.")
         terms = ["first_term", "second_term", "third_term"]
-        for _ in range(1, 3):
+        for i in range(1, 4):
             term = Term.objects.create(
-                term = random.choice(terms),
+                term = terms[i-1],
                 academic_year = AcademicYear.objects.get(pkid=1)
             )
             term.save()
+        self.success_message("Done creating term data.")
 
 
     def create_exam_session(self):
-        seqs = ("first_seqence", "second_sequence", "third_sequence", "fourth_sequence", "fifth_sequence", "sixth_sequence")
+        self.warning_message("Creating examination sessions.")
+        seqs = ("first_sequence", "second_sequence", "third_sequence", "fourth_sequence", "fifth_sequence", "sixth_sequence")
         k = 1
         for i in range(0, 6):
             if i > 2:
@@ -168,3 +187,4 @@ class Command(BaseCommand):
                 exam_session=seqs[i],
             )
             sess.save()
+        self.success_message("Examination sessions created.")

@@ -13,6 +13,8 @@ from apps.common.models import TimeStampedUUIDModel
 # from apps.teachers.models import TeacherProfile
 from apps.terms.models import ExaminationSession
 
+from apps.common.utils import auto_create_matricule
+
 
 
 User = get_user_model()
@@ -46,6 +48,12 @@ class StudentProfile(TimeStampedUUIDModel):
     )
     address = models.CharField(verbose_name=_("Address"), max_length=200)
     is_owing = models.BooleanField(default=True)
+    is_student = models.BooleanField(default=True)
+    matricule = models.CharField(blank=True, null=True, max_length=200, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.matricule = auto_create_matricule("student")
+        return super().save(*args, **kwargs)
 
 
 class Attendance(TimeStampedUUIDModel):
@@ -94,6 +102,13 @@ class TeacherProfile(TimeStampedUUIDModel):
     )
     location = models.CharField(verbose_name=_("Location"), max_length=100, blank=True, null=True)
     address = models.CharField(verbose_name=_("Address"), max_length=200)
+    matricule = models.CharField(blank=True, null=True, max_length=200, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.matricule = auto_create_matricule("staff")
+        return super().save(*args, **kwargs)
+
+    
 
 
 
