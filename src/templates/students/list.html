@@ -109,9 +109,9 @@
                                                 <a href="student-details.html"
                                                     class="avatar avatar-sm me-2"><img
                                                         class="avatar-img rounded-circle"
-                                                        src="{{ student.profile_photo.url }}"
+                                                        src="{{ student.profile_photo.url}}"
                                                         alt="User Image"></a>
-                                                <a href="student-details.html">Aaliyah</a>
+                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">Aaliyah</a>
                                             </h2>
                                         </td>
                                         <td>{{student.current_class.class_name}}</td>
