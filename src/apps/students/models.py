@@ -16,6 +16,13 @@ from apps.terms.models import ExaminationSession
 from apps.common.utils import auto_create_matricule
 
 
+class DOMAINCHOICES(models.TextChoices):
+    ARTS = "Arts", _("Arts")
+    SCIENCE = "Science", _("Science")
+    COMMERCIAL = "Commercial", _("Commercial")
+    INSDUSTRIAL = "Industrial", _("Industrial")
+    OTHER = "Other", _("Other")
+
 
 User = get_user_model()
 
@@ -28,7 +35,7 @@ class StudentProfile(TimeStampedUUIDModel):
     user = models.OneToOneField(User, related_name="student_profile", on_delete=models.CASCADE)
     parent = models.ForeignKey(ParentProfile, related_name="childrend", on_delete=models.CASCADE)
     current_class = models.ForeignKey("Class", on_delete=models.CASCADE, related_name="students")
-    number_of_absences = models.PositiveIntegerField(default=0, validators=[MinValueValidator(9), MaxValueValidator(1)])
+    number_of_absences = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
     remark = models.TextField(verbose_name=_("Remark"))
     is_repeater = models.BooleanField(default=False)
     gender = models.CharField(
@@ -50,6 +57,12 @@ class StudentProfile(TimeStampedUUIDModel):
     is_owing = models.BooleanField(default=True)
     is_student = models.BooleanField(default=True)
     matricule = models.CharField(blank=True, null=True, max_length=200, unique=True)
+    domain = models.CharField(
+        verbose_name=_("Domain"),
+        choices=DOMAINCHOICES.choices,
+        default=DOMAINCHOICES.OTHER,
+        max_length=20,
+    )
 
     def save(self, *args, **kwargs):
         self.matricule = auto_create_matricule("student")
