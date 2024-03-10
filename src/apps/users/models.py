@@ -20,6 +20,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_student = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
+    dob = models.DateTimeField(default=timezone.now)
 
 
     USERNAME_FIELD = "email"
