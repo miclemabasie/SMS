@@ -14,6 +14,12 @@
     <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+    
+    {% block stylelinks %}    
+        
+    {% endblock stylelinks %}
+        
 </head>
 
 <body>
@@ -35,13 +41,19 @@
        
     </div>
 
+    
+    
     <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'assets/js/feather.min.js' %}"></script>
     <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
     <script src="{% static 'assets/plugins/apexchart/apexcharts.min.js' %}"></script>
     <script src="{% static 'assets/plugins/apexchart/chart-data.js' %}"></script>
+    {% block scripttags %}
+
+    {% endblock scripttags %}
     <script src="{% static 'assets/js/script.js' %}"></script>
+
 </body>
 
 </html>
