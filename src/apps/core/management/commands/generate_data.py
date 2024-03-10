@@ -90,14 +90,17 @@ class Command(BaseCommand):
         """Create fake data for student models"""
         self.warning_message("Creating Students.")
         for i in range(1, 31):
+            user=User.objects.get(pkid=i)
             student = StudentProfile.objects.create(
-                user=User.objects.get(pkid=i),
+                user = user,
                 parent = ParentProfile.objects.get(pkid=i),
                 current_class = Class.objects.get(pkid=random.randint(1, 6)),
                 remark = faker.name(),
                 gender = random.choice(["Male", "Female"]),
                 address = faker.address(),
             )
+            user.is_student = True
+            user.save()
             student.save()
         self.success_message("Students have been created.")
 
@@ -105,13 +108,16 @@ class Command(BaseCommand):
         """Create fake data for student models"""
         self.warning_message("Creating teachers.")
         for i in range(31, 46):
+            user=User.objects.get(pkid=i)
             teacher = TeacherProfile.objects.create(
-                user=User.objects.get(pkid=i),
+                user=user,
                 location = faker.location_on_land()[2],
                 remark = faker.name(),
                 gender = random.choice(["Male", "Female"]),
                 address = faker.address(),
             )
+            user.is_teacher=True
+            user.save()
             teacher.save()
         self.success_message("Teachers, Created.")
 
@@ -142,12 +148,15 @@ class Command(BaseCommand):
     def create_admin_staff(self):
         self.warning_message("Creating Administrator Data")
         for i in range(47, 51):
+            user = User.objects.get(pkid=i)
             admin = AdminProfile.objects.create(
-                user = User.objects.get(pkid=i),
+                user=user,
                 location = faker.location_on_land()[2],
                 address = faker.address(),
                 can_manage = faker.text()
             )
+            user.is_admin = True
+            user.save()
             admin.save()
         self.success_message("Administor's data created.")
 

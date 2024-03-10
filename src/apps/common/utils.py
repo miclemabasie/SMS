@@ -3,7 +3,7 @@ from django.utils import timezone
 
 def auto_create_matricule(user_type):
     valid_user_types = ["staff", "student"]
-    st_pre_string = "ST-"
+    st_pre_string = "ST"
     teach_pre_string = "TC-"
     # The post string should eventaully come from the settings. 
     # And the length of the unique string should aswell come from the settings.
