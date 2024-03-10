@@ -11,7 +11,7 @@ from .models import ParentProfile
 # admin.site.register(Profile, ProfileAdmin)
 
 class ParentProfileAdmin(admin.ModelAdmin):
-    list_display = ["full_name", "address", "email", "role"]
+    list_display = ["first_name", "address", "email", "role"]
 
 
 admin.site.register(ParentProfile, ParentProfileAdmin)

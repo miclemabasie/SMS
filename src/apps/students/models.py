@@ -81,12 +81,12 @@ class Subject(TimeStampedUUIDModel):
     description = models.TextField(blank=True, null=True)
     
     # Add a ManyToManyField for teachers
-    teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)
+    # teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)
 
 class Mark(TimeStampedUUIDModel):
     score = models.IntegerField(default=0)
     student = models.ForeignKey(StudentProfile, related_name="student_marks", on_delete=models.CASCADE)
-    teacher = models.ForeignKey(StudentProfile, related_name="marks", on_delete=models.CASCADE)
+    teacher = models.ForeignKey("TeacherProfile", related_name="marks", on_delete=models.CASCADE)
     exam_session = models.ForeignKey(ExaminationSession, related_name="session_marks", on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, related_name="subject_marks", on_delete=models.CASCADE)
 

@@ -48,9 +48,24 @@ class Gender(models.TextChoices):
 #         return f"{self.user.username}'s profile"
 
 class ParentProfile(TimeStampedUUIDModel):
-    full_name = models.CharField(verbose_name=_("Full Name"), max_length=200)
+    first_name = models.CharField(verbose_name=_("Full Name"), max_length=200)
+    phone = PhoneNumberField(
+        verbose_name=_("Phone Number"), max_length=30, default="+237680672888", blank=True, null=True
+    )
+    occupation = models.CharField(verbose_name=_("Occupation"), max_length=200, blank=True, null=True)
     address = models.CharField(verbose_name=_("Address"), max_length=200)
     email = models.EmailField(verbose_name=_("Email"))
     role = models.CharField(verbose_name=_("Role"), max_length=50)
+
+
+    def save(self, *args, **kwargs):
+
+
+        return super().save(*args, **kwargs)
+    
+
+    @property
+    def get_fullname(self):
+        return f"{self.first_name} {self.last_name}"
 
  
