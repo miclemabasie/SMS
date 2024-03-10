@@ -125,7 +125,7 @@
                                                     class="btn btn-sm bg-success-light me-2 ">
                                                     <i class="feather-eye"></i>
                                                 </a>
-                                                <a href="edit-student.html" class="btn btn-sm bg-danger-light">
+                                                <a href="{% url 'students:student-edit' pkid=student.pkid matricule=student.matricule%}" class="btn btn-sm bg-danger-light">
                                                     <i class="feather-edit"></i>
                                                 </a>
                                             </div>
@@ -143,6 +143,7 @@
 {% endblock content %}
 
 
+<li><a href="">Student Edit</a></li>
 
 {% block scripttags %}
 <script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
