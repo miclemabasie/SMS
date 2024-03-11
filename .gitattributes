@@ -2,6 +2,7 @@
 
 static/* linguist-vendored
 staticfiles/* linguist-vendored
+templates/utils/* linguist-vendored
 
 # Set the default programming language for unknown files
 * linguist-language=Python
