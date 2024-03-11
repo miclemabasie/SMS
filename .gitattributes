@@ -2,7 +2,7 @@
 
 static/* linguist-vendored
 staticfiles/* linguist-vendored
-templates/* linguist-vendored
+# templates/* linguist-vendored
 
 # Set the default programming language for unknown files
 * linguist-language=Python
@@ -14,9 +14,9 @@ templates/* linguist-vendored
 *.pyw linguist-language=Python
 
 # Django files
-*.html linguist-language=HTML
-*.css linguist-language=CSS
-*.js linguist-language=JavaScript
+# *.html linguist-language=HTML
+# *.css linguist-language=CSS
+# *.js linguist-language=JavaScript
 
 # Other common web development files
 *.json linguist-language=JSON
