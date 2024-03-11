@@ -21,7 +21,7 @@ staticfiles/* linguist-vendored
 # Other common web development files
 *.json linguist-language=JSON
 *.xml linguist-language=XML
-*.html linguist-language=HTML
+# *.html linguist-language=HTML
 
 # Ignore generated files
 __pycache__/* linguist-generated=true
@@ -30,3 +30,5 @@ __pycache__/* linguist-generated=true
 *.pyd linguist-generated=true
 *.db linguist-generated=true
 *.sqlite linguist-generated=true
+*static/* linguist-generated=true
+*staticfiles/* linguist-generated=true
