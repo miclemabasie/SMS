@@ -1,7 +1,5 @@
 # .gitattributes
 
-static/* linguist-vendored
-staticfiles/* linguist-vendored
 # templates/* linguist-vendored
 
 # Set the default programming language for unknown files
@@ -15,8 +13,8 @@ staticfiles/* linguist-vendored
 
 # Django files
 # *.html linguist-language=HTML
-# *.css linguist-language=CSS
-# *.js linguist-language=JavaScript
+*.css linguist-language=CSS
+*.js linguist-language=JavaScript
 
 # Other common web development files
 *.json linguist-language=JSON
