@@ -1,7 +1,12 @@
 # .gitattributes
 
+static/* linguist-vendored
+staticfiles/* linguist-vendored
+
 # Set the default programming language for unknown files
 * linguist-language=Python
+
+
 
 # Python files
 *.py linguist-language=Python
