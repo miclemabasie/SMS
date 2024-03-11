@@ -27,7 +27,7 @@
        <div class="col-sm-12">
           <div class="card">
              <div class="card-body">
-                <form action="{% url 'students:student-add' %}" method="post">
+                <form action="{% url 'students:student-add' %}" method="post" enctype="multipart/form-data">
                   {% csrf_token %}
                    <div class="row">
                       <div class="col-12">
@@ -171,3 +171,4 @@
 {% block scripttags %}
 <script src="{% static 'assets/js/popper.min.js' %}"></script>
 {% endblock scripttags %}
+

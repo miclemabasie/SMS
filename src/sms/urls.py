@@ -25,7 +25,7 @@ urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
 
     # local apps
-    path("administration/", include("apps.staff.urls", namespace="staff")),
+    path("", include("apps.staff.urls", namespace="staff")),
     path("students/", include("apps.students.urls", namespace="students"))
 ]
 

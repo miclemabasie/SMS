@@ -52,7 +52,7 @@
                                 <div class="follow-group">
                                     <div class="students-follows">
                                         <h5>Parent Name</h5>
-                                        <h4>{{student.parent.full_name}}</h4>
+                                        <h4>{{student.parent.first_name}}</h4>
                                     </div>
                                     <div class="students-follows">
                                         <h5>Current Class</h5>
@@ -66,7 +66,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4 d-flex align-items-center">
                                 <div class="follow-btn-group">
-                                    <a href="">
+                                    <a href="{% url 'students:student-edit' pkid=student.pkid matricule=student.matricule%}">
                                     <button class="btn btn-info follow-btns">Edit Student Info</button>
                                 </a>
                                     

@@ -6,32 +6,32 @@
                 <li class="menu-title">
                     <span>Main Menu</span>
                 </li>
-                <li class="submenu active">
+                <li class="submenu {% if section == 'admin-area'  %}active{% endif %}">
                     <a href="#"><i class="feather-grid"></i> <span> Dashboard</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="index.html" class="active">Admin Dashboard</a></li>
-                        <li><a href="teacher-dashboard.html">Teacher Dashboard</a></li>
+                        <li><a href="{% url 'staff:admin-dashboard' %}" class="{% if request.path == '/'  %}active{% endif %}">Admin Dashboard</a></li>
+                        <li><a href="teacher-dashboard.html">Teachers Dashboard</a></li>
                         <li><a href="student-dashboard.html">Student Dashboard</a></li>
                     </ul>
                 </li>
-                <li class="submenu">
+                <li class="submenu {% if section == 'student-area'  %}active{% endif %}">
                     <a href="#"><i class="fas fa-graduation-cap"></i> <span> Students</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="{% url 'students:student-list' %}">Student List</a></li>
-                        <li><a href="student-details.html">Student View</a></li>
-                        <li><a href="{% url 'students:student-add' %}">Student Add</a></li>
+                        <li><a href="{% url 'students:student-list' %}" class="{% if request.path == '/students/'  %}active{% endif %}">Student List</a></li>
+                        <!-- <li><a href="student-details.html">Student View</a></li> -->
+                        <li><a href="{% url 'students:student-add' %}" class="{% if request.resolver_match.url_name == 'students:student-add'  %}active{% endif %}">Student Add</a></li>
                     </ul>
                 </li>
-                <li class="submenu">
+                <li class="submenu {% if section == 'teachers-area'  %}active{% endif %}">
                     <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="teachers.html">Teacher List</a></li>
-                        <li><a href="teacher-details.html">Teacher View</a></li>
-                        <li><a href="add-teacher.html">Teacher Add</a></li>
-                        <li><a href="edit-teacher.html">Teacher Edit</a></li>
+                        <li><a href="teachers.html" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
+                        <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
+                        <li><a href="add-teacher.html" class="{% if request.resolver_match.url_name == 'teachers:teachers-add'  %}active{% endif %}">Teacher Add</a></li>
+                        <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>
                 <li class="submenu">

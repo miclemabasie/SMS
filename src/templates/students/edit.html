@@ -27,7 +27,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="{% url 'students:student-edit' pkid=student_profile.pkid matricule=student_profile.matricule %}" method="post">
+                    <form action="{% url 'students:student-edit' pkid=student_profile.pkid matricule=student_profile.matricule %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-12">
@@ -116,6 +116,47 @@
                                     <label>Student Image</label>
                                     <input type="file" name="profile_photo" class="form-control">
                                 </div>
+                            </div>
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Parent Information</span></h5>
+                             </div>
+                             <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                   <label>Parent Frist Name</label>
+                                   <input type="text" name="parent-fname" class="form-control" value="student.parent.first_name">
+                                </div>
+                             </div>
+                             <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                   <label>Parent Occupation</label>
+                                   <input type="text" name="parent-occupation" class="form-control" value="student.parent.occuptaion">
+                                </div>
+                             </div>
+                             <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                   <label>Parent Mobile</label>
+                                   <input type="text" name="parent-phone" class="form-control" value="student.parent.phone">
+                                </div>
+                             </div>
+                             <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                   <label>Parent Email</label>
+                                   <input type="email" name="parent-email" class="form-control" value="student.parent.phone">
+                                </div>
+                             </div>
+                             
+                             <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                   <label>Address</label>
+                                   <input type="text" name="parent-address" class="form-control" value="student.parent.address">
+                                </div>
+                             </div>
+       
+                             <div class="col-12 col-sm-6">
+                               <div class="form-group">
+                                  <label>Role</label>
+                                  <input type="text" name="parent-role" class="form-control" value="student.parent.role">
+                               </div>
                             </div>
 
 

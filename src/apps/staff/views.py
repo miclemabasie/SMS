@@ -8,5 +8,9 @@ def admin_dashboard(request):
     pass
 
     template_name = "staff/dashboard.html"
-    context = {}
+    context = {
+        "section": "admin-area"
+    }
+
+
     return render(request, template_name, context)
