@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">Teachers Details</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="teachers.html">Teachers</a></li>
+                        <li class="breadcrumb-item active">Teachers Details</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="about-info">
+                        <h4>Profile <span><a href="javascript:;"><i class="feather-more-vertical"></i></a></span></h4>
+                    </div>
+                    <div class="student-profile-head">
+                        <div class="profile-bg-img">
+                            <img src="{% static 'assets/img/profile-bg.jpg' %}" alt="Profile">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4">
+                                <div class="profile-user-box">
+                                    <div class="profile-user-img">
+                                        <img src="{{ teacher.profile_photo.url }}" alt="Profile">
+                                        <!-- <div class="form-group students-up-files profile-edit-icon mb-0">
+                                            <div class="uplod d-flex">
+                                                <label class="file-upload profile-upbtn mb-0">
+                                                    <i class="feather-edit-3"></i><input type="file">
+                                                </label>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                    <div class="names-profiles">
+                                        <h4>{{teacher.user.first_name}} {{teacher.user.last_name}}</h4>
+                                        <h5>{{teacher.main_subject}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 d-flex align-items-center">
+                                <div class="follow-group">
+                                    <div class="students-follows">
+                                        <h5>Matricule</h5>
+                                        <h4>{{teacher.matricule}}</h4>
+                                    </div>
+                                    <!-- <div class="students-follows">
+                                        <h5>Followers</h5>
+                                        <h4>2850</h4>
+                                    </div>
+                                    <div class="students-follows">
+                                        <h5>Followers</h5>
+                                        <h4>2850</h4>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 d-flex align-items-center">
+                                <div class="follow-btn-group">
+                                    <a href="{% url 'teachers:teachers-edit' matricule=teacher.matricule pkid=teacher.pkid %}">
+                                        <button type="submit" class="btn btn-info follow-btns">Edit Teacher's Info</button>
+                                    </a>
+                                    <button type="submit" class="btn btn-info message-btns">Message</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="student-personals-grp">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="heading-detail">
+                                    <h4>Personal Details :</h4>
+                                </div>
+                                <div class="personal-activity">
+                                    <div class="personal-icons">
+                                        <i class="feather-user"></i>
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Name</h4>
+                                        <h5>{{teacher.user.first_name}} {{teacher.user.last_name}}</h5>
+                                    </div>
+                                </div>
+                                <div class="personal-activity">
+                                    <div class="personal-icons">
+                                        <img src="{% static 'assets/img/icons/buliding-icon.svg' %}" alt="">
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Main Subject </h4>
+                                        <h5>{{teacher.main_subject}}</h5>
+                                    </div>
+                                </div>
+                                <div class="personal-activity">
+                                    <div class="personal-icons">
+                                        <i class="feather-phone-call"></i>
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Mobile</h4>
+                                        <h5>{{ teacher.phone_number }}</h5>
+                                    </div>
+                                </div>
+                                <div class="personal-activity">
+                                    <div class="personal-icons">
+                                        <i class="feather-mail"></i>
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Email</h4>
+                                        <h5><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                                                data-cfemail="d4bebbb194b3b9b5bdb8fab7bbb9">{{teacher.user.email}}</a>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="personal-activity">
+                                    <div class="personal-icons">
+                                        <i class="feather-user"></i>
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Gender</h4>
+                                        <h5>Female</h5>
+                                    </div>
+                                </div>
+                                <div class="personal-activity">
+                                    <div class="personal-icons">
+                                        <i class="feather-calendar"></i>
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Date of Birth</h4>
+                                        <h5>{{teacher.user.dob|date:"j M Y"}}</h5>
+                                    </div>
+                                </div>
+                                <div class="personal-activity">
+                                    <div class="personal-icons">
+                                        <i class="feather-italic"></i>
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Language</h4>
+                                        <h5>English</h5>
+                                    </div>
+                                </div>
+                                <div class="personal-activity mb-0">
+                                    <div class="personal-icons">
+                                        <i class="feather-map-pin"></i>
+                                    </div>
+                                    <div class="views-personal">
+                                        <h4>Address</h4>
+                                        <h5>{{teacher.address}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                </div>
+                <div class="col-lg-8">
+                    <div class="student-personals-grp">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div class="heading-detail">
+                                    <h4>Extras</h4>
+                                </div>
+                                <div class="hello-park">
+                                    <h5>Remarks</h5>
+                                    <p>{{teacher.remark}}
+                                    </p>
+                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+                                        doloremque laudantium, totam inventore veritatis et quasi architecto beatae
+                                        vitae dicta sunt explicabo. </p>
+                                </div>
+                                <div class="hello-park">
+                                    <h5>Education</h5>
+                                    <div class="educate-year">
+                                        <h6>2008 - 2009</h6>
+                                        <p>Secondary Schooling at xyz school of secondary education, Mumbai.</p>
+                                    </div>
+                                    <div class="educate-year">
+                                        <h6>2011 - 2012</h6>
+                                        <p>Higher Secondary Schooling at xyz school of higher secondary education,
+                                            Mumbai.</p>
+                                    </div>
+                                    <div class="educate-year">
+                                        <h6>2012 - 2015</h6>
+                                        <p>Bachelor of Science at Abc College of Art and Science, Chennai.</p>
+                                    </div>
+                                    <div class="educate-year">
+                                        <h6>2015 - 2017</h6>
+                                        <p class="mb-0">Master of Science at Cdm College of Engineering and Technology,
+                                            Pune.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block scripttags %}
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+{% endblock scripttags %}
