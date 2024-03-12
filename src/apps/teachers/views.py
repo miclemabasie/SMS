@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from apps.students.models import TeacherProfile, StudentProfile, Mark, Class 
 from faker import Faker
 from datetime import datetime, time, timezone
+from django.http import Http404
+from django.contrib import messages
 
 
 faker_factory = Faker()
@@ -98,6 +100,8 @@ def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
         teacher.save()
         teacher.user.save()
 
+        messages.success(request, "TEacher successfully updated")
+
         
         return redirect(reverse("teachers:teachers-detail", kwargs={"pkid": teacher.pkid, "matricule": teacher.matricule}))
 
@@ -111,12 +115,16 @@ def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
 
 def teacher_delete_view(request, matricule, pkid, *args, **kwargs):
 
+    teacher = get_object_or_404(TeacherProfile, matricule=matricule, pkid=pkid)
+ 
     print("Deleting the user.")
-    # template_name = "teachers/teacher-edit.html"
-    context = {
-        "section": "teachers-area"
-    }
 
+    teacher.delete()
+
+    messages.success(request, "Teacher successfuly deleted.")
+    
+    # template_name = "teachers/teacher-edit.html"
+    
     return redirect(reverse("teachers:teachers-list"))
 
 
@@ -192,3 +200,102 @@ def teacher_add_view(request, *args, **kwargs):
     }
 
     return render(request, template_name, context)
+
+
+def class_add_view(request, *args, **kwargs):
+    
+    if request.method == "POST":
+        
+        # extract information from the class form
+        grade_level = request.POST.get("grade_level")
+        class_name = request.POST.get("class_name")
+        class_master = request.POST.get("class_master")
+        class_prefect = request.POST.get("class_prefect")
+
+        print(class_prefect, class_master)
+
+        # Create the class
+        if grade_level and class_name:
+            
+            klass= Class.objects.create(
+                grade_level=grade_level,
+                class_name=class_name,
+                class_master=class_master,
+                class_prefect=class_prefect
+            )
+            
+
+            klass.save()
+        save_and_add_flag =  request.POST.get("save_and_add")
+        print("%%%%%%%%%%%%%%%%%%%", save_and_add_flag)
+
+        if save_and_add_flag:
+            print(save_and_add_flag)
+            return redirect(reverse("class-add"))
+        return redirect(reverse("class-list"))
+
+    template_name = "classes/class-add.html"
+    context = {
+        "section": "class-area"
+    }
+
+    return render(request, template_name, context)
+
+
+
+def class_list_view(request, *args, **kwargs):
+
+    classes = Class.objects.all()
+
+    template_name = "classes/class-list.html"
+    context = {
+        "section": "class-area",
+        "classes": classes,
+    }
+
+    return render(request, template_name, context)
+
+
+def class_edit_view(request, pkid, *args, **kwargs):
+
+    klass = get_object_or_404(Class, pkid=pkid)
+
+    if request.method == "POST":
+        
+        # extract information from the class form
+        grade_level = request.POST.get("grade_level")
+        class_name = request.POST.get("class_name")
+        class_master = request.POST.get("class_master")
+        class_prefect = request.POST.get("class_prefect")
+
+        print(class_prefect, class_master)
+
+        klass.grade_level = grade_level
+        klass.class_name = class_name
+        klass.class_master = class_master
+        klass.class_prefect = class_prefect
+            
+
+        klass.save()
+        save_and_add_flag =  request.POST.get("save_and_add")
+        if save_and_add_flag:
+            print(save_and_add_flag)
+            return redirect(reverse("class-add"))
+        return redirect(reverse("class-list"))
+
+    template_name = "classes/class-edit.html"
+    context = {
+        "section": "class-area",
+        "class": klass
+    }
+    
+    return render(request, template_name, context)
+
+
+def class_delete_view(request, pkid, *args, **kwargs):
+    klass = get_object_or_404(Class, pkid=pkid)
+
+    klass.delete()
+    messages.success(request, "Class has been successfully deleted")
+
+    return redirect(reverse("class-list"))

@@ -54,7 +54,7 @@ class Command(BaseCommand):
         roles = ["Father", "Mother", "Uncle", "Auntie"]
         for _ in range(30):
             parent = ParentProfile.objects.create(
-                full_name = faker.user_name(),
+                first_name = faker.user_name(),
                 address = faker.address(),
                 email = faker.email(),
                 role = random.choice(roles)
@@ -81,7 +81,9 @@ class Command(BaseCommand):
         for i in range(7):
             klass = Class.objects.create(
                 class_name = faker.name(),
-                grade_level = f"Form {str(i+1)}"
+                grade_level = f"Form {str(i+1)}",
+                class_master=faker.user_name(),
+                class_prefect=faker.user_name()
             )
             klass.save()
         self.success_message("Classes Created.")

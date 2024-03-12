@@ -29,12 +29,14 @@ User = get_user_model()
 class Class(TimeStampedUUIDModel):
     class_name = models.CharField(verbose_name=_("Class Name"), max_length=200)
     grade_level = models.CharField(verbose_name=_("Class Level"), max_length=200)
+    class_master = models.CharField(verbose_name=_("Class Master"), max_length=200, blank=True, null=True)
+    class_prefect = models.CharField(verbose_name=_("Class Prefect"), max_length=200, blank=True, null=True)
 
 
 class StudentProfile(TimeStampedUUIDModel):
     user = models.OneToOneField(User, related_name="student_profile", on_delete=models.CASCADE)
     parent = models.ForeignKey(ParentProfile, related_name="childrend", on_delete=models.CASCADE)
-    current_class = models.ForeignKey("Class", on_delete=models.CASCADE, related_name="students")
+    current_class = models.ForeignKey("Class", on_delete=models.SET_NULL, related_name="students", blank=True, null=True)
     number_of_absences = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
     remark = models.TextField(verbose_name=_("Remark"))
     is_repeater = models.BooleanField(default=False)
@@ -116,7 +118,7 @@ class TeacherProfile(TimeStampedUUIDModel):
     location = models.CharField(verbose_name=_("Location"), max_length=100, blank=True, null=True)
     address = models.CharField(verbose_name=_("Address"), max_length=200)
     matricule = models.CharField(blank=True, null=True, max_length=200, unique=True)
-    main_subject = models.CharField(verbose_name=_("Main Subject"), blank=True, null=True, max_length=200, unique=True)
+    main_subject = models.CharField(verbose_name=_("Main Subject"), blank=True, null=True, max_length=200)
 
     def save(self, *args, **kwargs):
         self.matricule = auto_create_matricule("staff")

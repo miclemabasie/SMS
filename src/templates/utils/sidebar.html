@@ -34,6 +34,17 @@
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>
+                <li class="submenu {% if section == 'class-area'  %}active{% endif %}">
+                    <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Classes</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul>
+                        <!-- <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li> -->
+                        <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
+                        <li><a href="{% url 'class-list' %}" class="{% if request.resolver_match.url_name == 'class-list'  %}active{% endif %}">Classes</a></li>
+                        <li><a href="{% url 'class-add' %}" class="{% if request.resolver_match.url_name == 'class-add'  %}active{% endif %}">Class Add</a></li>
+                        <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
+                    </ul>
+                </li>
                 <li class="submenu">
                     <a href="#"><i class="fas fa-building"></i> <span> Departments</span> <span
                             class="menu-arrow"></span></a>

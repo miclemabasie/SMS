@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+
+
+{% block styletags %}
+    
+{% endblock styletags %}
+    
+
+{% block content %}
+
+<div class="content container-fluid">
+    <div class="page-header">
+       <div class="row align-items-center">
+          <div class="col">
+             <h3 class="page-title">Add Students</h3>
+             <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="students.html">Students</a></li>
+                <li class="breadcrumb-item active">Add Students</li>
+             </ul>
+          </div>
+       </div>
+    </div>
+    <div class="row">
+       <div class="col-sm-12">
+          <div class="card">
+             <div class="card-body">
+                <form action="{% url 'class-edit' pkid=class.pkid %}" method="post">
+                  {% csrf_token %}
+                   <div class="row">
+                      <div class="col-12">
+                         <h5 class="form-title"><span>Class Information</span></h5>
+                      </div>
+                      <div class="col-12 col-sm-6">
+                         <div class="form-group">
+                            <label>Grade Level</label>
+                            <input type="text" value="{{class.grade_level}}" name="grade_level" class="form-control">
+                         </div>
+                      </div>
+                      <div class="col-12 col-sm-6">
+                         <div class="form-group">
+                            <label>Class Name</label>
+                            <input type="text" value="{{class.class_name}}" name="class_name" class="form-control">
+                         </div>
+                      </div>
+
+                      <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                           <label>Class Master</label>
+                           <input type="text" value="{{class.class_master}}" name="class_master" class="form-control">
+                        </div>
+                     </div>
+                     <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                           <label>Class Prefect</label>
+                           <input type="text" value="{{class.class_prefect}}" name="class_prefect" class="form-control">
+                        </div>
+                     </div>
+                      <div class="col-12">
+                         <button type="submit" class="btn btn-primary">Add Class</button>
+                         <button type="submit" name="save_and_add" class="btn btn-primary">Save and Add Another</button>
+                      </div>
+
+                     
+                   </div>
+                </form>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+{% endblock content %}
+
+
+
+
+
+{% block scripttags %}
+    
+{% endblock scripttags %}
+
+    

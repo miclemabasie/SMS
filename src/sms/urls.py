@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from apps.teachers import views
 
 
 urlpatterns = [
@@ -11,7 +12,13 @@ urlpatterns = [
     # local apps
     path("", include("apps.staff.urls", namespace="staff")),
     path("students/", include("apps.students.urls", namespace="students")),
-    path("teachers/", include("apps.teachers.urls", namespace="teachers"))
+    path("teachers/", include("apps.teachers.urls", namespace="teachers")),
+
+    # Classes
+    path("classes/", views.class_list_view, name="class-list"),
+    path("add-class/", views.class_add_view, name="class-add"),
+    path("edit/<int:pkid>/", views.class_edit_view, name="class-edit"),
+    path("delete/<int:pkid>/", views.class_delete_view, name="class-delete"),
 ]
 
 if settings.DEBUG:

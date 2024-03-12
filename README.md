@@ -44,7 +44,7 @@ The School Management System is a comprehensive platform designed to streamline 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/miclem/school-management-system.git
+   git clone https://github.com/miclemabasie/school-management-system.git
    ```
 
 2. Set up the backend:
