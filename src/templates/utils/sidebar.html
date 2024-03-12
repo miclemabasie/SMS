@@ -28,9 +28,9 @@
                     <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="teachers.html" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
+                        <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
                         <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
-                        <li><a href="add-teacher.html" class="{% if request.resolver_match.url_name == 'teachers:teachers-add'  %}active{% endif %}">Teacher Add</a></li>
+                        <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers:teachers-add'  %}active{% endif %}">Teacher Add</a></li>
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>

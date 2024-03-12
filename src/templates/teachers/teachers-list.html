@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
+{% endblock stylelinks %}
+
+
+
+{% block content %}
+<div class="content container-fluid">
+
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Teachers</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Teachers</li>
+                </ul>
+            </div>
+            <div class="col-auto text-right float-right ml-auto">
+                <a href="#" class="btn btn-outline-primary mr-2"><i class="fas fa-download"></i> Download</a>
+                <a href="add-teacher.html" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0 datatable">
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Matricule</th>
+                                    <th>Name</th>
+                                    {% comment %} <th>Class</th> {% endcomment %}
+                                    <th>Gender</th>
+                                    <th>Subject</th>
+                                    <th>Section</th>
+                                    <th>Mobile Number</th>
+                                    <th>Address</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for teacher in teachers %}        
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{ teacher.matricule }}</td>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                <a href="{% url 'teachers:teachers-detail' pkid=teacher.pkid matricule=teacher.matricule %}" class="avatar avatar-sm mr-2"><img
+                                                        class="avatar-img rounded-circle"
+                                                        src="{{ teacher.profile_photo.url }}" alt="User Image"></a>
+                                                <a href="{% url 'teachers:teachers-detail' pkid=teacher.pkid matricule=teacher.matricule %}">{{ teacher.user.first_name}} {{teacher.user.last_name}}</a>
+                                            </h2>
+                                        </td>
+                                        {% comment %} <td></td> {% endcomment %}
+                                        <td>{{teacher.gender}}</td>
+                                        <td>{{teacher.main_subject}}</td>
+                                        <td>A</td>
+                                        <td>{{teacher.phone_number}}</td>
+                                        <td>{{teacher.address}}</td>
+                                        <td class="text-right">
+                                            <div class="actions">
+                                                <a href="{% url 'teachers:teachers-edit' pkid=teacher.pkid matricule=teacher.matricule %}" class="btn btn-sm bg-success-light mr-2">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="{% url 'teachers:teachers-delete' pkid=teacher.pkid matricule=teacher.matricule %}" class="btn btn-sm bg-danger-light">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripttags %}
+<script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
+{% endblock scripttags %}

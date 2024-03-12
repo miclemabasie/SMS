@@ -116,6 +116,7 @@ class TeacherProfile(TimeStampedUUIDModel):
     location = models.CharField(verbose_name=_("Location"), max_length=100, blank=True, null=True)
     address = models.CharField(verbose_name=_("Address"), max_length=200)
     matricule = models.CharField(blank=True, null=True, max_length=200, unique=True)
+    main_subject = models.CharField(verbose_name=_("Main Subject"), blank=True, null=True, max_length=200, unique=True)
 
     def save(self, *args, **kwargs):
         self.matricule = auto_create_matricule("staff")

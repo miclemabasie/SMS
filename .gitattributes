@@ -28,6 +28,4 @@ __pycache__/* linguist-generated=true
 *.pyd linguist-generated=true
 *.db linguist-generated=true
 *.sqlite linguist-generated=true
-*.html linguist-generated=true
-*static/* linguist-generated=true
 *staticfiles/* linguist-generated=true

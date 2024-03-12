@@ -91,6 +91,8 @@ def add_student_view(request):
         # attache random digit to the end
         faker_username + str(random.randint(0,9))
 
+        if not st_email:
+            st_email = faker.email()
  
         user = User.objects.create(
             username=faker_username,
@@ -103,8 +105,6 @@ def add_student_view(request):
 
         user.save()
 
-        if not st_email:
-            st_email = faker.email()
 
         # Create student instance
 
