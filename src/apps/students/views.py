@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import StudentProfile, Class
+from .models import StudentProfile, Class, Subject
 from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
 from datetime import datetime, timezone, time
@@ -194,3 +194,4 @@ def edit_student_profile(request, pkid, matricule):
     }
 
     return render(request, template_name, context)
+

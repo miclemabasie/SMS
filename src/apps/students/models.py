@@ -31,6 +31,7 @@ class Class(TimeStampedUUIDModel):
     grade_level = models.CharField(verbose_name=_("Class Level"), max_length=200)
     class_master = models.CharField(verbose_name=_("Class Master"), max_length=200, blank=True, null=True)
     class_prefect = models.CharField(verbose_name=_("Class Prefect"), max_length=200, blank=True, null=True)
+    subjects = models.ManyToManyField("Subject", related_name="subjects", blank=True)
 
 
 class StudentProfile(TimeStampedUUIDModel):
@@ -78,9 +79,10 @@ class Attendance(TimeStampedUUIDModel):
     subject = models.ForeignKey("Subject", related_name="attendance", on_delete=models.CASCADE)
 
 class Subject(TimeStampedUUIDModel):
-    klass = models.ForeignKey(Class, related_name="subjects", on_delete=models.CASCADE)
+    # klass = models.ForeignKey(Class, related_name="subjects", on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Class Name"), max_length=200)
     description = models.TextField(blank=True, null=True)
+    code = models.CharField(verbose_name=_("Subject Code"), max_length=10, blank=True, null=True)
     
     # Add a ManyToManyField for teachers
     # teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)

@@ -26,15 +26,13 @@ admin.site.register(StudentProfile, StudentProfileAdmin)
 class SubjectAdmin(admin.TabularInline):
     model = Subject
     extra = 5
-    fields = ["name", "description", "teachers"]
+    fields = ["name", "code" "description"]
 
 class ClassAdmin(admin.ModelAdmin):
     list_display = ["id", "pkid", "grade_level"]
     list_filter = ["grade_level"]
     list_display_links = ["id", "pkid"]
-    inlines = [
-        SubjectAdmin
-    ]
+    
 
 admin.site.register(Class, ClassAdmin)
 
@@ -46,3 +44,5 @@ class TeacherProfileAdmin(admin.ModelAdmin):
     
 
 admin.site.register(TeacherProfile, TeacherProfileAdmin)
+
+
