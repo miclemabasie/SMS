@@ -103,9 +103,8 @@
                                             <div class="form-check check-tables">
                                                 <input class="form-check-input" type="checkbox"
                                                     value="something">
-                                            </div>
-                                        </td>
-                                        <td>{{student.matricule}}</td>
+                                            </div>'. Did you forget to register or load this tag?
+                                            .matricule}}</td>
                                         <td>
                                             <h2 class="table-avatar">
                                                 <a href="student-details.html"
@@ -126,11 +125,12 @@
                                                 <a href="{% url 'students:student-edit' pkid=student.pkid matricule=student.matricule %}" class="btn btn-sm bg-success-light mr-2">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
-                                                <a href="{% url 'students:student-delete' pkid=student.pkid matricule=student.matricule %}" class="btn btn-sm bg-danger-light">
+                                                <a href="" class="btn btn-sm bg-danger-light">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
                                         </td>
+                                    {% endfor %}
                             </tbody>
                         </table>
                     </div>

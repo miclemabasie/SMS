@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block stylestags %}
+<link rel="stylesheet" href="{% static 'assets/plugins/dragula/css/dragula.min.css'  %}">
+{% endblock stylestags %}
+
+
+
+{% block content %}
+
+<div class="content container-fluid">
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Drag & Drop</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Components</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="col-md-12">
+            <div class="card" id="dd-handle">
+                <div class="card-header">
+                    <h5 class="card-title">Drag Handler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h4 class="my-1">List One</h4>
+                            <ul class="list-group" id="handle-list-1">
+                                
+                                {% for subject in unselected_subjects %}
+                                    
+                                <li class="list-group-item"><span class="handle">+</span>{{subject.name}}</li>
+                                {% endfor %}
+                                    
+                            </ul>
+                        </div>
+                        <div class="col-sm-6">
+                            <h4 class="my-1">List Two</h4>
+                            <ul class="list-group" id="handle-list-2">
+                                
+                                {% for subject in selected_subjects %}
+                                    
+                                <li class="list-group-item"><span class="handle">+</span> {{subject.name}}</li>
+                                {% endfor %}
+                                    
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripttags %}
+<script src="{% static 'assets/plugins/dragula/js/dragula.min.js' %}"></script>
+<script src="{% static 'assets/plugins/dragula/js/drag-drop.min.js' %}"></script>
+{% endblock scripttags %}

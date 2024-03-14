@@ -88,6 +88,7 @@
                                     <th>Class Name</th>
                                     <th>Class Master</th>
                                     <th>Class Prefect</th>
+                                    <th>Add subjects</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -107,6 +108,11 @@
                                         <td>{{class.class_name}}</td>
                                         <td>{{ class.class_master }}</td>
                                         <td>{{ class.class_prefect }}</td>
+                                        <td>
+                                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                                <a href="{% url 'staff:subjects-assign' pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2"><i
+                                                class="fas fa-plus"></i> Add Subject</a></td>
+                                            </div>
                                         <td class="text-right">
                                             <div class="actions">
                                                 <a href="{% url 'class-edit' pkid=class.pkid %}" class="btn btn-sm bg-success-light mr-2">

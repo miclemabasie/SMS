@@ -8,5 +8,6 @@ urlpatterns = [
     path("", views.list_student_view, name="student-list"),
     path("<int:pkid>/<str:matricule>/", views.student_detail_view, name="student-detail"),
     path("edit/<int:pkid>/<str:matricule>/", views.edit_student_profile, name="student-edit"),
+    # path("delete/<int:pkid>/<str:matricule>/", views.delete, name="student-edit"),
     path("add/", views.add_student_view, name="student-add"),
 ]
