@@ -19,6 +19,9 @@ urlpatterns = [
     path("add-class/", views.class_add_view, name="class-add"),
     path("edit/<int:pkid>/", views.class_edit_view, name="class-edit"),
     path("delete/<int:pkid>/", views.class_delete_view, name="class-delete"),
+
+    # auth
+    path('accounts/', include('apps.users.urls', namespace="users")),
 ]
 
 if settings.DEBUG:

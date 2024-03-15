@@ -14,7 +14,7 @@ class FeeTypeChoice(models.TextChoices):
 class Fee(TimeStampedUUIDModel):
     amount = models.PositiveIntegerField()
     fee_type = models.CharField(
-        verbose_name=_('Session'),
+        verbose_name = _('Session'),
         max_length=20,
         choices=FeeTypeChoice.choices,
         default=FeeTypeChoice.SCHOOL_FEES,

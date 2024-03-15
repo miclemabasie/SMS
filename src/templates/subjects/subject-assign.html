@@ -38,7 +38,7 @@
                                 
                                 {% for subject in unselected_subjects %}
                                     
-                                <li class="list-group-item"><span class="handle">+</span>{{subject.name}}</li>
+                                <li data-pkid="{{subject.pkid}}" class="list-group-item"><span class="handle">+</span>{{subject.name}}</li>
                                 {% endfor %}
                                     
                             </ul>
@@ -49,10 +49,13 @@
                                 
                                 {% for subject in selected_subjects %}
                                     
-                                <li class="list-group-item"><span class="handle">+</span> {{subject.name}}</li>
+                                <li data-pkid="{{subject.pkid}}" class="list-group-item"><span class="handle">+</span> {{subject.name}}</li>
                                 {% endfor %}
                                     
                             </ul>
+
+                            <button id="updateButton" class="btn btn-primary align-self-end">Update</button>
+
                         </div>
                     </div>
                 </div>
@@ -66,3 +69,67 @@
 <script src="{% static 'assets/plugins/dragula/js/dragula.min.js' %}"></script>
 <script src="{% static 'assets/plugins/dragula/js/drag-drop.min.js' %}"></script>
 {% endblock scripttags %}
+
+
+{% block script %}
+<script>
+
+console.log("This is linked")
+$(document).ready(function () {
+    // Dragula initialization code
+
+    // Fetch CSRF token from the cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Search for the CSRF token cookie
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Add event listener to the update button
+    document.getElementById("updateButton").addEventListener("click", function () {
+        // Get selected subjects from the second list
+        var selectedSubjects = [];
+        $("#handle-list-2 li").each(function () {
+            console.log($(this).data())
+            // selectedSubjects.push($(this).text().trim());
+            selectedSubjects.push($(this).data());
+        });
+
+        // Get the CSRF token
+        const csrftoken = getCookie('csrftoken');
+
+        // Send selected subjects to the server via AJAX
+        $.ajax({
+            url: "{% url 'staff:subjects-assign' pkid=class.pkid %}",
+            method: "POST",
+            // data: {id: 2},
+            data: JSON.stringify({ selectedSubjects: selectedSubjects }),
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": csrftoken  // Include the CSRF token in the headers
+            },
+            success: function (response) {
+                console.log("Subjects updated successfully:", response);
+                // Optionally, you can perform any actions here after successful update
+
+            },
+            error: function (xhr, status, error) {
+                console.error("Error updating subjects:", error);
+            }
+        });
+    });
+});
+
+</script>
+{% endblock script %}
+    

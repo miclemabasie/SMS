@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from .models import AdminProfile
 from apps.students.models import StudentProfile, TeacherProfile, Subject, Class
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+import json
 
 
-
+@login_required
 def admin_dashboard(request):
     pass
 
@@ -39,10 +42,27 @@ def assign_subject_to_classes(request, pkid):
         if subject not in selected_subjects:
             unselected_subjects.append(subject)
 
+    if request.method == "POST":
+        selected_subjects = request.POST.getlist("selectedSubjects")
+
+
+        print("This are the selected subjects", request.body)
+        data = json.loads(request.body)
+
+        selected_subjects_ids = []
+        for subject in data["selectedSubjects"]:
+            print(subject["pkid"])
+            selected_subjects_ids.append(subject.get("pkid"))
+        
+        print(selected_subjects_ids)
+
+        return JsonResponse({"message": "updated."})
+
     template_name = "subjects/subject-assign.html"
 
     context = {
         "section": "subjects",
+        "class": klass,
         "unselected_subjects": unselected_subjects,
         "selected_subjects": selected_subjects
     }

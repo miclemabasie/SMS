@@ -40,7 +40,17 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-THRID_PARTY_APPS = []
+LOGIN_URL = "accounts/login/"
+
+THRID_PARTY_APPS = [
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+
+    # # social media apps
+    # 'allauth.socialaccount.providers.google',
+
+]
 
 LOCAL_APPS = [
     "apps.users.apps.UsersConfig",
@@ -56,6 +66,9 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THRID_PARTY_APPS + LOCAL_APPS
+
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -81,6 +94,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                 # `allauth` needs this from django
+                # 'django.template.context_processossages",rs.request',
             ],
         },
     },
