@@ -43,9 +43,6 @@ def assign_subject_to_classes(request, pkid):
             unselected_subjects.append(subject)
 
     if request.method == "POST":
-        selected_subjects = request.POST.getlist("selectedSubjects")
-
-
         print("This are the selected subjects", request.body)
         data = json.loads(request.body)
 
@@ -53,8 +50,24 @@ def assign_subject_to_classes(request, pkid):
         for subject in data["selectedSubjects"]:
             print(subject["pkid"])
             selected_subjects_ids.append(subject.get("pkid"))
-        
         print(selected_subjects_ids)
+        # Flush out all the subjects that exist in the class and reset
+        print("we are inside the loop", len(selected_subjects), len(selected_subjects_ids))
+        if len(selected_subjects) > 0 and len(selected_subjects_ids) > 0:
+            for subject in selected_subjects:
+                print("This is the subject", subject)
+                klass.subjects.remove(subject)
+                klass.save()
+
+        print(klass.subjects.all())
+
+        # Reassign the subjects to the klass instance
+        # Ge throught the incoming ids, and get the subjects associated the with the pkids
+        for pkid in selected_subjects_ids:
+            sub = Subject.objects.filter(pkid=pkid).first()
+            if sub:
+                klass.subjects.add(sub)
+                klass.save()
 
         return JsonResponse({"message": "updated."})
 

@@ -15,7 +15,7 @@
     <div class="page-header">
         <div class="row">
             <div class="col">
-                <h3 class="page-title">Drag & Drop</h3>
+                <h3 class="page-title">Assign Subject To The Class: {{class.class_name}}</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
                     <li class="breadcrumb-item active">Components</li>
@@ -28,33 +28,33 @@
         <div class="col-md-12">
             <div class="card" id="dd-handle">
                 <div class="card-header">
-                    <h5 class="card-title">Drag Handler</h5>
+                    <h5>Using the <span class="handle px-4 py-2 bg-warning" >+</span> button, Drag and Drop subjects to the selected subjects list and click the update button to updat the list.</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h4 class="my-1">List One</h4>
+                            <h4 class="my-1 mb-4">Unselected Subjects</h4>
                             <ul class="list-group" id="handle-list-1">
                                 
                                 {% for subject in unselected_subjects %}
                                     
-                                <li data-pkid="{{subject.pkid}}" class="list-group-item"><span class="handle">+</span>{{subject.name}}</li>
+                                    <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-warning" >+</span>{{subject.name}}</li>
                                 {% endfor %}
                                     
                             </ul>
                         </div>
                         <div class="col-sm-6">
-                            <h4 class="my-1">List Two</h4>
+                            <h4 class="my-1 mb-4">Selected Subjects</h4>
                             <ul class="list-group" id="handle-list-2">
                                 
                                 {% for subject in selected_subjects %}
                                     
-                                <li data-pkid="{{subject.pkid}}" class="list-group-item"><span class="handle">+</span> {{subject.name}}</li>
+                                    <li data-pkid="{{subject.pkid}}" class="list-group-item"><span class="handle px-4 py-2 bg-success">+</span> {{subject.name}}</li>
                                 {% endfor %}
                                     
                             </ul>
 
-                            <button id="updateButton" class="btn btn-primary align-self-end">Update</button>
+                            <button id="updateButton" class="btn btn-primary align-self-end mt-4 form-control">Update</button>
 
                         </div>
                     </div>
