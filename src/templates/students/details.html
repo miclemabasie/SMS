@@ -71,7 +71,17 @@
                                 </a>
                                     
                                     {% if student.is_owing %}
-                                        <button type="submit" class="btn btn-warning">Add Payment</button>
+                                        
+                                        {% if number_of_payments > 0 %}
+                                            <a href="{% url 'fees:edit-fee' pkid=student.pkid matricule=student.matricule %}">
+                                                <button  class="btn btn-info btn-warning">Update Payment</button>
+                                            </a>
+                                        {% elif number_of_payments == 0 %}
+                                            <a href="{% url 'fees:add-fee' pkid=student.pkid matricule=student.matricule %}">
+                                                <button  class="btn btn-info btn-danger">Add Payment</button>
+                                            </a>
+                                        {% endif %}
+                              
                                     {% endif %}
                                     <!-- <button type="submit" class="btn btn-info message-btns">Message</button>  -->
                                 </div>
@@ -81,7 +91,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-9">
+                <div class="col-lg-8">
                     <div class="student-personals-grp">
                         <div class="card">
                             <div class="card-body">
@@ -165,7 +175,7 @@
                     </div>
  
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                     <div class="student-personals-grp">
                         <div class="card mb-0">
                             <div class="card-body">
@@ -181,17 +191,61 @@
                                         {% endif %}
                                         <hr>
                                         {% if student.is_owing %}       
-                                            <div class="alert bg-danger rounded-3 py-3 px-2 text-center font-weight-bold" role="alert">
-                                                Unpaid Fees
-                                            </div>
+                                            {% if number_of_payments > 0 %}
+                                                <div class="alert bg-warning rounded-3 py-3 px-2 text-center font-weight-bold" role="alert">
+                                                    Uncompleted Fees                                                        
+                                                </div>
+                                            {% else %}
+                                                <div class="alert bg-danger rounded-3 py-3 px-2 text-center font-weight-bold" role="alert">
+                                                    Unpaid Fees                                                        
+                                                </div>
+                                            {% endif %}
+                                                    
                                         {% else %}
                                             <div class="alert bg-success rounded-3 py-3 px-2 text-center font-weight-bold" role="alert">
-                                                Unpaid Fees
+                                                Fees Completed.
                                             </div>
                                         {% endif %}
 
                                     </div>
                                 </div>
+                                
+
+                                <div class="hello-park">
+                                    <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="card-title">Payment History</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped mb-0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Amount</th>
+                                                                <th>Pay Date</th>
+                                                                <th>Recieved By</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for payment in payment_history %}
+                                                            <tr>
+                                                                <td>{{payment.amount_paid}}</td>
+                                                                <td>{{ payment.pay_date|date:"j M Y" }}</td>
+                                                                <td>{{payment.collected_by.user.username}}</td>
+                                                            </tr>
+                                                            {% endfor %}  
+                                                            <tr>
+                                                                <td colspan="2"><b>Total</b></td>
+                                                                <td>{{fee.amount}}</td>
+                                                            </tr>                                                      
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>                              
+                                        
+                                </div>
+                                
                                 <div class="hello-park">
                                     <h5>Remarks</h5>
                                     <p>{{student.remark}}</p>
@@ -199,27 +253,6 @@
                                         doloremque laudantium, totam inventore veritatis et quasi architecto beatae
                                         vitae dicta sunt explicabo. </p>
                                 </div>
-                                <!-- <div class="hello-park">
-                                    <h5>Education</h5>
-                                    <div class="educate-year">
-                                        <h6>2008 - 2009</h6>
-                                        <p>Secondary Schooling at xyz school of secondary education, Mumbai.</p>
-                                    </div>
-                                    <div class="educate-year">
-                                        <h6>2011 - 2012</h6>
-                                        <p>Higher Secondary Schooling at xyz school of higher secondary education,
-                                            Mumbai.</p>
-                                    </div>
-                                    <div class="educate-year">
-                                        <h6>2012 - 2015</h6>
-                                        <p>Bachelor of Science at Abc College of Art and Science, Chennai.</p>
-                                    </div>
-                                    <div class="educate-year">
-                                        <h6>2015 - 2017</h6>
-                                        <p class="mb-0">Master of Science at Cdm College of Engineering and Technology,
-                                            Pune.</p>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                     </div>

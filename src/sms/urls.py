@@ -13,6 +13,7 @@ urlpatterns = [
     path("", include("apps.staff.urls", namespace="staff")),
     path("students/", include("apps.students.urls", namespace="students")),
     path("teachers/", include("apps.teachers.urls", namespace="teachers")),
+    path("payments/", include("apps.fees.urls", namespace="fees")),
 
     # Classes
     path("classes/", views.class_list_view, name="class-list"),

@@ -4,7 +4,7 @@ from .models import StudentProfile, Subject, Mark, Class, TeacherProfile
 class MarkAdmin(admin.TabularInline):
     model = Mark
     fk_name = "student"
-    extra = 5
+    extra = 1
     fields = ["score", "teacher", "exam_session", "subject"]
     verbose_name = "Marks Associated to this student"
     can_delete = False
@@ -12,7 +12,7 @@ class MarkAdmin(admin.TabularInline):
 
 class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ["id", "pkid", "user", "gender", "phone_number", "country", "is_repeater", "is_owing"]
-    list_filter = ["gender", "country"]
+    list_filter = ["gender", "is_owing", "country"]
     list_display_links = ["id", "pkid", "user"]
 
     inlines = [

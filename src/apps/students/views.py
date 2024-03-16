@@ -3,6 +3,7 @@ from django.urls import reverse
 from .models import StudentProfile, Class, Subject
 from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
+from apps.fees.models import Fee
 from datetime import datetime, timezone, time
 import random
 
@@ -26,11 +27,16 @@ def list_student_view(request):
 
 def student_detail_view(request, matricule, pkid):
     student = get_object_or_404(StudentProfile, matricule=matricule, pkid=pkid)
+    payment_history = student.payment_history.all()
+    fee = Fee.objects.filter(student=student).first()
 
     template_name = "students/details.html"
     context = {
         "section": "student-area",
-        "student": student
+        "student": student,
+        "payment_history": payment_history,
+        "number_of_payments": len(payment_history),
+        "fee": fee,
     }
 
     return render(request, template_name, context)

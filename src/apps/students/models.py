@@ -83,6 +83,7 @@ class Subject(TimeStampedUUIDModel):
     name = models.CharField(verbose_name=_("Class Name"), max_length=200)
     description = models.TextField(blank=True, null=True)
     code = models.CharField(verbose_name=_("Subject Code"), max_length=10, blank=True, null=True)
+    coef = models.PositiveIntegerField(verbose_name=_("Subject Code"), default=1)
     
     # Add a ManyToManyField for teachers
     # teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)

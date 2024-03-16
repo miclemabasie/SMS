@@ -49,12 +49,12 @@
                                 
                                 {% for subject in selected_subjects %}
                                     
-                                    <li data-pkid="{{subject.pkid}}" class="list-group-item"><span class="handle px-4 py-2 bg-success">+</span> {{subject.name}}</li>
+                                    <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-success">+</span> {{subject.name}}</li>
                                 {% endfor %}
                                     
                             </ul>
 
-                            <button id="updateButton" class="btn btn-primary align-self-end mt-4 form-control">Update</button>
+                            <button id="updateButton" class="btn btn-primary align-self-end mt-4 form-control text-white">Update</button>
 
                         </div>
                     </div>
@@ -132,4 +132,5 @@ $(document).ready(function () {
 
 </script>
 {% endblock script %}
+
     

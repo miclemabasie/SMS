@@ -79,19 +79,14 @@
                             class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
                             <thead class="student-thread">
                                 <tr>
-                                    <th>
-                                        <div class="form-check check-tables">
-                                            <input class="form-check-input" type="checkbox"
-                                                value="something">
-                                        </div>
-                                    </th>
-                                    <th>ID</th>
+                                    <th>SN</th>
                                     <th>Name</th>
                                     <th>Class</th>
                                     <th>DOB</th>
                                     <th>Parent Name</th>
                                     <th>Mobile Number</th>
                                     <th>Address</th>
+                                    <th>Fee Status</th>
                                     <th class="text-end">Action</th>
                                 </tr>
                             </thead>
@@ -100,11 +95,7 @@
                                 {% for student in students %}                                    
                                     <tr>
                                         <td>
-                                            <div class="form-check check-tables">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="something">
-                                            </div>'. Did you forget to register or load this tag?
-                                            .matricule}}</td>
+                                            {{forloop.counter}}
                                         <td>
                                             <h2 class="table-avatar">
                                                 <a href="student-details.html"
@@ -112,7 +103,7 @@
                                                         class="avatar-img rounded-circle"
                                                         src="{{ student.profile_photo.url}}"
                                                         alt="User Image"></a>
-                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">Aaliyah</a>
+                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.user.username}}</a>
                                             </h2>
                                         </td>
                                         <td>{{student.current_class.class_name}}</td>
@@ -120,8 +111,20 @@
                                         <td>{{ student.parent.full_name }}</td>
                                         <td>{{ student.phone_number }}</td>
                                         <td>{{ student.address }}</td>
+                                        <td>
+                                            
+                                            {% if student.is_owing %}
+                                                <span class="badge badge-warning">Is Owing</span>
+                                            {% else %}
+                                                <span class="badge badge-success">Completed</span>
+                                            {% endif %}
+                                                
+                                        </td>
                                         <td class="text-right">
                                             <div class="actions">
+                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}" class="btn btn-sm bg-success-light me-2">
+                                                    <i class="feather-eye"></i>
+                                                </a>
                                                 <a href="{% url 'students:student-edit' pkid=student.pkid matricule=student.matricule %}" class="btn btn-sm bg-success-light mr-2">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
