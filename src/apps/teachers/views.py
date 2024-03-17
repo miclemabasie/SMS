@@ -6,13 +6,13 @@ from faker import Faker
 from datetime import datetime, time, timezone
 from django.http import Http404
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 
 faker_factory = Faker()
 
 User = get_user_model()
 
-
+@login_required
 def teacher_list_view(request, *args, **kwargs):
 
 
@@ -28,6 +28,7 @@ def teacher_list_view(request, *args, **kwargs):
     return render(request, template_name, context)
 
 
+@login_required
 def teacher_detail_view(request, matricule, pkid, *args, **kwargs):
     teacher = get_object_or_404(TeacherProfile, matricule=matricule, pkid=pkid)
     template_name = "teachers/teacher-detail.html"
@@ -38,6 +39,8 @@ def teacher_detail_view(request, matricule, pkid, *args, **kwargs):
 
     return render(request, template_name, context)
 
+
+@login_required
 def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
     teacher = get_object_or_404(TeacherProfile, matricule=matricule, pkid=pkid)
 
@@ -113,6 +116,7 @@ def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
 
     return render(request, template_name, context)
 
+@login_required
 def teacher_delete_view(request, matricule, pkid, *args, **kwargs):
 
     teacher = get_object_or_404(TeacherProfile, matricule=matricule, pkid=pkid)
@@ -128,6 +132,7 @@ def teacher_delete_view(request, matricule, pkid, *args, **kwargs):
     return redirect(reverse("teachers:teachers-list"))
 
 
+@login_required
 def teacher_add_view(request, *args, **kwargs):
     
     if request.method == "POST":
@@ -202,6 +207,7 @@ def teacher_add_view(request, *args, **kwargs):
     return render(request, template_name, context)
 
 
+@login_required
 def class_add_view(request, *args, **kwargs):
     
     if request.method == "POST":
@@ -243,6 +249,7 @@ def class_add_view(request, *args, **kwargs):
 
 
 
+@login_required
 def class_list_view(request, *args, **kwargs):
 
     classes = Class.objects.all()
@@ -256,6 +263,7 @@ def class_list_view(request, *args, **kwargs):
     return render(request, template_name, context)
 
 
+@login_required
 def class_edit_view(request, pkid, *args, **kwargs):
 
     klass = get_object_or_404(Class, pkid=pkid)
@@ -292,6 +300,7 @@ def class_edit_view(request, pkid, *args, **kwargs):
     return render(request, template_name, context)
 
 
+@login_required
 def class_delete_view(request, pkid, *args, **kwargs):
     klass = get_object_or_404(Class, pkid=pkid)
 

@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
 from apps.fees.models import Fee
 from datetime import datetime, timezone, time
+from django.contrib.auth.decorators import login_required
 import random
 
 
@@ -13,6 +14,7 @@ User = get_user_model()
 from faker import Faker
 faker = Faker()
 
+@login_required
 def list_student_view(request):
 
     queryset = StudentProfile.objects.all()
@@ -25,6 +27,7 @@ def list_student_view(request):
     return render(request, template_name, context)
 
 
+@login_required
 def student_detail_view(request, matricule, pkid):
     student = get_object_or_404(StudentProfile, matricule=matricule, pkid=pkid)
     payment_history = student.payment_history.all()
@@ -33,6 +36,7 @@ def student_detail_view(request, matricule, pkid):
     template_name = "students/details.html"
     context = {
         "section": "student-area",
+        "student_detial_section": True,
         "student": student,
         "payment_history": payment_history,
         "number_of_payments": len(payment_history),
@@ -42,6 +46,7 @@ def student_detail_view(request, matricule, pkid):
     return render(request, template_name, context)
 
 
+@login_required
 def add_student_view(request):
     classes = Class.objects.all()
     if request.method == "POST":
@@ -144,6 +149,7 @@ def add_student_view(request):
     return render(request, template_name, context)
 
 
+@login_required
 def edit_student_profile(request, pkid, matricule):
     student = get_object_or_404(StudentProfile, pkid=pkid, matricule=matricule)
 

@@ -21,7 +21,12 @@
                     <ul>
                         <li><a href="{% url 'students:student-list' %}" class="{% if request.path == '/students/'  %}active{% endif %}">Student List</a></li>
                         <!-- <li><a href="student-details.html">Student View</a></li> -->
-                        <li><a href="{% url 'students:student-add' %}" class="{% if request.resolver_match.url_name == 'students:student-add'  %}active{% endif %}">Student Add</a></li>
+                        <li><a href="{% url 'students:student-add' %}" class="{% if request.resolver_match.url_name == 'student-add'  %}active{% endif %}">Student Add</a></li>
+                        
+                        {% if student_detial_section %}
+                            <li><a href="" class="active">Student View</a></li>
+                        {% endif %}
+                            
                     </ul>
                 </li>
                 <li class="submenu {% if section == 'teachers-area'  %}active{% endif %}">
@@ -30,7 +35,7 @@
                     <ul>
                         <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
                         <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
-                        <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers:teachers-add'  %}active{% endif %}">Teacher Add</a></li>
+                        <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Teacher Add</a></li>
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>

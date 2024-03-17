@@ -5,7 +5,10 @@ from apps.students.models import StudentProfile
 from apps.staff.models import AdminProfile
 from datetime import datetime, time, timezone
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def add_fee_view(request, pkid, matricule, *args, **kwargs):
 
     # get the student for which the fees needs to be paid for
@@ -74,7 +77,7 @@ def add_fee_view(request, pkid, matricule, *args, **kwargs):
 
     return render(request, template_name, context)
 
-
+@login_required
 def edit_fee_view(request, pkid, matricule, *args, **kwargs):
 
     # get the student for which the fees needs to be paid for

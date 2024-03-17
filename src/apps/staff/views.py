@@ -20,7 +20,7 @@ def admin_dashboard(request):
 
 
 # Subjects
-
+@login_required
 def list_all_subjects(request):
     subjects = Subject.objects.all()
     print(subjects)
@@ -31,6 +31,8 @@ def list_all_subjects(request):
 
     return render(request, template_name, context)
 
+
+@login_required
 def assign_subject_to_classes(request, pkid):
     subjects = Subject.objects.all()
     klass = get_object_or_404(Class, pkid=pkid)
