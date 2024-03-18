@@ -72,6 +72,10 @@
 <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
 <script src="{% static 'assets/plugins/scrollbar/scrollbar.min.js' %}"></script>
 <script src="{% static 'assets/plugins/scrollbar/custom-scroll.js' %}"></script>
+
+
+<script src="{% static 'assets/plugins/alertify/alertify.min.js' %}"></script>
+<script src="{% static 'assets/plugins/alertify/custom-alertify.min.js' %}"></script>
 {% endblock scripttags %}
 
 
@@ -128,12 +132,14 @@ $(document).ready(function () {
                 "X-CSRFToken": csrftoken  // Include the CSRF token in the headers
             },
             success: function (response) {
+                alertify.success("Subjects updated successfully")
                 console.log("Subjects updated successfully:", response);
                 // Optionally, you can perform any actions here after successful update
 
             },
             error: function (xhr, status, error) {
                 console.error("Error updating subjects:", error);
+                alertify.error("Error, something went wrong.")
             }
         });
     });

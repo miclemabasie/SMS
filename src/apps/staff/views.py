@@ -1,8 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from .models import AdminProfile
 from apps.students.models import StudentProfile, TeacherProfile, Subject, Class
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 import json
 
 
@@ -19,6 +21,7 @@ def admin_dashboard(request):
     return render(request, template_name, context)
 
 
+
 # Subjects
 @login_required
 def list_all_subjects(request):
@@ -31,6 +34,33 @@ def list_all_subjects(request):
 
     return render(request, template_name, context)
 
+@login_required
+def delete_subject(request, pkid, *args, **kwargs):
+    subject = get_object_or_404(Subject, pkid=pkid)
+
+    subject.delete()
+
+    return redirect(reverse("staff:subjects"))
+
+@login_required
+def add_subject_view(request, *args, **kwargs):
+    if request.method == "POST":
+        # Extract form data
+        subject_name = request.POST.get("subject_name")
+        subject_code = request.POST.get("subject_code")
+        subject_coeff = request.POST.get("subject_coeff")
+
+        # Create a subject instance
+        subject = Subject.objects.create(
+            name = subject_name,
+            code = subject_code,
+            coef = subject_coeff
+        )
+        subject.save()
+        messages.success(request, "Subject added.")
+
+        return redirect(reverse("staff:subjects"))
+    return redirect(reverse("staff:subjects"))
 
 @login_required
 def assign_subject_to_classes(request, pkid):
