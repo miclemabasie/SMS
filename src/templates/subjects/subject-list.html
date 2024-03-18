@@ -79,7 +79,7 @@
                                     <th>ID</th>
                                     <th>Code</th>
                                     <th>Name</th>
-                                    <th>Class</th>
+                                    <th>Coef</th>
                                     <th class="text-end">Action</th>
                                 </tr>
                             </thead>
@@ -101,25 +101,34 @@
                                             <a>{{subject.name}}</a>
                                         </h2>
                                     </td>
-                                    <td>{{subject.klass.class_name}}</td>
+                                    <td>{{subject.coef}}</td>
                                     <td class="text-end">
                                         <div class="actions">
-                                            <a href="javascript:;" class="btn btn-sm bg-success-light me-2">
-                                                <i class="feather-eye"></i>
-                                            </a>
-                                            <a href="edit-subject.html" class="btn btn-sm bg-danger-light">
+                                            
+                                            <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#edit_subject_{{subject.pkid}}">
                                                 <i class="feather-edit"></i>
                                             </a>
 
                                             <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
-                                                data-bs-target="#delete_class_{{subject.pkid}}">
+                                                data-bs-target="#delete_subject_{{subject.pkid}}">
                                                 <!-- <i class="fe fe-trash-2"></i> -->
                                                 <i class="fas fa-trash"></i>
                                             </a>
+
+                                            <!-- <div class="student-submit">
+                                                <a href="" data-bs-dismiss="modal"
+                                                class="btn btn-danger">Cancel</a>
+                                            </div>
+
+                                            <div class="student-submit">
+                                                <a href="" data-bs-dismiss="modal"
+                                                class="btn btn-danger">Cancel</a>
+                                            </div> -->
                                         </div>
                                     </td>
                                 </tr>
-                                <div class="modal custom-modal fade" id="delete_class_{{subject.pkid}}" role="dialog">
+                                <div class="modal custom-modal fade" id="delete_subject_{{subject.pkid}}" role="dialog">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-body">
@@ -137,6 +146,57 @@
                                                             <a href="javascript:void(0);" data-bs-dismiss="modal"
                                                                 class="btn btn-primary paid-cancel-btn">Cancel</a>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal custom-modal fade" id="edit_subject_{{subject.pkid}}" role="dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="form-header">
+                                                    <h3>Add Subject</h3>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form action="{% url 'staff:subject-edit' pkid=subject.pkid%} " method="post">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <h5 class="form-title"><span>Subject Information</span></h5>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Subject Name <span class="login-danger">*</span></label>
+                                                                        <input value="{{subject.name}}" name="subject_name" type="text" class="form-control" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Subject Code <span class="login-danger">*</span></label>
+                                                                        <input value="{{subject.code}}" name="subject_code" type="text" class="form-control" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Subject Coeff <span class="login-danger">*</span></label>
+                                                                        <input value="{{subject.coef}}" name="subject_coeff" type="text" class="form-control" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 row">
+                                                                    <div class="student-submit col-6">
+                                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                                    </div>
+                                                                    <div class="student-submit col-6 ml-5">
+                                                                        <a href="" data-bs-dismiss="modal"
+                                                                        class="btn btn-danger">Cancel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -173,24 +233,28 @@
                                 <div class="col-12">
                                     <div class="form-group local-forms">
                                         <label>Subject Name <span class="login-danger">*</span></label>
-                                        <input name="subject_name" type="text" class="form-control">
+                                        <input name="subject_name" type="text" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group local-forms">
                                         <label>Subject Code <span class="login-danger">*</span></label>
-                                        <input name="subject_code" type="text" class="form-control">
+                                        <input name="subject_code" type="text" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group local-forms">
                                         <label>Subject Coeff <span class="login-danger">*</span></label>
-                                        <input name="subject_coeff" type="text" class="form-control">
+                                        <input name="subject_coeff" type="text" class="form-control" required>
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <div class="student-submit">
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
                                         <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal"
+                                        class="btn btn-danger">Cancel</a>
                                     </div>
                                 </div>
                             </div>

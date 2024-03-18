@@ -63,6 +63,26 @@ def add_subject_view(request, *args, **kwargs):
     return redirect(reverse("staff:subjects"))
 
 @login_required
+def edit_subject_view(request, pkid, *args, **kwargs):
+    subject = get_object_or_404(Subject, pkid=pkid)
+    if request.method == "POST":
+        # Extract form data
+        subject_name = request.POST.get("subject_name")
+        subject_code = request.POST.get("subject_code")
+        subject_coeff = request.POST.get("subject_coeff")
+
+        # Update subject instance
+        subject.name = subject_name
+        subject.code = subject_code
+        subject.coef = subject_coeff
+       
+        subject.save()
+        messages.success(request, "Subject Updated succesfully.")
+
+        return redirect(reverse("staff:subjects"))
+    return redirect(reverse("staff:subjects"))
+
+@login_required
 def assign_subject_to_classes(request, pkid):
     subjects = Subject.objects.all()
     klass = get_object_or_404(Class, pkid=pkid)
