@@ -67,6 +67,9 @@ class StudentProfile(TimeStampedUUIDModel):
         max_length=20,
     )
 
+    # Adding optional subjects for the student
+    optional_subjects = models.ManyToManyField("Subject", related_name="students_taking")
+
     def save(self, *args, **kwargs):
         self.matricule = auto_create_matricule("student")
         return super().save(*args, **kwargs)
