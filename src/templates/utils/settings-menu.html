@@ -6,8 +6,8 @@
         <li class="nav-item {% if request.resolver_match.url_name == 'setting-sessions' %}active{% endif %}">
             <a class="nav-link" href="{% url 'settings:setting-sessions' %}">Session Settings</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="payment-settings.html">Payment Settings</a>
+        <li class="nav-item {% if request.resolver_match.url_name == 'setting-terms' %}active{% endif %}">
+            <a class="nav-link" href="{% url 'settings:setting-terms' %}">Term Settings</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="email-settings.html">Email Settings</a>

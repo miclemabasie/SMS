@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .models import AcademicYear, ExaminationSession
+from .models import AcademicYear, ExaminationSession, Term
 from django.contrib import messages
 from django.utils import timezone as tz
 from datetime import datetime, timezone, time
@@ -90,3 +90,93 @@ def mark_session_as_active(request, pkid):
 
     messages.success(request, "Session Successfully Marked as Active")
     return redirect(reverse("settings:setting-sessions"))
+
+
+@login_required
+def create_term_view(request):
+    if request.method == "POST":
+
+        # extract the fields
+        term_name = request.POST.get("selected_term")
+        year_name = request.POST.get("selected_year")
+
+        # Get the year
+        years = AcademicYear.objects.filter(name=year_name)
+        if years.exists:
+            year = year.first()
+        else:
+            messages.warning(request, "Given year not found")
+            return redirect(reverse("settings:setting-terms"))
+        # Create a new term
+        # make sure not term is current create with the same for the given year
+        test_term = Term.objects.filter(academic_year=year, term=term_name)
+        if test_term.exists():
+            messages.error(request, "Term with same name already exist for the given year.")
+            return redirect(reverse("settings:setting-terms"))
+        
+        # proceed to create the term
+
+        term = Term.objects.create(
+            term=term_name,
+            academic_year = year
+        )
+
+        term.save()
+        messages.success(request, "Term has successfully been created")
+        return redirect(reverse("settings:setting-terms"))
+    
+    return redirect(reverse("settings:setting-terms"))
+
+
+@login_required
+def edit_term_view(request, pkid):
+    if request.method == "POST":
+        # extract the fields
+        term_name = request.POST.get("selected_term")
+        year_name = request.POST.get("selected_year")
+        # Get the year
+        print("form info", term_name, year_name)
+        year = AcademicYear.objects.filter(name=year_name)
+        if year.exists():
+            year = year.first()
+        else:
+            messages.warning(request, "Given year not found")
+            return redirect(reverse("settings:setting-terms"))
+        # get and update the given term
+        print("This is the year", year)
+        terms = Term.objects.filter(academic_year=year, term=term_name)
+
+        if terms.exists():
+            term = terms.first()
+            term.term = term_name
+            term.academic_year = year
+
+            term.save()
+            messages.success(request, "Term updated successfully.")
+            return redirect(reverse("settings:setting-terms"))
+        else:
+            messages.error(request, "Term not found")
+            return redirect(reverse("settings:setting-terms"))
+
+        
+    return redirect(reverse("settings:setting-terms"))
+
+
+@login_required
+def mark_term_as_active(request, pkid):
+    term = get_object_or_404(Term, pkid=pkid)
+
+    # Get all other term and mark them as inactive for the mean time
+    terms = Term.objects.filter(is_current=True)
+
+    print(terms)
+    for t in terms:
+        print(t)
+        t.is_current = False
+        t.save()
+
+    term.is_current = True
+    term.save()
+
+    messages.success(request, "Term Successfully Marked as Active")
+    return redirect(reverse("settings:setting-terms"))

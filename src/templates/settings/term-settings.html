@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+
+
+{% block styletags %}
+
+{% endblock styletags %}
+
+
+
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Settings - Terms</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Settings</a></li>
+                    <li class="breadcrumb-item active">Term Settings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% include '../utils/settings-menu.html' %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+    
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="page-title badge bg-warning text-wrap text-white">Current Session is: {{current_term.term}} - {{current_term.academic_year.name}}</h3>
+                            </div>
+                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                <!-- <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
+                                    Download</a> -->
+                                <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#add_subject">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="table-responsive">
+                        <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            <thead class="student-thread">
+                                <tr>
+                                    
+                                    <th>#</th>
+                                    <th>Term Name</th>
+                                    <th>Academic year</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+    
+                                {% for term in terms %}
+    
+    
+                                <tr>
+                                    
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{term.term}}</td>
+                                    <td>{{term.academic_year.name}}</td>
+                                    <td> 
+                                    {% if term.is_current %}
+                                    <span class="badge bg-success">Active Session</span></td>
+                                    {% else %}
+                                    <span class="badge bg-warning">In Active</span></td>
+                                    {% endif %}
+                                        
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary">Action</button>
+                                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item btn btn-success text-white text-center" href="{% url 'sessions:term-mark-active' pkid=term.pkid %}">Mark Active</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item btn btn-warning text-white text-center" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#edit_term_{{term.pkid}}">Edit</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                        
+    
+                                <div class="modal custom-modal fade" id="edit_term_{{term.pkid}}" role="dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="form-header">
+                                                    <h3>Edit Term</h3>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form action="{% url 'sessions:term-edit' pkid=term.pkid%}"
+                                                            method="post">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <h5 class="form-title"><span>Term Information</span>
+                                                                    </h5>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Term Name <span
+                                                                        class="login-danger">*</span></label>
+                                                                        <select class="form-control" name="selected_term">
+                                                                            <option value="First Term">First Term</option>
+                                                                            <option value="Second Term">Second Term</option>
+                                                                            <option value="Third Term">Third Term</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Year Name <span
+                                                                        class="login-danger">*</span></label>
+                                                                        <select class="form-control" name="selected_year">
+                                                                            
+                                                                            {% for session in sessions %}                                                
+                                                                                <option value="{{session.name}}">{{session.name}}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                               
+                                                                <div class="col-12 row">
+                                                                    <div class="student-submit col-6">
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary">Submit</button>
+                                                                    </div>
+                                                                    <div class="student-submit col-6 ml-5">
+                                                                        <a href="" data-bs-dismiss="modal"
+                                                                            class="btn btn-danger">Cancel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+</div>
+
+<div class="modal custom-modal fade" id="add_subject" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Add A Term</h3>
+                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Sellect Term you wish to add from the dropdown and then select the appropriate year.</p>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'sessions:term-create' %}"
+                            method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Term Information</span>
+                                    </h5>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Term Name <span
+                                        class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_term">
+                                            <option value="First Term">First Term</option>
+                                            <option value="Second Term">Second Term</option>
+                                            <option value="Third Term">Third Term</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Year Name <span
+                                        class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_year">
+                                            
+                                            {% for session in sessions %}                                                
+                                                <option value="{{session.name}}">{{session.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit"
+                                            class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal"
+                                            class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripttags %}
+
+{% endblock scripttags %}

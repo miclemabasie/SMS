@@ -28,9 +28,9 @@ class AcademicYear(TimeStampedUUIDModel):
     
 
 class TermChoices(models.TextChoices):
-    FIRST_TERM = 'first_term', _('First Term')
-    SECOND_TERM = 'second_term', _('Second Term')
-    THIRD_TERM = 'third_term', _('Third Term')
+    FIRST_TERM = 'First Term', _('First Term')
+    SECOND_TERM = 'Second Term', _('Second Term')
+    THIRD_TERM = 'Third Term', _('Third Term')
 
 
 class ExamSequenceChoices(models.TextChoices):
@@ -50,6 +50,7 @@ class Term(TimeStampedUUIDModel):
         default=TermChoices.FIRST_TERM,
     )
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    is_current = models.BooleanField(default=False)
 
 class ExaminationSession(TimeStampedUUIDModel):
     term = models.ForeignKey(Term, related_name='examination_sessions', on_delete=models.CASCADE)
