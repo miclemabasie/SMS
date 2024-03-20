@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+
+
+{% block styletags %}
+
+{% endblock styletags %}
+
+
+
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Settings</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="settings.html">Settings</a></li>
+                    <li class="breadcrumb-item active">General Settings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% include '../utils/settings-menu.html' %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+    
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="page-title badge bg-warning text-wrap text-white">Current Session is: {{current_session}}</h3>
+                            </div>
+                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                <!-- <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
+                                    Download</a> -->
+                                <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#add_subject">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="table-responsive">
+                        <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            <thead class="student-thread">
+                                <tr>
+                                    
+                                    <th>#</th>
+                                    <th>Academic Session Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+    
+                                {% for session in sessions %}
+    
+    
+                                <tr>
+                                    
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{session.name}}</td>
+                                    <td>{{session.start_date}}</td>
+                                    <td>{{session.end_date}}</td>
+                                    <td> 
+                                    {% if session.is_current %}
+                                    <span class="badge bg-success">Active Session</span></td>
+                                    {% else %}
+                                    <span class="badge bg-warning">In Active</span></td>
+                                    {% endif %}
+                                        
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary">Action</button>
+                                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item btn btn-success text-white text-center" href="{% url 'sessions:session-mark-active' pkid=session.pkid %}">Mark Active</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item btn btn-warning text-white text-center" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#edit_session_{{session.pkid}}">Edit</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                        
+    
+                                <div class="modal custom-modal fade" id="edit_session_{{session.pkid}}" role="dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="form-header">
+                                                    <h3>Edit Academic Session</h3>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form action="{% url 'sessions:session-edit' session.pkid%}"
+                                                            method="post">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <h5 class="form-title"><span>Academic Session Information</span>
+                                                                    </h5>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Academic Session Name <span
+                                                                                class="login-danger">*</span></label>
+                                                                        <input value="{{session.name}}" name="academic_session_name"
+                                                                            type="text" class="form-control" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Start Date </label>
+                                                                        <input value="\" name="academic_session_start_date"
+                                                                        type="date" class="form-control" >
+                                                                    </div>
+                                                                    <p class="badge bg-warning p-4 text-40">Current start date: {{session.start_date|date}}</p>
+                                                                </div>
+                                                               
+                                                                <div class="col-12 row">
+                                                                    <div class="student-submit col-6">
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary">Submit</button>
+                                                                    </div>
+                                                                    <div class="student-submit col-6 ml-5">
+                                                                        <a href="" data-bs-dismiss="modal"
+                                                                            class="btn btn-danger">Cancel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+</div>
+
+<div class="modal custom-modal fade" id="add_subject" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Add Academic Session</h3>
+                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Enter the name of the session and leave the rest empty if you want the session to start today.</p>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'sessions:session-create' %}" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Academic Session Information</span></h5>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Academic Session Name <span class="login-danger">*</span></label>
+                                        <input name="academic_session_name" type="text" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Start Date</label>
+                                        <input name="academic_session_start_date" type="date" class="form-control">
+                                    </div>
+                                </div>
+                               
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripttags %}
+
+{% endblock scripttags %}

@@ -130,13 +130,3 @@ class TeacherProfile(TimeStampedUUIDModel):
         self.matricule = auto_create_matricule("staff")
         return super().save(*args, **kwargs)
 
-    
-
-
-
-
-
-
-
-
-

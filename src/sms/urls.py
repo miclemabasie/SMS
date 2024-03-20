@@ -14,6 +14,8 @@ urlpatterns = [
     path("students/", include("apps.students.urls", namespace="students")),
     path("teachers/", include("apps.teachers.urls", namespace="teachers")),
     path("payments/", include("apps.fees.urls", namespace="fees")),
+    path("settings/", include("apps.settings.urls", namespace="settings")),
+    path("sessions/", include("apps.terms.urls", namespace="sessions")),
 
     # Classes
     path("classes/", views.class_list_view, name="class-list"),

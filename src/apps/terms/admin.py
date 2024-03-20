@@ -3,7 +3,7 @@ from .models import Term, AcademicYear, ExaminationSession
 
 
 class AcademicYearAdmin(admin.ModelAdmin):
-    list_display = ["name", "start_date", "end_date"]
+    list_display = ["name", "start_date", "end_date", "is_current"]
 
 admin.site.register(AcademicYear, AcademicYearAdmin)
 

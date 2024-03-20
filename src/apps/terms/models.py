@@ -1,13 +1,28 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.common.models import TimeStampedUUIDModel
+from datetime import timedelta
 # Create your models here.
 
 class AcademicYear(TimeStampedUUIDModel):
     name = models.CharField(verbose_name=_("Academic Year"), max_length=100)
     start_date = models.DateField(verbose_name=_("Start Date"))
-    end_date = models.DateField(verbose_name=_("End Date"))
+    end_date = models.DateField(verbose_name=_("End Date"), blank=True, null=True)
+    is_current = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        # Calculate end date as one year from start date
+        self.end_date = self.start_date + timedelta(days=365)  # Assuming a year has 365 days
+        print("calling save method")
+        super().save(*args, **kwargs)
+
+    # def save(self, *args, **kwargs):
+    #     # make sure that no two sessions are active at the same time
+    #     sessions = AcademicYear.objects.filter(is_current=True)
+    #     if sessions.exists():
+    #         for session in sessions:
+    #             session.is_current = False
+        
     def __str__(self):
         return self.name
     
