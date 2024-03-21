@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 
 {% block styletags %}
-
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
 {% endblock styletags %}
 
 
@@ -29,7 +29,6 @@
         <div class="col-sm-12">
             <div class="card card-table">
                 <div class="card-body">
-
                     <div class="page-header">
                         <div class="row align-items-center">
                             <div class="col">
@@ -246,5 +245,5 @@
 
 
 {% block scripttags %}
-
+<script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
 {% endblock scripttags %}
