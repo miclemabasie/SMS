@@ -8,12 +8,12 @@ class AcademicYearAdmin(admin.ModelAdmin):
 admin.site.register(AcademicYear, AcademicYearAdmin)
 
 class TermAdmin(admin.ModelAdmin):
-    list_display = ["academic_year", "term"]
+    list_display = ["term","academic_year", "is_current"]
 
 admin.site.register(Term, TermAdmin)
 
 
 class ExaminationSessionAdmin(admin.ModelAdmin):
-    list_display = ["term", "exam_session"]
+    list_display = ["term", "exam_session", "is_current"]
 
 admin.site.register(ExaminationSession, ExaminationSessionAdmin)

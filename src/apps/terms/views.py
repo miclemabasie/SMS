@@ -103,7 +103,7 @@ def create_term_view(request):
         # Get the year
         years = AcademicYear.objects.filter(name=year_name)
         if years.exists:
-            year = year.first()
+            year = years.first()
         else:
             messages.warning(request, "Given year not found")
             return redirect(reverse("settings:setting-terms"))
@@ -180,3 +180,89 @@ def mark_term_as_active(request, pkid):
 
     messages.success(request, "Term Successfully Marked as Active")
     return redirect(reverse("settings:setting-terms"))
+
+
+@login_required
+def add_exam_session_view(request):
+    if request.method == "POST":
+        # Extract the data from the form
+        exam_session_name = request.POST.get("selected_sequence")
+        exam_session_term_id = request.POST.get("selected_term_id")
+
+        # Get the term
+        term = get_object_or_404(Term, pkid=int(exam_session_term_id))
+        print(exam_session_name, exam_session_term_id)
+
+        # make sure the same exam_session/term/year combination is not double created
+        # Check if this combination already exists
+        exam_combition = ExaminationSession.objects.filter(exam_session=exam_session_name, term=term)
+        if exam_combition.exists():
+            messages.warning(request, "Examination Session with same term already exist for the given year")
+            return redirect(reverse("settings:setting-exam-sessions"))
+        
+
+        # Create the examination session instance
+        exam_session = ExaminationSession.objects.create(
+            term = term,
+            exam_session = exam_session_name
+        )
+
+        exam_session.save()
+
+        messages.success(request, "Added Examination Session successfully")
+        return redirect(reverse("settings:setting-exam-sessions"))
+    return redirect(reverse("settings:setting-exam-sessions"))
+
+
+@login_required
+def edit_exam_session_view(request, pkid, *args, **kwargs):
+    if request.method == "POST":
+        # Get the exam session with given ID
+        exam_session = get_object_or_404(ExaminationSession, pkid=pkid)
+
+        # Extract the data from the form
+        exam_session_name = request.POST.get("selected_sequence")
+        exam_session_term_id = request.POST.get("selected_term_id")
+
+        # Check if term exists
+        term = get_object_or_404(Term, pkid=int(exam_session_term_id))
+
+
+        # Check if this combination of examination session and term does not already exists
+        exam_combition = ExaminationSession.objects.filter(exam_session=exam_session_name, term=term)
+        print(exam_combition)
+        if exam_combition.exists():
+            messages.warning(request, "Examination Session with same term already exist for the given year")
+            return redirect(reverse("settings:setting-exam-sessions"))
+        
+        # update the examination term
+        exam_session.exam_session = exam_session_name
+        exam_session.term = term
+        exam_session.save()
+
+        messages.success(request, "Examination Session Successfully Updated.")
+        return redirect(reverse("settings:setting-exam-sessions"))
+
+        print("This are the params", exam_session.exam_session, term.term)
+
+    return redirect("settings:setting-exam-sessions")
+
+
+@login_required
+def mark_exam_session_as_current_view(request, pkid, *args, **kwargs):
+    # Get the exam session
+    exam_session = get_object_or_404(ExaminationSession, pkid=pkid)
+
+    # Get all other term and mark them as inactive for the mean time
+    exam_sessions = ExaminationSession.objects.filter(is_current=True)
+
+    for exam_ses in exam_sessions:
+        exam_ses.is_current = False
+        exam_ses.save()
+
+    exam_session.is_current = True
+    exam_session.save()
+
+    messages.success(request, "Exam Session Successfully Marked as Active")
+    return redirect(reverse("settings:setting-exam-sessions"))
+    

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+
+
+{% block styletags %}
+
+{% endblock styletags %}
+
+
+
+
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Settings - Exam Sessions</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Settings</a></li>
+                    <li class="breadcrumb-item active">Exam Sessions Settings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% include '../utils/settings-menu.html' %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="page-title badge bg-warning text-wrap text-white">Current Exam Session Is:
+                                    {{current_exam_session.exam_session}} - {{current_term.term}} -
+                                    {{current_term.academic_year.name}}</h3>
+                            </div>
+                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                <!-- <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
+                                    Download</a> -->
+                                <a class="btn btn-primary" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#add_subject">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table
+                            class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            <thead class="student-thread">
+                                <tr>
+
+                                    <th>#</th>
+                                    <th>Exam Session Name</th>
+                                    <th>Term Name</th>
+                                    <th>Academic year</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for exam in exam_sessions %}
+
+
+                                <tr>
+
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{exam.exam_session}}</td>
+                                    <td>{{exam.term.term}}</td>
+                                    <td>{{exam.term.academic_year.name}}</td>
+                                    <td>
+                                        {% if exam.is_current %}
+                                        <span class="badge bg-success">Active Session</span>
+                                    </td>
+                                    {% else %}
+                                    <span class="badge bg-warning">In Active</span></td>
+                                    {% endif %}
+
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary">Action</button>
+                                            <button type="button"
+                                                class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item btn btn-success text-white text-center"
+                                                    href="{% url 'sessions:exam-session-mark-active' pkid=exam.pkid%}">Mark Active</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item btn btn-warning text-white text-center" href="#"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#edit_exam_session_{{exam.id}}">Edit</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <div class="modal custom-modal fade" id="edit_exam_session_{{exam.id}}" role="dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="form-header">
+                                                    <h3>Edit Exam Session Info</h3>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form action="{% url 'sessions:exam-session-edit' pkid=exam.pkid%}"
+                                                            method="post">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <h5 class="form-title"><span>Exam Sequence Information</span>
+                                                                    </h5>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Exam Seq. Name <span
+                                                                                class="login-danger">*</span></label>
+                                                                        <select class="form-control"
+                                                                            name="selected_sequence">
+                                                                            <option value="First Sequence" {% if exam.exam_session == 'First Sequence' %}selected{% endif %}>First Sequence</option>
+                                                                            <option value="Second Sequence" {% if exam.exam_session == 'Second Sequence' %}selected{% endif %}>Second Sequence</option>
+                                                                            <option value="Third Sequence" {% if exam.exam_session == 'Third Sequence' %}selected{% endif %}>Third Sequence</option>
+                                                                            <option value="Fouth Sequence" {% if exam.exam_session == 'Fouth Sequence' %}selected{% endif %}>Fouth Sequence</option>
+                                                                            <option value="Fifth Sequence" {% if exam.exam_session == 'Fifth Sequence' %}selected{% endif %}>Fifth Sequence</option>
+                                                                            <option value="Sixth Sequence" {% if exam.exam_session == 'Sixth Sequence' %}selected{% endif %}>Sixth Sequence</option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>Term Name <span
+                                                                                class="login-danger">*</span></label>
+                                                                        <select class="form-control"
+                                                                            name="selected_term_id">
+
+                                                                            {% for term in terms %}
+                                                                            <option value="{{term.pkid}}" {% if term.pkid == exam.term.pkid %}selected{% endif %}>{{term}}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 row">
+                                                                    <div class="student-submit col-6">
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary">Submit</button>
+                                                                    </div>
+                                                                    <div class="student-submit col-6 ml-5">
+                                                                        <a href="" data-bs-dismiss="modal"
+                                                                            class="btn btn-danger">Cancel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="modal custom-modal fade" id="add_subject" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Add An Exam Session</h3>
+                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Select the exam session,
+                        and select the appropriate term.</p>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'sessions:exam-session-add' %}" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Exam Sequence Information</span>
+                                    </h5>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Exam Seq. Name <span class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_sequence">
+                                            <option value="First Sequence" selected>First Sequence</option>
+                                            <option value="Second Sequence">Second Sequence</option>
+                                            <option value="Third Sequence">Third Sequence</option>
+                                            <option value="Fouth Sequence">Fouth Sequence</option>
+                                            <option value="Fifth Sequence">Fifth Sequence</option>
+                                            <option value="Sixth Sequence">Sixth Sequence</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Term Name <span class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_term_id">
+                                            {% for term in terms %}
+                                            <option value="{{term.pkid}}" {% if term.is_current %}selected{% endif %}>
+                                                {{term}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripttags %}
+
+{% endblock scripttags %}

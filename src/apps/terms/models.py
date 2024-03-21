@@ -16,6 +16,9 @@ class AcademicYear(TimeStampedUUIDModel):
         print("calling save method")
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.academic_year.name}"
+
     # def save(self, *args, **kwargs):
     #     # make sure that no two sessions are active at the same time
     #     sessions = AcademicYear.objects.filter(is_current=True)
@@ -34,13 +37,13 @@ class TermChoices(models.TextChoices):
 
 
 class ExamSequenceChoices(models.TextChoices):
-    FIRST_SEQUENCE = 'first_sequence', _('First Sequence')
-    SECOND_SEQUENCE = 'second_sequence', _('Second Sequence')
-    THIRD_SEQUENCE = 'third_sequence', _('Third Sequence')
-    FOURTH_SEQUENCE = 'fourth_sequence', _('Fourth Sequence')
-    FIFTH_SEQUENCE = 'fifth_sequence', _('Fifth Sequence')
-    SIXTH_SEQUENCE = 'sixth_sequence', _('Sixth Sequence')
-    SEVENTH_SEQUENCE = 'seventh_sequence', _('Seventh Sequence')
+    FIRST_SEQUENCE = 'First Sequence', _('First Sequence')
+    SECOND_SEQUENCE = 'Second Sequence', _('Second Sequence')
+    THIRD_SEQUENCE = 'Third Sequence', _('Third Sequence')
+    FOURTH_SEQUENCE = 'Fourth Sequence', _('Fourth Sequence')
+    FIFTH_SEQUENCE = 'Fifth Sequence', _('Fifth Sequence')
+    SIXTH_SEQUENCE = 'Sixth Sequence', _('Sixth Sequence')
+    SEVENTH_SEQUENCE = 'Seventh Sequence', _('Seventh Sequence')
 
 class Term(TimeStampedUUIDModel):
     term = models.CharField(
@@ -52,6 +55,9 @@ class Term(TimeStampedUUIDModel):
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
     is_current = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.term} - {self.academic_year.name}"
+
 class ExaminationSession(TimeStampedUUIDModel):
     term = models.ForeignKey(Term, related_name='examination_sessions', on_delete=models.CASCADE)
     exam_session = models.CharField(
@@ -60,4 +66,7 @@ class ExaminationSession(TimeStampedUUIDModel):
         choices=ExamSequenceChoices.choices,
         default=ExamSequenceChoices.FIRST_SEQUENCE,
     )
+    is_current = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.exam_session} - {self.term.term} - {self.term.academic_year.name}"

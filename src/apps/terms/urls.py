@@ -12,4 +12,8 @@ urlpatterns = [
     path("create-term", views.create_term_view, name="term-create"),
     path("edit-term/<int:pkid>/", views.edit_term_view, name="term-edit"),
     path("mark-term-active/<int:pkid>/", views.mark_term_as_active, name="term-mark-active"),
+
+    path("create-exam-session/", views.add_exam_session_view, name="exam-session-add"),
+    path("edit-exam-session/<int:pkid>/", views.edit_exam_session_view, name="exam-session-edit"),
+    path("mark-exam-session/<int:pkid>/", views.mark_exam_session_as_current_view, name="exam-session-mark-active")
 ]

@@ -9,8 +9,8 @@
         <li class="nav-item {% if request.resolver_match.url_name == 'setting-terms' %}active{% endif %}">
             <a class="nav-link" href="{% url 'settings:setting-terms' %}">Term Settings</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="email-settings.html">Email Settings</a>
+        <li class="nav-item {% if request.resolver_match.url_name == 'setting-exam-sessions' %}active{% endif %}">
+            <a class="nav-link" href="{% url 'settings:setting-exam-sessions' %}">Examination Sessions</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="social-settings.html">Social Media Login</a>
