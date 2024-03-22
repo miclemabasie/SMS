@@ -10,4 +10,10 @@ urlpatterns = [
     path("edit/<int:pkid>/<str:matricule>/", views.edit_student_profile, name="student-edit"),
     # path("delete/<int:pkid>/<str:matricule>/", views.delete, name="student-edit"),
     path("add/", views.add_student_view, name="student-add"),
+
+
+    # Marks
+    path("download-marks-sheet/<int:class_pkid>/", views.download_marksheet, name="mark-sheet-download"),
+    path("upload-marks/<int:class_pkid>", views.upload_marks, name="marks-upload"),
+    path("marks", views.marks, name="marks"),
 ]

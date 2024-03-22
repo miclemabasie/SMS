@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+
+{% block styletags %}
+    
+{% endblock styletags %}
+    
+
+{% block content %}
+    <div class="content-container fluid">
+        <div class="row">
+            <div class="col-xxl-12">
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0">Upload Student Marks For The Class: {{class.grade_level}} - {{class.class_name}}</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Download the marks sheet from the download button below</p>
+                        <p>1. Click the Download Mark Sheet button</p>
+                        <p>2. Select the subject for which you wish to download the marks sheet for.</p>
+                        <p>3. Click on the download button.</p>
+                        <p>4. Open the file and modify only the row column for the marks, do this for all the students on the file and save the file to a know loacation.</p>
+
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#download_class_{{class.pkid}}"><i
+                                                    class="fas fa-download"></i> Download Marks Sheet</a>
+                        
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Uploading the marks</p>
+                        <p>1. After the file has been modified and saved.</p>
+                        <p>2. Click on the upload Marks button</p>
+                        <p>3. Select the file from your device wherever it was saved</p>
+                        <p>4. Enter the The Teacher Matricule responsible for the assessment of this subject.</p>
+
+
+                        <p>You can click the link  below to see all registered teachers with their corresponding Matricule Numbers and copy from there.</p>
+
+                        <p ><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">List of all teachers.</a></p>
+                        <p>4. Click on Upload.</p>
+
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#upload_class_{{class.pkid}}"><i
+                                                    class="fas fa-upload"></i> Upload Marks Sheet</a>
+                        
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- modals -->
+
+<!-- downloading marks sheet modal -->
+    <div class="modal custom-modal fade" id="download_class_{{class.pkid}}" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Download Mark Sheet</h3>
+                        <p>{{class.grade_level}} - {{class.class_name}}</p>
+                    </div>
+                    <form action="{% url 'students:mark-sheet-download' class_pkid=class.pkid %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Select Subject</span></h5>
+                            </div>
+                            
+                            
+                            <div class="col-12">
+                                <div class="form-group local-forms">
+                                    <label>Subject Name <span class="login-danger">*</span></label>
+                                    <select class="form-control" name="selected_subject_id">
+                                        {% for subject in subjects %}
+                                        <option class="py-4" value="{{subject.pkid}}" {% if term.is_current %}selected{% endif %}>
+                                            {{subject.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 row">
+                                <div class="student-submit col-6">
+                                    <button type="submit" class="btn btn-primary">Download</button>
+                                </div>
+                                <div class="student-submit col-6 ml-5">
+                                    <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- upload -->
+    <div class="modal custom-modal fade" id="upload_class_{{class.pkid}}" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Download Mark Sheet</h3>
+                        <p>{{class.grade_level}} - {{class.class_name}}</p>
+                    </div>
+                    <form action="{% url 'students:marks-upload' class_pkid=class.pkid %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Select Subject</span></h5>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group local-forms">
+                                    <label>Teacher Matricule
+                                        <span class="login-danger">*</span></label>
+                                    <input name="subject_name" type="text" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <input name="marks_file" class="form-control" type="file" placeholder="Upload file">
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 row">
+                                <div class="student-submit col-6">
+                                    <button type="submit" class="btn btn-primary">Download</button>
+                                </div>
+                                <div class="student-submit col-6 ml-5">
+                                    <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+    
+
+
+
+{% block scripttags %}
+    
+{% endblock scripttags %}
+        
+    

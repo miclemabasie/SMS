@@ -1,12 +1,19 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import StudentProfile, Class, Subject
+from .models import StudentProfile, Class, Subject, Mark
+from apps.terms.models import ExaminationSession, AcademicYear
 from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
 from apps.fees.models import Fee
 from datetime import datetime, timezone, time
 from django.contrib.auth.decorators import login_required
 import random
+import openpyxl
+from django.http import HttpResponse
+from openpyxl.utils import get_column_letter
+import csv
+from django.contrib import messages
+from openpyxl import workbook, load_workbook
 
 
 User = get_user_model()
@@ -207,3 +214,136 @@ def edit_student_profile(request, pkid, matricule):
 
     return render(request, template_name, context)
 
+
+@login_required
+def download_marksheet(request, class_pkid, *args, **kwargs):
+    # Get the class for which the mark sheet needs to be downloaded}|
+
+    klass = get_object_or_404(Class, pkid=class_pkid)
+    current_academic_session = AcademicYear.objects.filter(is_current=True).first()
+    current_exam_session = ExaminationSession.objects.filter(is_current=True).first()
+    if request.method == "POST":
+        print("POST WAS MADE TO CLASS ID: ", class_pkid)
+        print("POST WAS MADE TO subject ID: ", request.POST.get("selected_subject_id"))
+        subject_id = request.POST.get("selected_subject_id")
+        # Make sure subject with id exist
+        subjects = Subject.objects.filter(pkid=subject_id)
+        if subjects.exists():
+            subject = subjects.first()
+        else:
+            messages.error(request, "Subject Does not exist")
+            return redirect("students:marks")
+
+
+        # Fetch all the students associated with the class
+        students = klass.students.all()
+        # Create a new workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "marks"
+
+        # Define column headers
+        headers = [
+            "Matricule",
+            "Full Name",
+            "Class",
+            "Mark",
+            "Acadmemic Session",
+            "Exam Session",
+            "Subject Name",
+            "SPKID",
+        ]
+
+        # Write headers to the first row
+        for col_num, header in enumerate(headers, start=1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.value = header
+
+        # Write student data to the worksheet
+        for row_num, student in enumerate(students, start=2):
+            ws.cell(row=row_num, column=1).value = student.matricule
+            ws.cell(row=row_num, column=2).value = student.user.get_fullname
+            ws.cell(row=row_num, column=3).value = f"{student.current_class.grade_level}-{student.current_class.class_name}"
+            # ws.cell(row=row_num, column=4).value = current_academic_session.name
+            ws.cell(row=row_num, column=5).value = current_academic_session.name
+            ws.cell(row=row_num, column=6).value = current_exam_session.exam_session
+            ws.cell(row=row_num, column=7).value = subject.name
+            ws.cell(row=row_num, column=8).value = subject.pkid
+
+        # Set column widths
+        for col_num in range(1, len(headers) + 1):
+            column_letter = get_column_letter(col_num)
+            ws.column_dimensions[column_letter].width = 20
+
+        # Create a response object
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=student_profiles.xlsx'
+
+        # Save the workbook to the response
+        wb.save(response)
+
+        return response
+
+    template_name = "students/marks-sheet-download.html"
+    context = {
+        'section': "marks-area"
+    }
+    return render(request, template_name, context)
+
+@login_required
+def upload_marks(request, class_pkid, *args, **kwargs):
+    # Get the subject and all the students associated to thesubject from the database
+
+    klass = get_object_or_404(Class, pkid=class_pkid)
+    if request.method == 'POST' and request.FILES['marks_file']:
+        marks_file = request.FILES['marks_file']
+        # decoded_file = marks_file.read().decode('utf-8').splitlines()
+        wb = load_workbook(filename=marks_file)
+
+        ws = wb.get_sheet_by_name("marks")
+
+        
+        print(ws.iter_rows(min_row=2))
+
+
+        
+        # for row in reader:
+        #     matricule = row['Matricule']
+        #     subject_name = subject.name
+        #     score = row['Mark']
+
+        #     # Get the student and subject objects
+        #     student = StudentProfile.objects.get(matricule=matricule)
+        #     subject = Subject.objects.get(name=subject_name)
+
+        #     # Check if a mark already exists for this student and subject
+        #     mark, created = Mark.objects.get_or_create(student=student, subject=subject)
+
+        #     # Update the score
+        #     mark.score = score
+        #     mark.save()
+
+        # Redirect to a success page or render a success message
+        return redirect(reverse("students:marks"))
+
+    template_name = "students/upload-marks.html"
+    context = {
+        "section": "marks-area",
+        "class": klass,
+        "subjects": Subject.objects.all()
+    }
+
+    return render(request, template_name, context)
+
+
+@login_required
+def marks(request):
+
+    template_name = "students/marks.html"
+    context = {
+        "section": "marks-area",
+        'classes': Class.objects.all(),
+        'subjects': Subject.objects.all(),
+    }
+
+    return render(request, template_name, context)
