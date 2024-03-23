@@ -337,7 +337,7 @@ def upload_marks(request, class_pkid, *args, **kwargs):
 
             # Update the score
             mark.score = marks
-            # mark.save()
+            mark.save()
             print(mark)
 
         messages.success(request, f"Marks have been updated for the subject: `{subject.name}` by: `{teacher.user.username}` with matricule No: {teacher.matricule}")

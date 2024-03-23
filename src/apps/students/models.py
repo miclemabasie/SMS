@@ -87,9 +87,13 @@ class Subject(TimeStampedUUIDModel):
     description = models.TextField(blank=True, null=True)
     code = models.CharField(verbose_name=_("Subject Code"), max_length=10, blank=True, null=True)
     coef = models.PositiveIntegerField(verbose_name=_("Subject Code"), default=1)
-    
+
     # Add a ManyToManyField for teachers
     # teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)
+
+    def __str__(self):
+        return f"{self.name}-{self.code}"
+
 
 class Mark(TimeStampedUUIDModel):
     score = models.IntegerField(default=0)
@@ -97,6 +101,7 @@ class Mark(TimeStampedUUIDModel):
     teacher = models.ForeignKey("TeacherProfile", related_name="marks", on_delete=models.CASCADE)
     exam_session = models.ForeignKey(ExaminationSession, related_name="session_marks", on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, related_name="subject_marks", on_delete=models.CASCADE)
+    remark = models.CharField(max_length=255, verbose_name=_("Remark"), blank=True, null=True)
 
 
 
