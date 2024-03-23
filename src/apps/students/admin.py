@@ -11,9 +11,10 @@ class MarkAdmin(admin.TabularInline):
 
 
 class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ["id", "pkid", "user", "gender", "phone_number", "country", "is_repeater", "is_owing"]
+    list_display = ["matricule", "pkid", "user", "gender", "phone_number", "country", "is_repeater", "is_owing"]
     list_filter = ["gender", "country"]
-    list_display_links = ["id", "pkid", "user"]
+    list_display_links = ["matricule", "pkid", "user"]
+    search_fields = ["matricule"]
 
     inlines = [
         MarkAdmin

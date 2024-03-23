@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import StudentProfile, Class, Subject, Mark
+from .models import StudentProfile, Class, Subject, Mark, TeacherProfile
 from apps.terms.models import ExaminationSession, AcademicYear
 from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
@@ -297,33 +297,50 @@ def upload_marks(request, class_pkid, *args, **kwargs):
     klass = get_object_or_404(Class, pkid=class_pkid)
     if request.method == 'POST' and request.FILES['marks_file']:
         marks_file = request.FILES['marks_file']
+        teacher_matricule = request.POST.get("teacher_matricule")
+        selected_subject_id = request.POST.get("selected_subject_id")
+
+        print("This is the information from the form: ", teacher_matricule, selected_subject_id)
+
         # decoded_file = marks_file.read().decode('utf-8').splitlines()
+
+        # Get the teacher from the DB
+        teachers = TeacherProfile.objects.filter(matricule=teacher_matricule)
+        if teachers.exists():
+            teacher = teachers.first()
+        else:
+            messages.error(request, "No Teacher found with the given matricule")
+            return redirect(reverse("students:marks-upload", kwargs={"class_pkid": class_pkid}))
+
+        # Get the subject from the database
+        subjects = Subject.objects.filter(pkid=selected_subject_id)
+        if subjects.exists():
+            subject = subjects.first()
+        else:
+            messages.error(request, "Subject not found.")
+            return redirect(reverse("students:marks-uploads", kwargs={"class_pkid": class_pkid}))
+        
+        # Get the session
+        exam_session = ExaminationSession.objects.get(is_current=True)
+        
         wb = load_workbook(filename=marks_file)
 
         ws = wb.get_sheet_by_name("marks")
 
         
-        print(ws.iter_rows(min_row=2))
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            student_matricule, marks, subject_name, subject_id = row[0], row[3], row[6], row[7]
+            print(f"student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject_id}")
+            student = StudentProfile.objects.get(matricule=student_matricule)
+            # Check if a mark already exists for this student and subject
+            mark, created = Mark.objects.get_or_create(student=student, subject=subject, teacher=teacher, exam_session=exam_session)
 
+            # Update the score
+            mark.score = marks
+            # mark.save()
+            print(mark)
 
-        
-        # for row in reader:
-        #     matricule = row['Matricule']
-        #     subject_name = subject.name
-        #     score = row['Mark']
-
-        #     # Get the student and subject objects
-        #     student = StudentProfile.objects.get(matricule=matricule)
-        #     subject = Subject.objects.get(name=subject_name)
-
-        #     # Check if a mark already exists for this student and subject
-        #     mark, created = Mark.objects.get_or_create(student=student, subject=subject)
-
-        #     # Update the score
-        #     mark.score = score
-        #     mark.save()
-
-        # Redirect to a success page or render a success message
+        messages.success(request, f"Marks have been updated for the subject: `{subject.name}` by: `{teacher.user.username}` with matricule No: {teacher.matricule}")
         return redirect(reverse("students:marks"))
 
     template_name = "students/upload-marks.html"

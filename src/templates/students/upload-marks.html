@@ -120,7 +120,18 @@
                                 <div class="form-group local-forms">
                                     <label>Teacher Matricule
                                         <span class="login-danger">*</span></label>
-                                    <input name="subject_name" type="text" class="form-control" required>
+                                    <input name="teacher_matricule" type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group local-forms">
+                                    <label>Subject Name <span class="login-danger">*</span></label>
+                                    <select class="form-control" name="selected_subject_id">
+                                        {% for subject in subjects %}
+                                        <option class="py-4" value="{{subject.pkid}}" {% if term.is_current %}selected{% endif %}>
+                                            {{subject.name}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
 
