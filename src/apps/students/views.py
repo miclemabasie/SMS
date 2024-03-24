@@ -40,6 +40,9 @@ def student_detail_view(request, matricule, pkid):
     payment_history = student.payment_history.all()
     fee = Fee.objects.filter(student=student).first()
 
+    # Grab all the mark recods associated to this student
+    marks = student.student_marks.all()
+
     template_name = "students/details.html"
     context = {
         "section": "student-area",
@@ -47,6 +50,7 @@ def student_detail_view(request, matricule, pkid):
         "student": student,
         "payment_history": payment_history,
         "number_of_payments": len(payment_history),
+        "marks": marks,
         "fee": fee,
     }
 
@@ -333,7 +337,9 @@ def upload_marks(request, class_pkid, *args, **kwargs):
             print(f"student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject_id}")
             student = StudentProfile.objects.get(matricule=student_matricule)
             # Check if a mark already exists for this student and subject
-            mark, created = Mark.objects.get_or_create(student=student, subject=subject, teacher=teacher, exam_session=exam_session)
+            mark, created = Mark.objects.get_or_create(student=student, subject=subject, exam_session=exam_session)
+
+            mark.teacher = teacher
 
             # Update the score
             mark.score = marks

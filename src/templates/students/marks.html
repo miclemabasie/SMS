@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-sub-header">
-                    <h3 class="page-title">Classes</h3>
+                    <h3 class="page-title">Marks</h3>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'class-list' %}">Classes</a></li>
                         <li class="breadcrumb-item active">All Classes</li>
@@ -25,7 +25,7 @@
 
  
 
-    <div class="student-group-form">
+    <!-- <div class="student-group-form">
         <div class="row">
             <div class="col-lg-3 col-md-6">
                 <div class="form-group">
@@ -48,22 +48,19 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="row">
         <div class="col-sm-12">
             <div class="card card-table comman-shadow">
                 <div class="card-body">
 
-                    <div class="page-header">
+                    <!-- <div class="page-header">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3 class="page-title">Students</h3>
+                                <h3 class="page-title">Classes</h3>
                             </div>
                             <div class="col-auto text-end float-end ms-auto download-grp">
-                                <!-- <a href="students.html" class="btn btn-outline-gray me-2 active"><i
-                                        class="feather-list"></i></a>
-                                <a href="students-grid.html" class="btn btn-outline-gray me-2"><i
-                                        class="feather-grid"></i></a> -->
+                               
                                 <a href="#" class="btn btn-outline-primary me-2"><i
                                         class="fas fa-download"></i> Download Mark Sheet</a>
                                     <a href="#" class="btn btn-outline-primary me-2"><i
@@ -72,58 +69,42 @@
                                         class="fas fa-plus"></i></a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="table-responsive">
                         <table
-                            class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            class="table border-0 star-student table-hover table-center mb-0 table-striped" id="classesTable">
                             <thead class="student-thread">
                                 <tr>
-                                    <th>
-                                        <div class="form-check check-tables">
-                                            <input class="form-check-input" type="checkbox"
-                                                value="something">
-                                        </div>
-                                    </th>
-                                    <th>ID</th>
+                                    
+                                    <th>#</th>
                                     <th>Grade Level</th>
                                     <th>Class Name</th>
-                                    <th>Class Master</th>
-                                    <th>Class Prefect</th>
-                                    <th>Number of Students</th>
-                                    <th>Download/Upload Marks</th>
-                                    <th>Actions</th>
+                                    <th>Upload Marks</th>
+                                    <!-- <th>Actions</th> -->
                                 </tr>
                             </thead>
                             <tbody>
                                 
                                 {% for class in classes %}                                    
                                     <tr>
-                                        <td>
-                                            <div class="form-check check-tables">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="something">
-                                            </div>
-                                        </td>
+                                        
                                         <td>{{forloop.counter}}</td>
                                         <td>{{class.grade_level}}</td>
                                         
                                         <td>{{class.class_name}}</td>
-                                        <td>{{ class.class_master }}</td>
-                                        <td>{{ class.class_prefect }}</td>
-                                        <td>{{ class.students.all.count }}</td>
                                         <td>
-                                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                            <div class="col-auto ms-auto download-grp">
                                                 <a href="{% url 'students:marks-upload' class_pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2" ><i
                                                 class="fas fa-plus"></i> Upload Marks</a>
-
+<!-- 
 
                                                 <a href="#" style="color: white;" class="btn btn-outline-primary me-2" data-bs-toggle="modal"
                                                 data-bs-target="#download_class_{{class.pkid}}"><i
-                                                    class="fas fa-plus"></i> Download Marks Sheet</a></td>
+                                                    class="fas fa-plus"></i> Download Marks Sheet</a></td> -->
                                             </div>
                                         </td>
-                                        <td class="text-right">
+                                        <!-- <td class="text-right">
                                             <div class="actions">
                                                 <a href="{% url 'class-edit' pkid=class.pkid %}" class="btn btn-sm bg-success-light mr-2">
                                                     <i class="fas fa-pen"></i>
@@ -132,12 +113,12 @@
                                                 
                                                 <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
                                                     data-bs-target="#delete_class_{{class.pkid}}">
-                                                    <!-- <i class="fe fe-trash-2"></i> -->
+                                                    <i class="fe fe-trash-2"></i>
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                                     
                                             </div>
-                                        </td>
+                                        </td> -->
                                     </tr>
 
                                     <div class="modal custom-modal fade" id="delete_class_{{class.pkid}}" role="dialog">
@@ -224,5 +205,13 @@
 {% block scripttags %}
 <script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
 {% endblock scripttags %}
+
+{% block script %}
+<script>
+    $('#classesTable').DataTable( {
+        searching: true // or false to enable or disable search
+    } );
+</script>
+{% endblock script %}
     
     

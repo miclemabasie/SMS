@@ -62,7 +62,11 @@
                 <li class="{% if request.resolver_match.url_name == 'settings-home'  %}active{% endif %}">
                     <a href="{% url 'settings:settings-home' %} " ><i class="fas fa-cog"></i> <span>Settings</span></a>
                 </li>
-                <li class="submenu">
+                <li class="{% if request.resolver_match.url_name == 'marks'  %}active{% endif %}">
+                    <a href="{% url 'students:marks' %} " ><i class="fas fa-certificate"></i> <span>Marks</span></a>
+                </li>
+
+                <!-- <li class="submenu">
                     <a href="#"><i class="fas fa-certificate"></i> <span> Marks</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
@@ -70,7 +74,7 @@
                         <li><a href="add-department.html">Department Add</a></li>
                         <li><a href="edit-department.html">Department Edit</a></li>
                     </ul>
-                </li>
+                </li> -->
                
                 <li class="submenu">
                     <a href="#"><i class="fas fa-clipboard"></i> <span> Invoices</span> <span

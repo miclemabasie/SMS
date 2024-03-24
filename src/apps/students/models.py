@@ -97,7 +97,7 @@ class Subject(TimeStampedUUIDModel):
 
 class Mark(TimeStampedUUIDModel):
     score = models.IntegerField(default=0)
-    student = models.ForeignKey(StudentProfile, related_name="student_marks", on_delete=models.CASCADE)
+    student = models.ForeignKey(StudentProfile, related_name="student_marks", on_delete=models.SET_NULL, blank=True, null=True)
     teacher = models.ForeignKey("TeacherProfile", related_name="marks", on_delete=models.CASCADE)
     exam_session = models.ForeignKey(ExaminationSession, related_name="session_marks", on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, related_name="subject_marks", on_delete=models.CASCADE)
