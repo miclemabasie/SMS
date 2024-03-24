@@ -22,6 +22,7 @@
         </div>
     </div>
 
+    {% if setting %}
     {% include '../utils/settings-menu.html' %}
     <div class="row">
         <div class="col-md-6">
@@ -30,137 +31,189 @@
                     <h5 class="card-title">School Basic Details</h5>
                 </div>
                 <div class="card-body pt-0">
-                    <form>
+                    <form action="{% url 'settings:settings-update' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <div class="settings-form">
-                            <div class="form-group">
-                                <label>School Name <span class="star-red">*</span></label>
-                                <input type="text" class="form-control" placeholder="Enter Website Name">
+                            <div class="form-group mb-4 text-end float-right">
+                                <div class="settings-btns">
+                                    <button type="submit" class="btn btn-orange">Update</button>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <p class="settings-label">School Logo <span class="star-red">*</span></p>
-                                <div class="settings-btn">
-                                    <input type="file" accept="image/*" name="image" id="file"
-                                        onchange="loadFile(event)" class="hide-input">
-                                    <label for="file" class="upload">
-                                        <i class="feather-upload"></i>
-                                    </label>
-                                </div>
+                                <label>School Name <span class="star-red">*</span></label>
+                                <input value="{{setting.school_name}}" type="text" class="form-control"
+                                    placeholder="Enter Shool Name" name="school_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Currency</label>
+                                <input value="{{setting.currency}}" type="text" class="form-control" placeholder="CFA"
+                                    name="currency">
+                            </div>
+                            <div class="form-group">
+                                <label>Country </label>
+                                <input value="{{setting.country}}" type="text" class="form-control"
+                                    placeholder="Cameroon" name="country">
+                            </div>
+
+                            <div class="form-group">
+                                <label>City </label>
+                                <input value="{{setting.city}}" type="text" class="form-control" placeholder="Bamenda"
+                                    name="city">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Motto </label>
+                                <input value="{{setting.motto}}" type="text" class="form-control" placeholder="Bamenda"
+                                    name="motto">
+                            </div>
+
+
+
+                            {% comment %} logo {% endcomment %}
+                            <div class="form-group">
+                                <label>Logo </label>
+                                <input value="{{setting.motto}}" type="file" class="form-control" placeholder="Bamenda"
+                                    name="logo">
                                 <h6 class="settings-size">Recommended image size is <span>150px x 150px</span></h6>
                                 <div class="upload-images">
-                                    <img src="assets/img/logo.png" alt="Image">
+                                    <img src="{{setting.school_logo.url}}" alt="Image">
                                     <a href="javascript:void(0);" class="btn-icon logo-hide-btn">
                                         <i class="feather-x-circle"></i>
                                     </a>
                                 </div>
+
                             </div>
+
+
                             <div class="form-group">
-                                <p class="settings-label">Favicon <span class="star-red">*</span></p>
-                                <div class="settings-btn">
-                                    <input type="file" accept="image/*" name="image" id="file"
-                                        onchange="loadFile(event)" class="hide-input">
-                                    <label for="file" class="upload">
-                                        <i class="feather-upload"></i>
-                                    </label>
-                                </div>
+                                <label>Favicon </label>
+                                <input value="{{setting.school_favicon}}" type="file" class="form-control"
+                                    name="favicon">
                                 <h6 class="settings-size">
                                     Recommended image size is <span>16px x 16px or 32px x 32px</span>
                                 </h6>
                                 <h6 class="settings-size mt-1">Accepted formats: only png and ico</h6>
                                 <div class="upload-images upload-size">
-                                    <img src="assets/img/favicon.png" alt="Image">
+                                    <img src="{{setting.school_favicon.url}}" alt="Image">
                                     <a href="javascript:void(0);" class="btn-icon logo-hide-btn">
                                         <i class="feather-x-circle"></i>
                                     </a>
                                 </div>
+
                             </div>
-                            <div class="row">
-                                <div class="col-lg-5 col-md-6">
-                                    <div class="form-group">
-                                        <div class="status-toggle d-flex justify-content-between align-items-center">
-                                            <p class="mb-0">RTL</p>
-                                            <input type="checkbox" id="status_1" class="check">
-                                            <label for="status_1" class="checktoggle">checkbox</label>
-                                        </div>
-                                    </div>
-                                </div>
+                            {% comment %} Address {% endcomment %}
+
+
+
+
+                            <div class="form-group">
+                                <label>Address Line 1 </label>
+                                <input value="{{setting.address1}}" type="text" class="form-control"
+                                    placeholder="Enter Address Line 1" name="address1">
                             </div>
-                            <div class="form-group mb-0">
+                            <div class="form-group">
+                                <label>Address Line 2 </label>
+                                <input value="{{setting.address2}}" type="text" class="form-control"
+                                    placeholder="Enter Address Line 2" name="address2">
+                            </div>
+                            <div class="form-group">
+                                <label>Postal/Zip Code </label>
+                                <input value="{{setting.postal_code}}" type="text" class="form-control"
+                                    placeholder="Postal Code">
+                            </div>
+
+                            <div class="form-group mb-4 text-end float-right">
                                 <div class="settings-btns">
                                     <button type="submit" class="btn btn-orange">Update</button>
-                                    <button type="submit" class="btn btn-grey">Cancel</button>
                                 </div>
                             </div>
+
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+
+
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Address Details</h5>
+                    <h5 class="card-title">Current Settings</h5>
                 </div>
-                <div class="card-body pt-0">
-                    <form>
-                        <div class="settings-form">
-                            <div class="form-group">
-                                <label>Address Line 1 <span class="star-red">*</span></label>
-                                <input type="text" class="form-control" placeholder="Enter Address Line 1">
-                            </div>
-                            <div class="form-group">
-                                <label>Address Line 2 <span class="star-red">*</span></label>
-                                <input type="text" class="form-control" placeholder="Enter Address Line 2">
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>City <span class="star-red">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>State/Province <span class="star-red">*</span></label>
-                                        <select class="select form-control">
-                                            <option selected="selected">Select</option>
-                                            <option>California</option>
-                                            <option>Tasmania</option>
-                                            <option>Auckland</option>
-                                            <option>Marlborough</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Zip/Postal Code <span class="star-red">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Country <span class="star-red">*</span></label>
-                                        <select class="select form-control">
-                                            <option selected="selected">Select</option>
-                                            <option>India</option>
-                                            <option>London</option>
-                                            <option>France</option>
-                                            <option>USA</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-0">
-                                <div class="settings-btns">
-                                    <button type="submit" class="btn btn-orange">Update</button>
-                                    <button type="submit" class="btn btn-grey">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Value</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>School Name</td>
+                                    <td>{{setting.school_name}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Currency</td>
+                                    <td>{{setting.currency}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Country</td>
+                                    <td>{{setting.country}}</td>
+                                </tr>
+                                <tr>
+                                    <td>City</td>
+                                    <td>{{setting.school_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Motto</td>
+                                    <td>{{setting.school_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Logo</td>
+                                    <td>{{setting.school_logo}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Favicon</td>
+                                    <td>{{setting.school_favicon}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Address Line 1</td>
+                                    <td>{{setting.address1}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Address Line 2</td>
+                                    <td>{{setting.address2}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    {% else %}
+
+    <div class="col-md-6 col-sm-12">
+        <div class="ribbon-wrapper card">
+            <div class="card-body">
+                <div class="ribbon ribbon-primary">Ribbon</div>
+                <p class="text"><strong>The settings for allow you to customize the system in different way with
+                        different settings, to proceed with this, click on the the <mark>initialize</mark> button below
+                        and you can then start to customize the system.</strong></p>
+                <form action="{% url 'settings:settings-home' %}" method='post'>
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning ml-auto">Initialize Settings.</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
 
 </div>
 {% endblock content %}
