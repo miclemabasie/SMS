@@ -26,6 +26,11 @@ urlpatterns = [
         views.add_optional_subjects_to_student,
         name="assign-optional-subjects",
     ),
+    path(
+        "download-class-list/",
+        views.download_class_list,
+        name="download-class-list",
+    ),
     # Marks
     path(
         "download-marks-sheet/<int:class_pkid>/",

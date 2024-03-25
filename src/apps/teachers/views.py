@@ -1,29 +1,29 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from apps.students.models import TeacherProfile, StudentProfile, Mark, Class 
+from apps.students.models import TeacherProfile, StudentProfile, Mark, Class
 from faker import Faker
 from datetime import datetime, time, timezone
 from django.http import Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from openpyxl import workbook, load_workbook
+from openpyxl.utils import get_column_letter
+from django.http import HttpResponse
 
 faker_factory = Faker()
 
 User = get_user_model()
 
+
 @login_required
 def teacher_list_view(request, *args, **kwargs):
-
 
     teachers = TeacherProfile.objects.all()
 
     template_name = "teachers/teachers-list.html"
 
-    context = {
-        "section": "teachers-area",
-        "teachers": teachers
-    }
+    context = {"section": "teachers-area", "teachers": teachers}
 
     return render(request, template_name, context)
 
@@ -61,21 +61,18 @@ def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
         profile_photo = request.FILES.get("photo")
 
         # Update user instance for the teacher
-        
 
-        teacher.user.username=username
-        teacher.user.first_name=first_name
-        teacher.user.last_name=last_name
-        teacher.user.email=email
-        
+        teacher.user.username = username
+        teacher.user.first_name = first_name
+        teacher.user.last_name = last_name
+        teacher.user.email = email
+
         teacher.user.save()
 
-        
         # Update teacher profile instance
 
-    
         teacher.gender = gender
-        teacher.phone_number=phone
+        teacher.phone_number = phone
         teacher.main_subject = subject
         teacher.address = address
 
@@ -93,48 +90,50 @@ def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
         if dob:
             date_string_from_form = dob
 
-            dob = datetime.strptime(date_string_from_form, '%Y-%m-%d').date()
+            dob = datetime.strptime(date_string_from_form, "%Y-%m-%d").date()
             # Create a specific time
             specific_time = time(8, 51, 2)
 
             dob_with_time = datetime.combine(dob, specific_time, tzinfo=timezone.utc)
-            teacher.user.dob=dob_with_time
+            teacher.user.dob = dob_with_time
 
         teacher.save()
         teacher.user.save()
 
         messages.success(request, "TEacher successfully updated")
 
-        
-        return redirect(reverse("teachers:teachers-detail", kwargs={"pkid": teacher.pkid, "matricule": teacher.matricule}))
+        return redirect(
+            reverse(
+                "teachers:teachers-detail",
+                kwargs={"pkid": teacher.pkid, "matricule": teacher.matricule},
+            )
+        )
 
     template_name = "teachers/teacher-edit.html"
-    context = {
-        "teacher": teacher,
-        "section": "teachers-area"
-    }
+    context = {"teacher": teacher, "section": "teachers-area"}
 
     return render(request, template_name, context)
+
 
 @login_required
 def teacher_delete_view(request, matricule, pkid, *args, **kwargs):
 
     teacher = get_object_or_404(TeacherProfile, matricule=matricule, pkid=pkid)
- 
+
     print("Deleting the user.")
 
     teacher.delete()
 
     messages.success(request, "Teacher successfuly deleted.")
-    
+
     # template_name = "teachers/teacher-edit.html"
-    
+
     return redirect(reverse("teachers:teachers-list"))
 
 
 @login_required
 def teacher_add_view(request, *args, **kwargs):
-    
+
     if request.method == "POST":
         # Xtract data from the form
         first_name = request.POST.get("first_name")
@@ -155,7 +154,7 @@ def teacher_add_view(request, *args, **kwargs):
         # construct a valid date out of the html date
         date_string_from_form = dob
 
-        dob = datetime.strptime(date_string_from_form, '%Y-%m-%d').date()
+        dob = datetime.strptime(date_string_from_form, "%Y-%m-%d").date()
         # Create a specific time
         specific_time = time(8, 51, 2)
 
@@ -167,7 +166,7 @@ def teacher_add_view(request, *args, **kwargs):
             last_name=last_name,
             email=email,
             is_teacher=True,
-            dob=dob_with_time
+            dob=dob_with_time,
         )
         user.save()
         user.set_password(faker_factory.password())
@@ -177,10 +176,10 @@ def teacher_add_view(request, *args, **kwargs):
 
         teacher = TeacherProfile.objects.create(
             user=user,
-            gender = gender,
+            gender=gender,
             phone_number=phone,
-            main_subject = subject,
-            address = address,
+            main_subject=subject,
+            address=address,
         )
         teacher.save()
         if location:
@@ -194,24 +193,24 @@ def teacher_add_view(request, *args, **kwargs):
 
         teacher.save()
 
-        
-        return redirect(reverse("teachers:teachers-detail", kwargs={"pkid": teacher.pkid, "matricule": teacher.matricule}))
-
-
+        return redirect(
+            reverse(
+                "teachers:teachers-detail",
+                kwargs={"pkid": teacher.pkid, "matricule": teacher.matricule},
+            )
+        )
 
     template_name = "teachers/teacher-add.html"
-    context = {
-        "section": "teachers-area"
-    }
+    context = {"section": "teachers-area"}
 
     return render(request, template_name, context)
 
 
 @login_required
 def class_add_view(request, *args, **kwargs):
-    
+
     if request.method == "POST":
-        
+
         # extract information from the class form
         grade_level = request.POST.get("grade_level")
         class_name = request.POST.get("class_name")
@@ -222,17 +221,16 @@ def class_add_view(request, *args, **kwargs):
 
         # Create the class
         if grade_level and class_name:
-            
-            klass= Class.objects.create(
+
+            klass = Class.objects.create(
                 grade_level=grade_level,
                 class_name=class_name,
                 class_master=class_master,
-                class_prefect=class_prefect
+                class_prefect=class_prefect,
             )
-            
 
             klass.save()
-        save_and_add_flag =  request.POST.get("save_and_add")
+        save_and_add_flag = request.POST.get("save_and_add")
         print("%%%%%%%%%%%%%%%%%%%", save_and_add_flag)
 
         if save_and_add_flag:
@@ -241,12 +239,9 @@ def class_add_view(request, *args, **kwargs):
         return redirect(reverse("class-list"))
 
     template_name = "classes/class-add.html"
-    context = {
-        "section": "class-area"
-    }
+    context = {"section": "class-area"}
 
     return render(request, template_name, context)
-
 
 
 @login_required
@@ -269,7 +264,7 @@ def class_edit_view(request, pkid, *args, **kwargs):
     klass = get_object_or_404(Class, pkid=pkid)
 
     if request.method == "POST":
-        
+
         # extract information from the class form
         grade_level = request.POST.get("grade_level")
         class_name = request.POST.get("class_name")
@@ -282,21 +277,17 @@ def class_edit_view(request, pkid, *args, **kwargs):
         klass.class_name = class_name
         klass.class_master = class_master
         klass.class_prefect = class_prefect
-            
 
         klass.save()
-        save_and_add_flag =  request.POST.get("save_and_add")
+        save_and_add_flag = request.POST.get("save_and_add")
         if save_and_add_flag:
             print(save_and_add_flag)
             return redirect(reverse("class-add"))
         return redirect(reverse("class-list"))
 
     template_name = "classes/class-edit.html"
-    context = {
-        "section": "class-area",
-        "class": klass
-    }
-    
+    context = {"section": "class-area", "class": klass}
+
     return render(request, template_name, context)
 
 

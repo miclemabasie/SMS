@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+
+from .utils import check_student_is_owing, check_student_is_repeater
 from .models import StudentProfile, Class, Subject, Mark, TeacherProfile
 from apps.terms.models import ExaminationSession, AcademicYear
 from django.contrib.auth import get_user_model
@@ -249,8 +251,6 @@ def download_marksheet(request, class_pkid, *args, **kwargs):
     current_academic_session = AcademicYear.objects.filter(is_current=True).first()
     current_exam_session = ExaminationSession.objects.filter(is_current=True).first()
     if request.method == "POST":
-        print("POST WAS MADE TO CLASS ID: ", class_pkid)
-        print("POST WAS MADE TO subject ID: ", request.POST.get("selected_subject_id"))
         subject_id = request.POST.get("selected_subject_id")
         # Make sure subject with id exist
         subjects = Subject.objects.filter(pkid=subject_id)
@@ -483,3 +483,70 @@ def add_optional_subjects_to_student(
     }
 
     return render(request, template_name, context)
+
+
+@login_required
+def download_class_list(request, *args, **kwargs):
+    # Get the class
+    if request.method == "POST":
+        class_pkid = int(request.POST.get("selected_class_id"))
+
+        # Check if there is a class given class_id
+        classes = Class.objects.filter(pkid=class_pkid)
+        if classes.exists():
+            klass = classes.first()
+        else:
+            return redirect(reverse("students:student-list"))
+
+        students = StudentProfile.objects.filter(current_class=klass)
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = f"{klass.grade_level}-{klass.class_name}"
+
+        headers = [
+            "Matricule",
+            "Fullname",
+            "DOB",
+            "Parent",
+            "Gender",
+            "IS Owing",
+            "Is Repeater",
+        ]
+
+        # Write headers to the first row
+        for col_num, header in enumerate(headers, start=1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.value = header
+
+        # Write student data to the worksheet
+        for row_num, student in enumerate(students, start=2):
+            ws.cell(row=row_num, column=1).value = student.matricule
+            ws.cell(row=row_num, column=2).value = student.user.get_fullname
+            ws.cell(row=row_num, column=3).value = student.user.dob.year
+            ws.cell(row=row_num, column=4).value = student.parent.first_name
+            # ws.cell(row=row_num, column=4).value = current_academic_session.name
+            ws.cell(row=row_num, column=5).value = student.gender
+            ws.cell(row=row_num, column=6).value = check_student_is_owing(student.pkid)
+            ws.cell(row=row_num, column=7).value = check_student_is_repeater(
+                student_pkid=student.pkid
+            )
+
+        # Set column widths
+        for col_num in range(1, len(headers) + 1):
+            column_letter = get_column_letter(col_num)
+            ws.column_dimensions[column_letter].width = 20
+
+        # Create a response object
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = (
+            f"attachment; filename={klass.grade_level}-{klass.class_name}-class-list.xlsx"
+        )
+
+        # Save the workbook to the response
+        wb.save(response)
+
+        return response
+    return redirect(reverse("students:student-list"))
