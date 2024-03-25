@@ -1,4 +1,7 @@
 {% load static %}
+{% load student_tags %}
+
+
 
 <div class="header">
 
@@ -17,17 +20,19 @@
     </div>
 
     <div class="top-nav-search">
-        <form>
+        {% comment %} <form>
             <input type="text" class="form-control" placeholder="Search here">
             <button class="btn" type="submit"><i class="fas fa-search"></i></button>
-        </form>
+        </form> {% endcomment %}
+
+        {{current_working_session}}
     </div>
     <a class="mobile_btn" id="mobile_btn">
         <i class="fas fa-bars"></i>
     </a>
 
     <ul class="nav user-menu">
-        <li class="nav-item dropdown noti-dropdown language-drop me-2">
+        {% comment %} <li class="nav-item dropdown noti-dropdown language-drop me-2">
             <a href="#" class="dropdown-toggle nav-link header-nav-list" data-bs-toggle="dropdown">
                 <img src="{% static 'assets/img/icons/header-icon-01.svg' %}" alt="">
             </a>
@@ -42,7 +47,7 @@
                     </div>
                 </div>
             </div>
-        </li>
+        </li> {% endcomment %}
 
         <li class="nav-item dropdown noti-dropdown me-2">
             <a href="#" class="dropdown-toggle nav-link header-nav-list" data-bs-toggle="dropdown">

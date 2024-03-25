@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+
+{% block styletags %}{% endblock styletags %}
+
+
+{% block content %}
+  <!-- table to display all students records -->
+  <div class="row">
+    <div class="col-sm-12">
+        <div class="card card-table">
+            <div class="card-body">
+
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="page-title">Student Academic Recods</h3>
+                        </div>
+                        <div class="col-auto text-end float-end ms-auto download-grp">
+                            <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
+                                Download</a>
+                            <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#add_subject">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                        <thead class="student-thread">
+                            <!-- score
+                            student
+                            teacher
+                            exam_session
+                            subject
+                            remark -->
+                            <tr>
+                                <th>#</th>
+                                <th>Subject Name</th>
+                                <th>Mark</th>
+                                <th>Coefficient</th>
+                                <th>Teacher</th>
+                                <th>Exam Session</th>
+                                <th>Year</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for mark in marks %}
+
+
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{mark.subject.name}}</td>
+                                <td>{{mark.score}}</td>
+                                <td>{{mark.subject.coef}}</td>
+                                <td>{{mark.teacher.user.get_fullname}}</td>
+                                <td>{{mark.exam_session.exam_session}}</td>
+                                <td>{{mark.exam_session.term.academic_year}}</td>
+                                
+                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock content %}
+
+
+
+{% block scripttags %}{% endblock scripttags %}
+
+
