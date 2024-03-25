@@ -21,6 +21,11 @@ urlpatterns = [
         name="student-academic-record",
     ),
     path("add/", views.add_student_view, name="student-add"),
+    path(
+        "assign-optional-subjects/<int:student_pkid>/<str:student_matricule>/",
+        views.add_optional_subjects_to_student,
+        name="assign-optional-subjects",
+    ),
     # Marks
     path(
         "download-marks-sheet/<int:class_pkid>/",

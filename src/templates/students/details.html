@@ -72,9 +72,6 @@
                                         <button class="btn btn-info follow-btns">Edit Student Info</button>
                                     </a>
 
-                                    <a href="{% url 'students:student-edit' pkid=student.pkid matricule=student.matricule%}">
-                                        <button class="btn btn-info follow-btns btn-success">Add Subjects </button>
-                                    </a>
                                     
                                     {% if student.is_owing %}
                                         
@@ -269,6 +266,171 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+        <div class="card card-table">
+            <div class="card-body">
+
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="page-title">Your Subjects</h3>
+                        </div>
+                        <div class="col-auto text-end float-end ms-auto download-grp">
+                            <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
+                                Download</a>
+                
+                            <a href="{% url 'students:assign-optional-subjects' student_pkid=student.pkid student_matricule=student.matricule %}" class="btn btn-outline-primary me-2">
+                                Add/Remove Subjects</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                        <thead class="student-thread">
+                            <tr>
+                                
+                                <th>#</th>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Coef</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for subject in subjects %}
+
+
+                            <tr>
+                                
+                                <td>{{forloop.counter}}</td>
+                                <td>{{subject.code}}</td>
+                                <td>
+                                    <h2>
+                                        <a>{{subject.name}}</a>
+                                    </h2>
+                                </td>
+                                <td>{{subject.coef}}</td>
+                                {% comment %} <td class="text-end">
+                                    <div class="actions">
+
+                                        <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
+                                            data-bs-target="#edit_subject_{{subject.pkid}}">
+                                            <i class="feather-edit"></i>
+                                        </a>
+
+                                        <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
+                                            data-bs-target="#delete_subject_{{subject.pkid}}">
+                                            <!-- <i class="fe fe-trash-2"></i> -->
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+
+                                        <!-- <div class="student-submit">
+                                                <a href="" data-bs-dismiss="modal"
+                                                class="btn btn-danger">Cancel</a>
+                                            </div>
+
+                                            <div class="student-submit">
+                                                <a href="" data-bs-dismiss="modal"
+                                                class="btn btn-danger">Cancel</a>
+                                            </div> -->
+                                    </div>
+                                </td> {% endcomment %}
+                            </tr>
+                            <div class="modal custom-modal fade" id="delete_subject_{{subject.pkid}}" role="dialog">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <div class="form-header">
+                                                <h3>Delete Subject ({{subject.name}})</h3>
+                                                <p>Are you sure want to delete?</p>
+                                            </div>
+                                            <div class="modal-btn delete-action">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <a href="{% url 'staff:subjects-delete' pkid=subject.pkid %}"
+                                                            class="btn btn-primary paid-continue-btn">Delete</a>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <a href="javascript:void(0);" data-bs-dismiss="modal"
+                                                            class="btn btn-primary paid-cancel-btn">Cancel</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal custom-modal fade" id="edit_subject_{{subject.pkid}}" role="dialog">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <div class="form-header">
+                                                <h3>Add Subject</h3>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <form action="{% url 'staff:subject-edit' pkid=subject.pkid%} "
+                                                        method="post">
+                                                        {% csrf_token %}
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <h5 class="form-title"><span>Subject Information</span>
+                                                                </h5>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="form-group local-forms">
+                                                                    <label>Subject Name <span
+                                                                            class="login-danger">*</span></label>
+                                                                    <input value="{{subject.name}}" name="subject_name"
+                                                                        type="text" class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="form-group local-forms">
+                                                                    <label>Subject Code <span
+                                                                            class="login-danger">*</span></label>
+                                                                    <input value="{{subject.code}}" name="subject_code"
+                                                                        type="text" class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="form-group local-forms">
+                                                                    <label>Subject Coeff <span
+                                                                            class="login-danger">*</span></label>
+                                                                    <input value="{{subject.coef}}" name="subject_coeff"
+                                                                        type="text" class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12 row">
+                                                                <div class="student-submit col-6">
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary">Submit</button>
+                                                                </div>
+                                                                <div class="student-submit col-6 ml-5">
+                                                                    <a href="" data-bs-dismiss="modal"
+                                                                        class="btn btn-danger">Cancel</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 </div>

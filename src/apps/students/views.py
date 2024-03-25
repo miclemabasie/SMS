@@ -14,6 +14,8 @@ from openpyxl.utils import get_column_letter
 import csv
 from django.contrib import messages
 from openpyxl import workbook, load_workbook
+import json
+from django.http import JsonResponse
 
 
 User = get_user_model()
@@ -54,6 +56,14 @@ def student_detail_view(request, matricule, pkid):
     # Grab all the mark records associated to this student
     marks = student.student_marks.all()
 
+    # Get all the subjects in the class the student belongs to
+    # and those optionally added by the student
+    subjects1 = student.current_class.subjects.all()
+    # get optoinal subjects for the particular student
+    optional_subjects = student.optional_subjects.all()
+
+    distinct_subjects = set(list(subjects1) + list(optional_subjects))
+
     template_name = "students/details.html"
     context = {
         "section": "student-area",
@@ -62,6 +72,7 @@ def student_detail_view(request, matricule, pkid):
         "payment_history": payment_history,
         "number_of_payments": len(payment_history),
         "marks": marks,
+        "subjects": distinct_subjects,
         "fee": fee,
     }
 
@@ -412,5 +423,63 @@ def list_student_record(request, pkid, matricule, *args, **kwargs):
     template_name = "students/academic-records.html"
 
     context = {"section": "student-area", "marks": marks}
+
+    return render(request, template_name, context)
+
+
+def add_optional_subjects_to_student(
+    request, student_pkid, student_matricule, *args, **kwargs
+):
+
+    student = get_object_or_404(
+        StudentProfile, pkid=student_pkid, matricule=student_matricule
+    )
+    # Get all the subjects in the class the student belongs to
+    # and those optionally added by the student
+    subjects1 = student.current_class.subjects.all()
+    # get optoinal subjects for the particular student
+    optional_subjects = student.optional_subjects.all()
+
+    distinct_subjects = set(list(subjects1) + list(optional_subjects))
+
+    subjects = Subject.objects.all()
+
+    if request.method == "POST":
+        print("This are the selected subjects", request.body)
+        data = json.loads(request.body)
+
+        selected_subjects_ids = []
+        for subject in data["selectedSubjects"]:
+            print(subject["pkid"])
+            selected_subjects_ids.append(subject.get("pkid"))
+        print(selected_subjects_ids)
+        # Flush out all the subjects that exist in the class and reset
+        print(
+            "we are inside the loop", len(optional_subjects), len(selected_subjects_ids)
+        )
+        if len(optional_subjects) > 0 and len(selected_subjects_ids) > 0:
+            for subject in optional_subjects:
+                print("This is the subject", subject)
+                student.optional_subjects.remove(subject)
+                student.save()
+
+        print(student.optional_subjects.all())
+
+        # Reassign the subjects to the klass instance
+        # Ge throught the incoming ids, and get the subjects associated the with the pkids
+        for pkid in selected_subjects_ids:
+            sub = Subject.objects.filter(pkid=pkid).first()
+            if sub:
+                student.optional_subjects.add(sub)
+                student.save()
+
+        return JsonResponse({"message": "updated."})
+
+    template_name = "students/add-optional-subjects.html"
+    context = {
+        "selected_subjects": distinct_subjects,
+        "unselected_subjects": subjects,
+        "student": student,
+    }
 
     return render(request, template_name, context)

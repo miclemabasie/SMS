@@ -123,7 +123,7 @@ $(document).ready(function () {
 
         // Send selected subjects to the server via AJAX
         $.ajax({
-            url: "{% url 'staff:subjects-assign' pkid=class.pkid %}",
+            url: "{% url 'students:assign-optional-subjects' student_pkid=student.pkid student_matricule=student.matricule %}",
             method: "POST",
             // data: {id: 2},
             data: JSON.stringify({ selectedSubjects: selectedSubjects }),
