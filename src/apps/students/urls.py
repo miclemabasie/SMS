@@ -31,6 +31,16 @@ urlpatterns = [
         views.download_class_list,
         name="download-class-list",
     ),
+    path(
+        "upload-students/",
+        views.upload_students_from_file,
+        name="upload-students-from-file",
+    ),
+    path(
+        "download-sample-file",
+        views.download_sample_student_file,
+        name="download-sample-file",
+    ),
     # Marks
     path(
         "download-marks-sheet/<int:class_pkid>/",

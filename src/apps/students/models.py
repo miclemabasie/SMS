@@ -45,7 +45,11 @@ class StudentProfile(TimeStampedUUIDModel):
         User, related_name="student_profile", on_delete=models.CASCADE
     )
     parent = models.ForeignKey(
-        ParentProfile, related_name="childrend", on_delete=models.CASCADE
+        ParentProfile,
+        related_name="childrend",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
     current_class = models.ForeignKey(
         "Class",
@@ -57,7 +61,7 @@ class StudentProfile(TimeStampedUUIDModel):
     number_of_absences = models.PositiveIntegerField(
         default=0, validators=[MinValueValidator(0)]
     )
-    remark = models.TextField(verbose_name=_("Remark"))
+    remark = models.TextField(verbose_name=_("Remark"), blank=True, null=True)
     is_repeater = models.BooleanField(default=False)
     gender = models.CharField(
         verbose_name=_("Gender"),

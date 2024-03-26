@@ -204,7 +204,7 @@ def edit_student_profile(request, pkid, matricule):
         specific_time = time(8, 51, 2)
 
         dob_with_time = datetime.combine(dob, specific_time, tzinfo=timezone.utc)
-
+        # <class 'datetime.datetime'>
         # Update user fields
         student.user.first_name = st_fname
         student.user.last_name = st_lname
@@ -550,3 +550,157 @@ def download_class_list(request, *args, **kwargs):
 
         return response
     return redirect(reverse("students:student-list"))
+
+
+@login_required
+def upload_students_from_file(request, *args, **kwargs):
+    # Get the subject and all the students associated to thesubject from the database
+
+    classes = Class.objects.all()
+    if request.method == "POST" and request.FILES["students_file"]:
+        students_file = request.FILES["students_file"]
+        selected_class_id = request.POST.get("selected_class_id")
+
+        print("incoming data", students_file, selected_class_id)
+
+        # decoded_file = students_file.read().decode('utf-8').splitlines()
+
+        # Get the subject from the database
+        classes = Class.objects.filter(pkid=selected_class_id)
+        if classes.exists():
+            klass = classes.first()
+        else:
+            messages.error(request, "Class not found.")
+            return redirect(reverse("students:upload-students-from-file"))
+
+        wb = load_workbook(filename=students_file)
+
+        ws = wb.get_sheet_by_name("Student Upload Sample File")
+
+        # Check if all the attributes need to create the user and student profile are available inthe file
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            first_name, last_name, email, dob, gender, phone, address = (
+                row[0],
+                row[1],
+                row[2],
+                row[3],
+                row[4],
+                row[5],
+                row[6],
+            )
+            attributes = [first_name, last_name, email, gender, phone]
+            for value in attributes:
+                if not value:
+                    messages.error(request, "Invalid file, missing information")
+                    return redirect(reverse("students:upload-students-from-file"))
+
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            first_name, last_name, email, dob, gender, phone, address = (
+                row[0],
+                row[1],
+                row[2],
+                row[3],
+                row[4],
+                row[5],
+                row[6],
+            )
+
+            print(
+                f"fistname {first_name}, lastname {last_name}, email {email}, dob {dob} gender {gender} phone {phone} address {address}"
+            )
+
+            # Create user
+            print("this is the date", type(dob))
+            email = None
+            if not email:
+                intial_string = first_name
+                email = f"{intial_string}{random.randint(1, 10)}@gmail.com"
+                print(email)
+            user = User.objects.create(
+                username=f"{first_name}{random.randint(1, 10)}",
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+            )
+            if dob:
+                dob = datetime.combine(dob, dob.time(), tzinfo=timezone.utc)
+                user.dob = dob
+
+            user.save()
+            print(user)
+            print("user was saved")
+
+            # create student profile instance
+            if gender.lower() == "M":
+                gender = "Male"
+            else:
+                gender = "Female"
+            student = StudentProfile.objects.create(
+                user=user,
+                current_class=klass,
+                gender=gender,
+                phone_number=str(phone),
+            )
+            if not address:
+                student.address = faker.address()
+
+            print("Saving student")
+            student.save()
+            print(student)
+            student.delete()
+
+            user.delete()
+        messages.success(
+            request,
+            f"Students have been uploaded for the class {klass.grade_level}-{klass.class_name}",
+        )
+        return redirect(reverse("students:upload-students-from-file"))
+
+    template_name = "students/upload-students.html"
+    context = {
+        "section": "marks-area",
+        "classes": classes,
+    }
+
+    return render(request, template_name, context)
+
+
+@login_required
+def download_sample_student_file(request, *args, **kwargs):
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Student Upload Sample File"
+
+    headers = [
+        "First Name",
+        "Last Name",
+        "Email",
+        "Date Of Birth",
+        "Gender",
+        "Phone Number",
+        "Address",
+    ]
+
+    # Write headers to the first row
+    for col_num, header in enumerate(headers, start=1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.value = header
+
+    # Set column widths
+    for col_num in range(1, len(headers) + 1):
+        column_letter = get_column_letter(col_num)
+        ws.column_dimensions[column_letter].width = 20
+
+    # Create a response object
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = (
+        f"attachment; filename=student_upload_sample_file.xlsx"
+    )
+
+    # Save the workbook to the response
+    wb.save(response)
+
+    return response

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+
+{% block styletags %}
+    
+{% endblock styletags %}
+    
+
+{% block content %}
+    <div class="content-container fluid">
+        <div class="row">
+            <div class="col-xxl-12">
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0">Upload Student Marks For The Class: {{class.grade_level}} - {{class.class_name}}</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Download a guide for the students list in excel format, to guide you on the information that is needed by the system.</p>
+                        <p>1. Click the Download Sample file button</p>
+                        <p>4. And fill in all the values for individual students.</p>
+
+                        <a href="{% url 'students:download-sample-file' %}" class="btn btn-primary"><i
+                                                    class="fas fa-download"></i> Download Sample File</a>
+                        
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Uploading the marks</p>
+                        <p>1. Prepare a file with all the needed information in the above format.</p>
+                        <p>2. Click on the Upload Students button</p>
+                        <p>2. Select the class for which the students belong to.</p>
+                        <p>3. Select the file from your device wherever it was saved</p>
+                        <p>4. Click on the upload button.</p>
+
+
+                        <p style="font-size: 18px;" class="badge badge-warning">Make sure that the fields {First Name, Last Name, Gender, Phone} are available for each row int he document, a missing value in any of this columns will result to an error.</p>
+                        <br>
+                        
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#upload_class_{{class.pkid}}"><i
+                                                    class="fas fa-upload"></i> Upload Marks Sheet</a>
+                        
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- modals -->
+
+
+    <!-- upload -->
+    <div class="modal custom-modal fade" id="upload_class_{{class.pkid}}" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Upload Mark Sheet</h3>
+                        <p>{{class.grade_level}} - {{class.class_name}}</p>
+                    </div>
+                    <form action="{% url 'students:upload-students-from-file' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Select Class</span></h5>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group local-forms">
+                                    <label>Class <span class="login-danger">*</span></label>
+                                    <select class="form-control" name="selected_class_id">
+                                        {% for klass in classes %}
+                                        <option class="py-4" value="{{klass.pkid}}" {% if term.is_current %}selected{% endif %}>
+                                            {{klass.grade_level}}-{{klass.class_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <input name="students_file" class="form-control" type="file" placeholder="Upload file">
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 row">
+                                <div class="student-submit col-6">
+                                    <button type="submit" class="btn btn-primary">Download</button>
+                                </div>
+                                <div class="student-submit col-6 ml-5">
+                                    <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+    
+
+
+
+{% block scripttags %}
+    
+{% endblock scripttags %}
+        
+    
