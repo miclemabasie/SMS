@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secondary School Report Card</title>
+  <style>
+
+    @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+   
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header {
+      text-align: center;
+      /* margin-bottom: 20px; */
+    }
+
+    .student-info {
+      margin-bottom: 20px;
+      text-align: right;
+    }
+
+    .academic-info {
+      /* margin-bottom: 20px; */
+      text-align: left;
+    }
+
+    .section-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subject-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .subject-table th,
+    .subject-table td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .subject-table th {
+      background-color: #f0f0f0;
+    }
+
+    .discipline-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .discipline-table th,
+    .discipline-table td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .discipline-table th {
+      background-color: #f0f0f0;
+    }
+
+    .subject-table tfoot td:first-child {
+      width: 100px;
+      /* Adjust the width as needed */
+    }
+
+    .subject-table tfoot td:last-child {
+      width: 80px;
+      /* Adjust the width as needed */
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="report-card">
+    <div class="logo">
+      <img src="school_logo.png" alt="School Logo">
+    </div>
+
+    <div class="header">
+      <h1>REPUBLIC OF CAMEROON</h1>
+      <h2><u><i>Peace Work Fatherland</i></u></h2>
+    </div>
+
+    <!-- <div class="student-info">
+      <p>Section: Industrial Techniques</p>
+      <p>Specialty: Civil Engineering</p>
+      <p>Student's name: [Student's Name]</p>
+      <p>Date of Birth: [Date of Birth]</p>
+    </div>
+
+    <div class="academic-info">
+      <p>Academic Year: 2014-2015</p>
+      <p>Repeater:</p>
+      <p>Adm. Nr: 0 0</p>
+    </div> -->
+
+    <div class="section-header">FIRST TERM PROGRESS RECORD</div>
+
+    <table class="subject-table">
+      <thead>
+        <tr>
+          <th rowspan="2">SUBJECT NAME</th>
+          <th >SEQ.1</th>
+          <th >SEQ 2</th>
+          <th rowspan="2">AV./20</th>
+          <th rowspan="2">COEF</th>
+          <th rowspan="2">TERM</th>
+          <th rowspan="2">Teacher's Name</th>
+          <th rowspan="2">Teacher's Remark</th>
+        </tr>
+        
+      </thead>
+      <tbody>
+        <tr>
+          <td>ENGLISH</td>
+      
+          <td>36</td>
+          <td>14</td>
+          <td>10.5</td>
+          <td>3</td>
+          <td>1234</td>
+          <td>Mme NTENGA</td>
+          <td>Good</td>
+        </tr>
+        <tr>
+          <td>MATHEMATICS</td>
+
+          <td>30</td>
+          <td>20</td>
+          <td>12.5</td>
+          <td>3</td>
+          <td>5678</td>
+          <td>Mrs. SMITH</td>
+          <td>Excellent</td>
+        </tr>
+        <tr>
+          <td>PHYSICS</td>
+          <td>22</td>
+          <td>20</td>
+          <td>10</td>
+          <td>3</td>
+          <td>91011</td>
+          <td>Mr. JOHNSON</td>
+          <td>Weak</td>
+        </tr>
+        <!-- Add more rows for other subjects -->
+        <tr>
+          <td>CHEMISTRY</td>
+          <td>25</td>
+          <td>18</td>
+          <td>13</td>
+          <td>3</td>
+          <td>121314</td>
+          <td>Mrs. PARKER</td>
+          <td>Poor</td>
+        </tr>
+        <tr>
+          <td>BIOLOGY</td>
+          <td>30</td>
+          <td>20</td>
+          <td>14</td>
+          <td>3</td>
+          <td>151617</td>
+          <td>Mr. WHITE</td>
+          <td>Good</td>
+        </tr>
+        <tr>
+          <td>HISTORY</td>
+          <td>26</td>
+          <td>17</td>
+          <td>13.5</td>
+          <td>3</td>
+          <td>181920</td>
+          <td>Mrs. BROWN</td>
+          <td>Excellent</td>
+        </tr>
+        <tr>
+          <td>GEOGRAPHY</td>
+          <td>25</td>
+          <td>18</td>
+          <td>13.5</td>
+          <td>3</td>
+          <td>212223</td>
+          <td>Mr. GREEN</td>
+          <td>Excellent</td>
+        </tr>
+        <tr>
+          <td>LITERATURE</td>
+          <td>28</td>
+          <td>20</td>
+          <td>14.5</td>
+          <td>3</td>
+          <td>242526</td>
+          <td>Mrs. JOHNSON</td>
+          <td>Weak</td>
+        </tr>
+        <tr>
+          <td>PHILOSOPHY</td>
+          <td>26</td>
+          <td>18</td>
+          <td>13.5</td>
+          <td>3</td>
+          <td>272829</td>
+          <td>Mr. JAMES</td>
+          <td>Good</td>
+        </tr>
+        <tr>
+          <td>ECONOMICS</td>
+          <td>28</td>
+          <td>20</td>
+          <td>15.5</td>
+          <td>3</td>
+          <td>303132</td>
+          <td>Mrs. ADAMS</td>
+          <td>Good</td>
+        </tr>
+        <tr>
+          <td>COMPUTER SCIENCE</td>
+          <td>26</td>
+          <td>18</td>
+          <td>14.5</td>
+          <td>3</td>
+          <td>333435</td>
+          <td>Mr. EVANS</td>
+          <td>Poor</td>
+        </tr>
+        <tr>
+          <td>COMPUTER SCIENCE</td>
+          <td>26</td>
+          <td>18</td>
+          <td>14.5</td>
+          <td>3</td>
+          <td>333435</td>
+          <td>Mr. EVANS</td>
+          <td>Poor</td>
+        </tr>
+        <tr>
+          <td>COMPUTER SCIENCE</td>
+          <td>26</td>
+          <td>18</td>
+          <td>14.5</td>
+          <td>3</td>
+          <td>333435</td>
+          <td>Mr. EVANS</td>
+          <td>Poor</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7">Average</td>
+          <td colspan="3">N/A</td>
+        </tr>
+        <tr>
+          <td colspan="6">Grand Total:</td>
+          <td>192</td>
+          <td>N/A</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="section-header">DISCIPLINE</div>
+
+    <table class="discipline-table">
+      <thead>
+        <tr>
+          <th>Discipline</th>
+          <th>Class Master Signature</th>
+          <th>Principal Signature</th>
+          <th>Next Term Start Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <label><input type="radio" name="discipline" value="warning"> Warning</label><br>
+            <label><input type="radio" name="discipline" value="absence"> Absence</label><br>
+            <label><input type="radio" name="discipline" value="suspension"> Suspension</label><br>
+            <label><input type="radio" name="discipline" value="late-coming"> Late Coming</label><br>
+          </td>
+          <td></td>
+          <td></td>
+          <td>05/01/2015</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</body>
+
+</html>
