@@ -66,11 +66,11 @@
                     <a href="{% url 'students:marks' %} " ><i class="fas fa-certificate"></i> <span>Marks</span></a>
                 </li>
 
-                <li class="submenu {% if section == 'subjects-area'  %}active{% endif %}">
+                <li class="submenu {% if section == 'reports-area'  %}active{% endif %}">
                     <a href="#"><i class="fas fa-book-reader"></i> <span> Reports</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="{% url 'staff:subjects' %}">Subject List</a></li>
+                        <li><a href="{% url 'reports:reports' %}">Generate Reports</a></li>
                         <li><a href="add-subject.html">Subject Add</a></li>
                         <li><a href="edit-subject.html">Subject Edit</a></li>
                     </ul>
