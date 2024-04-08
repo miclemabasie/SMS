@@ -1,4 +1,9 @@
 from django.shortcuts import render
+import pdfkit
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from apps.students.models import StudentProfile
 
 
 def reports(request, *args, **kwargs):
@@ -11,16 +16,9 @@ def reports(request, *args, **kwargs):
     return render(request, template_name, context)
 
 
-import pdfkit
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from .models import Student
-
-
 def generate_report_card_pdf(request, class_id):
     # Get all students in the class
-    students = Student.objects.filter(class_id=class_id)
+    students = StudentProfile.objects.filter(class_id=class_id)
 
     # Create an HttpResponse object with content type PDF
     response = HttpResponse(content_type="application/pdf")
