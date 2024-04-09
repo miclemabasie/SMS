@@ -361,7 +361,7 @@ def upload_marks(request, class_pkid, *args, **kwargs):
 
         wb = load_workbook(filename=marks_file)
 
-        ws = wb.get_sheet_by_name("marks")
+        ws = wb["marks"]
 
         for row in ws.iter_rows(min_row=2, values_only=True):
             student_matricule, marks, subject_name, subject_id = (
@@ -371,7 +371,7 @@ def upload_marks(request, class_pkid, *args, **kwargs):
                 row[7],
             )
             print(
-                f"student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject_id}"
+                f"this is the student information student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject_id}"
             )
             student = StudentProfile.objects.get(matricule=student_matricule)
             # Check if a mark already exists for this student and subject
@@ -382,6 +382,8 @@ def upload_marks(request, class_pkid, *args, **kwargs):
             mark.teacher = teacher
 
             # Update the score
+            if not marks:
+                marks = 0
             mark.score = marks
             mark.save()
             print(mark)
@@ -641,6 +643,7 @@ def upload_students_from_file(request, *args, **kwargs):
                 gender=gender,
                 phone_number=str(phone),
             )
+
             if not address:
                 student.address = faker.address()
 

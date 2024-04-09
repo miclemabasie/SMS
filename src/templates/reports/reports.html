@@ -95,16 +95,17 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <form action="{% url 'sessions:session-create' %}" method="post">
+                        <form action="{% url 'reports:generate_report_cards' %}" method="post">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group local-forms">
-                                        <label>Year Name <span class="login-danger">*</span></label>
-                                        <select class="form-control" name="selected_year">
+                                        <label>Class <span class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_class_id">
 
                                             {% for class in classes %}
-                                            <option value="{{class.class_name}}">{{class.class_name}}</option>
+                                            <option value="{{class.pkid}}">{{class.grade_level}}-{{class.class_name}}
+                                            </option>
                                             {% endfor %}
                                         </select>
                                     </div>

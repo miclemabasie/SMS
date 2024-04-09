@@ -141,7 +141,11 @@ class Mark(TimeStampedUUIDModel):
         null=True,
     )
     teacher = models.ForeignKey(
-        "TeacherProfile", related_name="marks", on_delete=models.CASCADE
+        "TeacherProfile",
+        related_name="marks",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
     exam_session = models.ForeignKey(
         ExaminationSession, related_name="session_marks", on_delete=models.CASCADE

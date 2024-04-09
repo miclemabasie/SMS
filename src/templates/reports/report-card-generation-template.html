@@ -119,6 +119,8 @@
 
     <div class="section-header">FIRST TERM PROGRESS RECORD</div>
 
+    <p>{{student.user.first_name}}</p>
+
     <table class="subject-table">
       <thead>
         <tr>
@@ -127,146 +129,25 @@
           <th >SEQ 2</th>
           <th rowspan="2">AV./20</th>
           <th rowspan="2">COEF</th>
-          <th rowspan="2">TERM</th>
+          <th rowspan="2">M X C</th>
           <th rowspan="2">Teacher's Name</th>
           <th rowspan="2">Teacher's Remark</th>
         </tr>
         
       </thead>
       <tbody>
+       {% for subject in courses %}
         <tr>
-          <td>ENGLISH</td>
-      
-          <td>36</td>
-          <td>14</td>
-          <td>10.5</td>
-          <td>3</td>
-          <td>1234</td>
-          <td>Mme NTENGA</td>
-          <td>Good</td>
-        </tr>
-        <tr>
-          <td>MATHEMATICS</td>
-
-          <td>30</td>
-          <td>20</td>
-          <td>12.5</td>
-          <td>3</td>
-          <td>5678</td>
-          <td>Mrs. SMITH</td>
-          <td>Excellent</td>
-        </tr>
-        <tr>
-          <td>PHYSICS</td>
-          <td>22</td>
-          <td>20</td>
-          <td>10</td>
-          <td>3</td>
-          <td>91011</td>
-          <td>Mr. JOHNSON</td>
-          <td>Weak</td>
-        </tr>
-        <!-- Add more rows for other subjects -->
-        <tr>
-          <td>CHEMISTRY</td>
-          <td>25</td>
+          <td>{{subject.name}}</td>
           <td>18</td>
-          <td>13</td>
-          <td>3</td>
-          <td>121314</td>
-          <td>Mrs. PARKER</td>
+          <td>14.5</td>          
+          <td>{{subject.coef}}</td>
+          <td>{{subject.coef}}</td>
+          <td>Mr. Kum</td>
+          <td>Good</td>
           <td>Poor</td>
         </tr>
-        <tr>
-          <td>BIOLOGY</td>
-          <td>30</td>
-          <td>20</td>
-          <td>14</td>
-          <td>3</td>
-          <td>151617</td>
-          <td>Mr. WHITE</td>
-          <td>Good</td>
-        </tr>
-        <tr>
-          <td>HISTORY</td>
-          <td>26</td>
-          <td>17</td>
-          <td>13.5</td>
-          <td>3</td>
-          <td>181920</td>
-          <td>Mrs. BROWN</td>
-          <td>Excellent</td>
-        </tr>
-        <tr>
-          <td>GEOGRAPHY</td>
-          <td>25</td>
-          <td>18</td>
-          <td>13.5</td>
-          <td>3</td>
-          <td>212223</td>
-          <td>Mr. GREEN</td>
-          <td>Excellent</td>
-        </tr>
-        <tr>
-          <td>LITERATURE</td>
-          <td>28</td>
-          <td>20</td>
-          <td>14.5</td>
-          <td>3</td>
-          <td>242526</td>
-          <td>Mrs. JOHNSON</td>
-          <td>Weak</td>
-        </tr>
-        <tr>
-          <td>PHILOSOPHY</td>
-          <td>26</td>
-          <td>18</td>
-          <td>13.5</td>
-          <td>3</td>
-          <td>272829</td>
-          <td>Mr. JAMES</td>
-          <td>Good</td>
-        </tr>
-        <tr>
-          <td>ECONOMICS</td>
-          <td>28</td>
-          <td>20</td>
-          <td>15.5</td>
-          <td>3</td>
-          <td>303132</td>
-          <td>Mrs. ADAMS</td>
-          <td>Good</td>
-        </tr>
-        <tr>
-          <td>COMPUTER SCIENCE</td>
-          <td>26</td>
-          <td>18</td>
-          <td>14.5</td>
-          <td>3</td>
-          <td>333435</td>
-          <td>Mr. EVANS</td>
-          <td>Poor</td>
-        </tr>
-        <tr>
-          <td>COMPUTER SCIENCE</td>
-          <td>26</td>
-          <td>18</td>
-          <td>14.5</td>
-          <td>3</td>
-          <td>333435</td>
-          <td>Mr. EVANS</td>
-          <td>Poor</td>
-        </tr>
-        <tr>
-          <td>COMPUTER SCIENCE</td>
-          <td>26</td>
-          <td>18</td>
-          <td>14.5</td>
-          <td>3</td>
-          <td>333435</td>
-          <td>Mr. EVANS</td>
-          <td>Poor</td>
-        </tr>
+        {% endfor %}
       </tbody>
       <tfoot>
         <tr>
