@@ -5,12 +5,14 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from apps.students.models import StudentProfile, Class, Subject
+from django.contrib.auth.decorators import login_required
 
 import tempfile
 from PyPDF2 import PdfMerger
 import os
 
 
+@login_required
 def reports(request, *args, **kwargs):
     classes = Class.objects.all()
     template_name = "reports/reports.html"
@@ -22,6 +24,7 @@ def reports(request, *args, **kwargs):
 import pdfkit
 
 
+@login_required
 def generate_report_card_pdf(request):
     if request.method == "POST":
         class_id = request.POST.get("selected_class_id")

@@ -7,6 +7,7 @@ from apps.terms.models import AcademicYear
 from datetime import datetime, time, timezone
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 @login_required
@@ -24,6 +25,12 @@ def add_fee_view(request, pkid, matricule, *args, **kwargs):
 
         # Create the user instance
         # construct a valid date out of the html date
+
+        if fees_amount > target_amount:
+            messages.warning(request, "Fees amount is greater than the target amount.")
+            return redirect(
+                reverse("fees:add-fee", kwargs={"pkid": pkid, "matricule": matricule})
+            )
         pay_date_with_time = None
         if pay_date:
             date_string_from_form = pay_date
@@ -102,6 +109,12 @@ def edit_fee_view(request, pkid, matricule, *args, **kwargs):
         target_amount = request.POST.get("target_amount")
         selected_fee_type = request.POST.get("selected_fee_type")
         pay_date = request.POST.get("pay_date")
+
+        if fees_amount > target_amount:
+            messages.warning(request, "Fees amount is greater than the target amount.")
+            return redirect(
+                reverse("fees:edit-fee", kwargs={"pkid": pkid, "matricule": matricule})
+            )
 
         # Create the user instance
         # construct a valid date out of the html date

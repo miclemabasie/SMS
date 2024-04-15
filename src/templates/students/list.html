@@ -104,7 +104,7 @@
                                                         class="avatar-img rounded-circle"
                                                         src="{{ student.profile_photo.url}}"
                                                         alt="User Image"></a>
-                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.user.username}}</a>
+                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.user.first_name}} {{student.user.last_name}}</a>
                                             </h2>
                                         </td>
                                         <td>{{student.current_class.class_name}}</td>
@@ -113,13 +113,12 @@
                                         <td>{{ student.phone_number }}</td>
                                         <td>{{ student.address }}</td>
                                         <td>
-                                            
+            
                                             {% if student.is_owing %}
                                                 <span class="badge badge-warning">Is Owing</span>
                                             {% else %}
                                                 <span class="badge badge-success">Completed</span>
-                                            {% endif %}
-                                                
+                                            {% endif %}                                                
                                         </td>
                                         <td class="text-right">
                                             <div class="actions">
