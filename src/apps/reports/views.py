@@ -6,19 +6,90 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from apps.students.models import StudentProfile, Class, Subject
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from apps.terms.models import AcademicYear, Term, ExaminationSession
 
 import tempfile
 from PyPDF2 import PdfMerger
 import os
+
+from xhtml2pdf import pisa
+from django.template.loader import get_template
 
 
 @login_required
 def reports(request, *args, **kwargs):
     classes = Class.objects.all()
     template_name = "reports/reports.html"
-    context = {"section": "reports", "classes": classes}
+    students = StudentProfile.objects.all()
+
+    context = {
+        "section": "reports",
+        "classes": classes,
+        "students": students,
+    }
 
     return render(request, template_name, context)
+
+
+@login_required
+def create_one_report_card(request, *args, **kwargs):
+
+    if request.method == "POST":
+        print("loggginnnnnng")
+        selected_student_id = request.POST.get("selected_student_id")
+        if not selected_student_id:
+            messages.error(request, "Invalid or empty student id")
+            return reverse("reporsts:reports")
+        # Get the student
+        student = StudentProfile.objects.filter(pkid=selected_student_id)
+
+        if student.exists():
+            student = student.first()
+        else:
+            messages.error(request, "No student with given id and matricule found.")
+            return redirect(reverse("reports:reports"))
+
+        # get all the subjects associated to the student
+        # Get all the subjects in the class the student belongs to
+        # and those optionally added by the student
+        subjects1 = student.current_class.subjects.all()
+        # get optoinal subjects for the particular student
+        optional_subjects = student.optional_subjects.all()
+
+        distinct_subjects = set(list(subjects1) + list(optional_subjects))
+
+        # current year
+        academic_year = AcademicYear.objects.filter(is_current=True).first()
+        term = Term.objects.filter(is_current=True).first()
+
+        sessions = ExaminationSession.objects.filter(term=term)
+
+        pdf_data = {
+            "student": student,
+            "academic_year": academic_year,
+            "subjects": distinct_subjects,
+            "term": term,
+            "sessions": sessions,
+        }
+        context = {"data": pdf_data}
+
+        report_card_name = f"{student.user.first_name}-report"
+        response = HttpResponse(content_type="application/pdf")
+
+        template_path = "reports/report-card-generation-template.html"
+
+        # find the template and render it.
+        template = get_template(template_path)
+        html = template.render(context)
+        # create a pdf
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        # if error then show some funny view
+        if pisa_status.err:
+            return HttpResponse("We had some errors <pre>" + html + "</pre>")
+        return response
+    else:
+        return redirect(reverse("reports:reports"))
 
 
 import pdfkit

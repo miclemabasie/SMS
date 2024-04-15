@@ -118,8 +118,7 @@
     </div> -->
 
     <div class="section-header">FIRST TERM PROGRESS RECORD</div>
-
-    <p>{{student.user.first_name}}</p>
+    <div class="section-header">{{data.academic_year.name}}</div>
 
     <table class="subject-table">
       <thead>
@@ -136,7 +135,7 @@
         
       </thead>
       <tbody>
-       {% for subject in courses %}
+       {% for subject in data.subjects %}
         <tr>
           <td>{{subject.name}}</td>
           <td>18</td>

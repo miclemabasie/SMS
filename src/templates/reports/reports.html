@@ -34,7 +34,7 @@
                 <div class="form-group mb-4 text-end float-right">
                     <div class="settings-btns">
                         <a href="" href="#" data-bs-toggle="modal" data-bs-target="#generate_report_card">
-                            <button class="btn ribbon-primary text-white">Update</button>
+                            <button class="btn ribbon-primary text-white">Generate report cards</button>
                         </a>
                     </div>
                 </div>
@@ -53,8 +53,8 @@
 
                 <div class="form-group mb-4 text-end float-right">
                     <div class="settings-btns">
-                        <a href="">
-                            <button class="btn ribbon-secondary text-white">Update</button>
+                        <a href="" data-bs-toggle="modal" data-bs-target="#generate_single_report_card">
+                            <button class="btn ribbon-secondary text-white">Generate single report</button>
                         </a>
                     </div>
                 </div>
@@ -128,6 +128,56 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal custom-modal fade" id="generate_single_report_card" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Generate Report Card</h3>
+                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Select the target class
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'reports:generate_single_report_card' %}" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Class <span class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_student_id">
+
+                                            {% for student in students %}
+                                            <option value="{{student.pkid}}">{{student.user.first_name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% comment %} testing {% endcomment %}
+<a href="url"></a>
 
 {% endblock content %}
 

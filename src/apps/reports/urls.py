@@ -11,4 +11,9 @@ urlpatterns = [
         views.generate_report_card_pdf,
         name="generate_report_cards",
     ),
+    path(
+        "generate-report",
+        views.create_one_report_card,
+        name="generate_single_report_card",
+    ),
 ]
