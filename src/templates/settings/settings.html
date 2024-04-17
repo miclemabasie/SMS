@@ -76,28 +76,35 @@
                                     name="logo">
                                 <h6 class="settings-size">Recommended image size is <span>150px x 150px</span></h6>
                                 <div class="upload-images">
+                                {% if setting.school.logo %}
                                     <img src="{{setting.school_logo.url}}" alt="Image">
                                     <a href="javascript:void(0);" class="btn-icon logo-hide-btn">
                                         <i class="feather-x-circle"></i>
                                     </a>
+                                {%endif%}
                                 </div>
 
                             </div>
 
 
                             <div class="form-group">
+                                {% if setting.school_favicon%}
                                 <label>Favicon </label>
+                                        
                                 <input value="{{setting.school_favicon}}" type="file" class="form-control"
                                     name="favicon">
+                                {%endif%}
                                 <h6 class="settings-size">
                                     Recommended image size is <span>16px x 16px or 32px x 32px</span>
                                 </h6>
                                 <h6 class="settings-size mt-1">Accepted formats: only png and ico</h6>
                                 <div class="upload-images upload-size">
+                                    {% if setting.school_favicon%}
                                     <img src="{{setting.school_favicon.url}}" alt="Image">
                                     <a href="javascript:void(0);" class="btn-icon logo-hide-btn">
                                         <i class="feather-x-circle"></i>
                                     </a>
+                                    {%endif%}
                                 </div>
 
                             </div>
@@ -174,11 +181,17 @@
                                 </tr>
                                 <tr>
                                     <td>Logo</td>
+                                    {% if setting.school_logo %}
                                     <td>{{setting.school_logo}}</td>
+                                    
+                                    {% endif %}
                                 </tr>
                                 <tr>
                                     <td>Favicon</td>
+                                {% if setting.school_favicon %}
+                                
                                     <td>{{setting.school_favicon}}</td>
+                                {% endif %}
                                 </tr>
                                 <tr>
                                     <td>Address Line 1</td>
