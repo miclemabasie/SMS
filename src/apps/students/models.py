@@ -101,6 +101,18 @@ class StudentProfile(TimeStampedUUIDModel):
             self.matricule = auto_create_matricule("student")
         return super().save(*args, **kwargs)
 
+    def get_all_subjects(self):
+        # get all the subjects associated to the student
+        # Get all the subjects in the class the student belongs to
+        # and those optionally added by the student
+        subjects1 = self.current_class.subjects.all()
+        # get optoinal subjects for the particular student
+        optional_subjects = self.optional_subjects.all()
+
+        distinct_subjects = set(list(subjects1) + list(optional_subjects))
+
+        return list(distinct_subjects)
+
 
 class Attendance(TimeStampedUUIDModel):
     is_present = models.BooleanField(default=False)
@@ -122,7 +134,7 @@ class Subject(TimeStampedUUIDModel):
     code = models.CharField(
         verbose_name=_("Subject Code"), max_length=10, blank=True, null=True
     )
-    coef = models.PositiveIntegerField(verbose_name=_("Subject Code"), default=1)
+    coef = models.PositiveIntegerField(verbose_name=_("Subject Coef"), default=1)
 
     # Add a ManyToManyField for teachers
     # teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)

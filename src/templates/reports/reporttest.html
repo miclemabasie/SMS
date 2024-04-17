@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secondary School Report Card</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subject-table,
+        .discipline-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .subject-table th,
+        .subject-table td,
+        .discipline-table th,
+        .discipline-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .subject-table th,
+        .discipline-table th {
+            background-color: #f0f0f0;
+        }
+
+        .subject-table tfoot td:first-child,
+        .subject-table tfoot td:last-child {
+            width: 100px; /* Adjust the width as needed */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="report-card">
+        <div class="logo">
+            <img src="school_logo.png" alt="School Logo">
+        </div>
+
+        <div class="header">
+            <h1>REPUBLIC OF CAMEROON</h1>
+            <h2><u><i>Peace Work Fatherland</i></u></h2>
+        </div>
+
+        <div class="section-header">FIRST TERM PROGRESS RECORD</div>
+
+        <table class="subject-table">
+            <thead>
+                <tr>
+                    <th>SUBJECT NAME</th>
+                    <th>seq1</th>
+                    <th>seq2</th>                   
+                    <th>AV./20</th>
+                    <th>COEF</th>
+                    <th>M X C</th>
+                    <th>Teacher's Name</th>
+                    <th>Teacher's Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                <tr>
+                    <td>maths</td>
+                    <td>18</td>
+                    <td>14.5</td>
+                    <td>3</td>
+                    <td>23</td>
+                    <td>Mr. Kum</td>
+                    <td>Good</td>
+                    <td>Poor</td>
+                </tr>
+              
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">Average</td>
+                    <td colspan="4">N/A</td>
+                </tr>
+                <tr>
+                    <td colspan="6">Grand Total:</td>
+                    <td>192</td>
+                    <td>N/A</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="section-header">DISCIPLINE</div>
+
+        
+
+    </div>
+
+</body>
+
+</html>
