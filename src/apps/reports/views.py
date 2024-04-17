@@ -4,7 +4,7 @@ import pdfkit
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from apps.students.models import StudentProfile, Class, Subject
+from apps.students.models import StudentProfile, Class, Subject, Mark
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from apps.terms.models import AcademicYear, Term, ExaminationSession
@@ -32,11 +32,14 @@ def reports(request, *args, **kwargs):
     return render(request, template_name, context)
 
 
+from .utils import calculate_marks
+
+
 @login_required
 def create_one_report_card(request, *args, **kwargs):
 
     if request.method == "POST":
-        print("loggginnnnnng")
+
         selected_student_id = request.POST.get("selected_student_id")
         if not selected_student_id:
             messages.error(request, "Invalid or empty student id")
@@ -50,27 +53,41 @@ def create_one_report_card(request, *args, **kwargs):
             messages.error(request, "No student with given id and matricule found.")
             return redirect(reverse("reports:reports"))
 
-        # get all the subjects associated to the student
-        # Get all the subjects in the class the student belongs to
-        # and those optionally added by the student
-        subjects1 = student.current_class.subjects.all()
-        # get optoinal subjects for the particular student
-        optional_subjects = student.optional_subjects.all()
-
-        distinct_subjects = set(list(subjects1) + list(optional_subjects))
-
-        # current year
+        print(calculate_marks(student))
+        #     # current year
         academic_year = AcademicYear.objects.filter(is_current=True).first()
         term = Term.objects.filter(is_current=True).first()
 
         sessions = ExaminationSession.objects.filter(term=term)
 
+        #     # Get the marks for the first sequestn in the term
+        #     term_1, term_2 = ExaminationSession.objects.filter(term=term)
+
+        #     print(term_1)
+        #     print(term_2)
+
+        #     # marks for term1
+        #     sequence_1_marks_list = Mark.objects.filter(student=student, exam_session=term_1)
+        #     sequence_2_marks_list = Mark.objects.filter(student=student, exam_session=term_2)
+
+        #     sequence_1_marks = []
+        #     for mark in sequence_1_marks_list:
+        #         sequence_1_marks.append((mark.subject.name, mark.score))
+
+        #     sequence_2_marks = []
+        #     for mark in sequence_2_marks_list:
+        #         sequence_2_marks.append((mark.subject.name, mark.score))
+
+        #     print(sequence_1_marks)
+        #     print(sequence_2_marks)
+        student_marks = calculate_marks(student)
         pdf_data = {
-            "student": student,
-            "academic_year": academic_year,
-            "subjects": distinct_subjects,
+            "marks": student_marks["data"],
+            "student_data": student_marks,
             "term": term,
+            "term_name": term.term.title(),
             "sessions": sessions,
+            "year": academic_year,
         }
         context = {"data": pdf_data}
 

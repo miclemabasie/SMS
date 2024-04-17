@@ -2,192 +2,161 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secondary School Report Card</title>
-  <style>
-
-    @page {
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secondary School Report Card</title>
+    <style>
+        @page {
             size: A4;
             margin: 0;
         }
 
         body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-    }
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
 
-   
-    .logo {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    .header {
-      text-align: center;
-      /* margin-bottom: 20px; */
-    }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    .student-info {
-      margin-bottom: 20px;
-      text-align: right;
-    }
+        .section-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
 
-    .academic-info {
-      /* margin-bottom: 20px; */
-      text-align: left;
-    }
+        .subject-table,
+        .discipline-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
 
-    .section-header {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      text-align: center;
-    }
+        .subject-table th,
+        .subject-table td,
+        .discipline-table th,
+        .discipline-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
 
-    .subject-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
+        .subject-table th,
+        .discipline-table th {
+            background-color: #f0f0f0;
+        }
 
-    .subject-table th,
-    .subject-table td {
-      border: 1px solid #000;
-      padding: 8px;
-      text-align: center;
-      min-width: 60px;
-    }
-
-    .subject-table th {
-      background-color: #f0f0f0;
-    }
-
-    .discipline-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    .discipline-table th,
-    .discipline-table td {
-      border: 1px solid #000;
-      padding: 8px;
-      text-align: center;
-    }
-
-    .discipline-table th {
-      background-color: #f0f0f0;
-    }
-
-    .subject-table tfoot td:first-child {
-      width: 100px;
-      /* Adjust the width as needed */
-    }
-
-    .subject-table tfoot td:last-child {
-      width: 80px;
-      /* Adjust the width as needed */
-    }
-  </style>
+        .subject-table tfoot td:first-child,
+        .subject-table tfoot td:last-child {
+            width: 100px;
+            /* Adjust the width as needed */
+        }
+    </style>
 </head>
 
 <body>
 
-  <div class="report-card">
-    <div class="logo">
-      <img src="school_logo.png" alt="School Logo">
+    <div class="report-card">
+        <div class="logo">
+            <img src="school_logo.png" alt="School Logo">
+        </div>
+
+        <div class="header">
+            <h1>REPUBLIC OF CAMEROON</h1>
+            <h5><u><i>Peace Work Fatherland</i></u></h5>
+        </div>
+
+        <div class="section-header">{{data.term}} PROGRESS RECORD</div>
+        <div class="section-header">{{data.academic_year.name}}</div>
+
+        <table class="subject-table">
+            <thead>
+                <tr>
+                    <th>SUBJECT NAME</th>
+                    {% for session in data.sessions %}
+                    {% if session.exam_session == 'First Sequence' %}
+                    <th>1st Seq</th>
+                    {% elif session.exam_session == "Second Sequence" %}
+                    <th>2nd Seq</th>
+                    {% elif session.exam_session == "Third Sequence" %}
+                    <th>3rd Seq</th>
+                    {% elif session.exam_session == "Fourth Sequence" %}
+                    <th>4th Seq</th>
+                    {% elif session.exam_session == "Fifth Sequence" %}
+                    <th>5th Seq</th>
+                    {% elif session.exam_session == "Sixth Sequence" %}
+                    <th>6th Seq</th>
+                    {% endif %}
+                    {% endfor %}
+                    <th>AV./20</th>
+                    <th>COEF</th>
+                    <th>M X C</th>
+                    <th>Teacher's Name</th>
+                    <th>Teacher's Remark</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for mark in data.marks %}
+
+                <tr>
+                    <td>{{mark.subject_name}}</td>
+                    <td>{{mark.first_sequence}}</td>
+                    <td>{{mark.session2}}</td>
+                    <td>{{mark.average}}</td>
+                    <td>{{mark.coef}}</td>
+                    <td>{{mark.MXC}}</td>
+                    <td>{{mark.teacher}}</td>
+                    <td>{{mark.remark}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <th>Grand Total</th>
+                    <th>{{data.student_data.sequence1_total}}</th>
+                    <th>{{data.student_data.sequence2_total}}</th>
+                    <th>{{data.student_data.avg_sum}}</th>
+                    <th>{{data.student_data.sum_of_coefs}}</th>
+                    <th>{{data.student_data.mxc_sum}}</th>
+                    <th colspan="2">{{data.student_data.term_remark}}</th>
+                </tr>
+                <tr>
+                    <th>Sequence Avg.</th>
+                    <th>{{data.student_data.session1_avg}}</th>
+                    <th>{{data.student_data.session2_avg}}</th>
+                    <th colspan="2">Term Average:</th>
+                    <th>{{data.student_data.term_avg}}</th>
+                    <th>{{data.student_data.mxc_sum}}</th>
+                    <th>Total</th>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">Average</td>
+                    <td colspan="4">N/A</td>
+                </tr>
+                <tr>
+                    <td colspan="6">Grand Total:</td>
+                    <td>192</td>
+                    <td>N/A</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="section-header">DISCIPLINE</div>
+
+
+
     </div>
-
-    <div class="header">
-      <h1>REPUBLIC OF CAMEROON</h1>
-      <h2><u><i>Peace Work Fatherland</i></u></h2>
-    </div>
-
-    <!-- <div class="student-info">
-      <p>Section: Industrial Techniques</p>
-      <p>Specialty: Civil Engineering</p>
-      <p>Student's name: [Student's Name]</p>
-      <p>Date of Birth: [Date of Birth]</p>
-    </div>
-
-    <div class="academic-info">
-      <p>Academic Year: 2014-2015</p>
-      <p>Repeater:</p>
-      <p>Adm. Nr: 0 0</p>
-    </div> -->
-
-    <div class="section-header">FIRST TERM PROGRESS RECORD</div>
-    <div class="section-header">{{data.academic_year.name}}</div>
-
-    <table class="subject-table">
-      <thead>
-        <tr>
-          <th rowspan="2">SUBJECT NAME</th>
-          <th >SEQ.1</th>
-          <th >SEQ 2</th>
-          <th rowspan="2">AV./20</th>
-          <th rowspan="2">COEF</th>
-          <th rowspan="2">M X C</th>
-          <th rowspan="2">Teacher's Name</th>
-          <th rowspan="2">Teacher's Remark</th>
-        </tr>
-        
-      </thead>
-      <tbody>
-       {% for subject in data.subjects %}
-        <tr>
-          <td>{{subject.name}}</td>
-          <td>18</td>
-          <td>14.5</td>          
-          <td>{{subject.coef}}</td>
-          <td>{{subject.coef}}</td>
-          <td>Mr. Kum</td>
-          <td>Good</td>
-          <td>Poor</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="7">Average</td>
-          <td colspan="3">N/A</td>
-        </tr>
-        <tr>
-          <td colspan="6">Grand Total:</td>
-          <td>192</td>
-          <td>N/A</td>
-        </tr>
-      </tfoot>
-    </table>
-
-    <div class="section-header">DISCIPLINE</div>
-
-    <table class="discipline-table">
-      <thead>
-        <tr>
-          <th>Discipline</th>
-          <th>Class Master Signature</th>
-          <th>Principal Signature</th>
-          <th>Next Term Start Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <label><input type="radio" name="discipline" value="warning"> Warning</label><br>
-            <label><input type="radio" name="discipline" value="absence"> Absence</label><br>
-            <label><input type="radio" name="discipline" value="suspension"> Suspension</label><br>
-            <label><input type="radio" name="discipline" value="late-coming"> Late Coming</label><br>
-          </td>
-          <td></td>
-          <td></td>
-          <td>05/01/2015</td>
-        </tr>
-      </tbody>
-    </table>
-
-  </div>
 
 </body>
 
