@@ -60,32 +60,12 @@ def create_one_report_card(request, *args, **kwargs):
 
         sessions = ExaminationSession.objects.filter(term=term)
 
-        #     # Get the marks for the first sequestn in the term
-        #     term_1, term_2 = ExaminationSession.objects.filter(term=term)
-
-        #     print(term_1)
-        #     print(term_2)
-
-        #     # marks for term1
-        #     sequence_1_marks_list = Mark.objects.filter(student=student, exam_session=term_1)
-        #     sequence_2_marks_list = Mark.objects.filter(student=student, exam_session=term_2)
-
-        #     sequence_1_marks = []
-        #     for mark in sequence_1_marks_list:
-        #         sequence_1_marks.append((mark.subject.name, mark.score))
-
-        #     sequence_2_marks = []
-        #     for mark in sequence_2_marks_list:
-        #         sequence_2_marks.append((mark.subject.name, mark.score))
-
-        #     print(sequence_1_marks)
-        #     print(sequence_2_marks)
         student_marks = calculate_marks(student)
         pdf_data = {
             "marks": student_marks["data"],
             "student_data": student_marks,
             "term": term,
-            "term_name": term.term.title(),
+            "term_name": term.term.upper(),
             "sessions": sessions,
             "year": academic_year,
         }

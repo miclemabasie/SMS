@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Partitioned Cell</title>
+
+    <style>
+        .extra-info {
+            display: flex;
+            flex-direction: row;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table border="1" style="margin: auto;">
+        <tr>
+            <td colspan="2" rowspan="2">Large Cell 1</td>
+            <td colspan="2">Large Cell 2</td>
+        </tr>
+        <tr>
+            <td colspan="2">Large Cell 3</td>
+        </tr>
+        <tr>
+            <td rowspan="2">Large Cell 4</td>
+            <td rowspan="2">Large Cell 5</td>
+            <td>Small Cell 1</td>
+            <td>Small Cell 2</td>
+        </tr>
+        <tr>
+            <td>Small Cell 3</td>
+            <td>Small Cell 4</td>
+        </tr>
+    </table>
+
+    <div class="extra-info">
+        <div class="discipline">This is the discipline section</div>
+        <div class="gradding">This is the gradding section</div>
+
+    </div>
+    <div class="section-header">
+        <i><u>Principal's Remarks</u></i>
+
+
+        <div class="signatures">
+            <div class="class-master-signature">
+                <b><i>signature of the class master</i></b>
+            </div>
+
+            <div class="principla-signature">
+                <b><i>signature of the principal</i></b>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

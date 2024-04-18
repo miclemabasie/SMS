@@ -61,6 +61,36 @@
             width: 100px;
             /* Adjust the width as needed */
         }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+            /* Adjust the font size as needed */
+        }
+
+        tr {
+            height: 40px;
+            /* Adjust the height of the rows here */
+        }
+
+        .extra-info {
+            /* Optionally, you can set width or adjust other properties for .extra-info */
+        }
+
+        .discipline,
+        .gradding {
+            display: inline-block;
+            /* Optionally, you can set width or adjust other properties for .discipline and .gradding */
+        }
     </style>
 </head>
 
@@ -72,11 +102,11 @@
         </div>
 
         <div class="header">
-            <h1>REPUBLIC OF CAMEROON</h1>
+            <h1 style="color: red;">REPUBLIC OF CAMEROON</h1>
             <h5><u><i>Peace Work Fatherland</i></u></h5>
         </div>
 
-        <div class="section-header">{{data.term}} PROGRESS RECORD</div>
+        <div class="section-header">{{data.term_name }} PROGRESS RECORD</div>
         <div class="section-header">{{data.academic_year.name}}</div>
 
         <table class="subject-table">
@@ -111,17 +141,18 @@
 
                 <tr>
                     <td>{{mark.subject_name}}</td>
-                    <td>{{mark.first_sequence}}</td>
-                    <td>{{mark.session2}}</td>
-                    <td>{{mark.average}}</td>
+                    <td style="color: {% if mark.first_sequence < 10%} red {%else%} green {%endif%} ;">
+                        {{mark.first_sequence}}</td>
+                    <td style="color: {% if mark.session2 < 10%} red {%else%} green {%endif%}  ;">{{mark.session2}}</td>
+                    <td style="color: {% if mark.average < 10%} red {%else%} green {%endif%} ;">{{mark.average}}</td>
                     <td>{{mark.coef}}</td>
-                    <td>{{mark.MXC}}</td>
+                    <td style="color: {% if mark.MXC < 50%} red {%else%} green {%endif%} ;">{{mark.MXC}}</td>
                     <td>{{mark.teacher}}</td>
                     <td>{{mark.remark}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
-                    <th>Grand Total</th>
+                    <th>GRAND TOTAL:</th>
                     <th>{{data.student_data.sequence1_total}}</th>
                     <th>{{data.student_data.sequence2_total}}</th>
                     <th>{{data.student_data.avg_sum}}</th>
@@ -130,34 +161,75 @@
                     <th colspan="2">{{data.student_data.term_remark}}</th>
                 </tr>
                 <tr>
-                    <th>Sequence Avg.</th>
-                    <th>{{data.student_data.session1_avg}}</th>
-                    <th>{{data.student_data.session2_avg}}</th>
-                    <th colspan="2">Term Average:</th>
-                    <th>{{data.student_data.term_avg}}</th>
-                    <th>{{data.student_data.mxc_sum}}</th>
-                    <th>Total</th>
+                    <th rowspan="2">SEQ. Avg.</th>
+                    <th rowspan="2"
+                        style="color: {% if data.student_data.session1_avg < 10 %} red {% else %} green {% endif %} ;">
+                        {{ data.student_data.session1_avg }}</th>
+                    <th rowspan="2"
+                        style="color: {% if data.student_data.session2_avg < 10 %} red {% else %} green {% endif %} ;">
+                        {{ data.student_data.session2_avg }}</th>
+                    <th colspan="2">
+                        <h1>{{ data.term_name }}:</h1>
+                    </th>
+                    <th style="color: {% if data.student_data.term_avg < 10 %} red {% else %} green {% endif %} ;">
+                        <h1>{{ data.student_data.term_avg }}</h1>
+                    </th>
+                    <th>Class Avg.</th>
+                    <th>5.4</th>
                 </tr>
+
+                <tr>
+                    <th colspan="2">
+                        <h1>CLASS POSITION:</h1>
+                    </th>
+                    <th style="color: {% if data.student_data.term_avg < 10 %} red {% else %} green {% endif %} ;">
+                        <h1>N0. 4 / 9</h1>
+                    </th>
+                    <th>ldl</th>
+                    <th>ldl</th>
+                </tr>
+
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="4">Average</td>
-                    <td colspan="4">N/A</td>
+                    <td colspan="6">CLASS LEVEL</td>
+                    <td colspan="2"><i>weak</i></td>
                 </tr>
                 <tr>
-                    <td colspan="6">Grand Total:</td>
+                    <td colspan="6">TOTAL ENROLLMENT:</td>
                     <td>192</td>
-                    <td>N/A</td>
+                    <td></td>
                 </tr>
+
             </tfoot>
         </table>
 
-        <div class="section-header">DISCIPLINE</div>
+
+        <div class="section-header">
+            <i><u>Principal's Remarks</u></i>
+
+
+            <div class="signatures">
+                <div class="class-master-signature">
+                    <b><i>signature of the class master</i></b>
+                </div>
+
+                <div class="principla-signature">
+                    <b><i>signature of the principal</i></b>
+                </div>
+            </div>
+
+        </div>
 
 
 
     </div>
+    <div class="extra-info">
+        <div class="discipline">This is the discipline section</div>
+        <div class="gradding">This is the gradding section</div>
 
+
+    </div>
 </body>
 
 </html>
