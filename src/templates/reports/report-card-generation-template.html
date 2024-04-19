@@ -8,12 +8,12 @@
     <style>
         @page {
             size: A4;
-            margin: 0;
+            margin: 10pt;
+            border: 2px solid black;
         }
 
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
             margin: 0;
             padding: 20px;
         }
@@ -32,7 +32,6 @@
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 10px;
-            text-align: center;
         }
 
         .subject-table,
@@ -91,6 +90,10 @@
             display: inline-block;
             /* Optionally, you can set width or adjust other properties for .discipline and .gradding */
         }
+
+        .inline {
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -102,11 +105,11 @@
         </div>
 
         <div class="header">
-            <h1 style="color: red;">REPUBLIC OF CAMEROON</h1>
+            <h1>REPUBLIC OF CAMEROON</h1>
             <h5><u><i>Peace Work Fatherland</i></u></h5>
         </div>
 
-        <div class="section-header">{{data.term_name }} PROGRESS RECORD</div>
+        <div style="text-align: center;" class="section-header">{{data.term_name }} PROGRESS RECORD</div>
         <div class="section-header">{{data.academic_year.name}}</div>
 
         <table class="subject-table">
@@ -207,16 +210,27 @@
 
         <div class="section-header">
             <i><u>Principal's Remarks</u></i>
+            <!-- <div class="extra-info">
+                <div class="discipline">
+                    <p class="inline">some text in a p tag</p>
+                </div>
+                <div class="gradding">
+                    <p style="margin-left: 100px; margin-right: 0;" class="inline">The second text in the p tag</p>
+                </div>
 
+
+            </div> -->
 
             <div class="signatures">
-                <div class="class-master-signature">
-                    <b><i>signature of the class master</i></b>
+                <div style="float: left" class="inline class-master-signature">
+                    <b style="font-size: 16px;"><i><span>signature of the class
+                                master</span></i></b>
                 </div>
 
-                <div class="principla-signature">
-                    <b><i>signature of the principal</i></b>
+                <div style="float: right; text-align: right;" class="inline class-master-signature">
+                    <b style="font-size: 16px;"><i>signature of the principal</i></b>
                 </div>
+
             </div>
 
         </div>
@@ -224,12 +238,7 @@
 
 
     </div>
-    <div class="extra-info">
-        <div class="discipline">This is the discipline section</div>
-        <div class="gradding">This is the gradding section</div>
 
-
-    </div>
 </body>
 
 </html>
