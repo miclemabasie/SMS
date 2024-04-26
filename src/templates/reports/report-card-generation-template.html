@@ -108,9 +108,11 @@
             <h1>REPUBLIC OF CAMEROON</h1>
             <h5><u><i>Peace Work Fatherland</i></u></h5>
         </div>
+        
 
-        <div style="text-align: center;" class="section-header">{{data.term_name }} PROGRESS RECORD</div>
-        <div class="section-header">{{data.academic_year.name}}</div>
+        {% comment %} <h1>Student Name: {{data.student_data.name}}</h1> {% endcomment %}
+        <h1>{{data.student_data.name}} - {{data.term_name}} PROGRESS REPORT</h1>
+     
 
         <table class="subject-table">
             <thead>
@@ -207,7 +209,6 @@
             </tfoot>
         </table>
 
-
         <div class="section-header">
             <i><u>Principal's Remarks</u></i>
             <!-- <div class="extra-info">
@@ -217,8 +218,6 @@
                 <div class="gradding">
                     <p style="margin-left: 100px; margin-right: 0;" class="inline">The second text in the p tag</p>
                 </div>
-
-
             </div> -->
 
             <div class="signatures">

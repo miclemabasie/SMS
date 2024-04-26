@@ -8,7 +8,7 @@ urlpatterns = [
     path("reports", views.reports, name="reports"),
     path(
         "generate-report-card",
-        views.generate_report_card_pdf,
+        views.create_report_cards,
         name="generate_report_cards",
     ),
     path(

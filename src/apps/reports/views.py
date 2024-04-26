@@ -61,6 +61,7 @@ def create_one_report_card(request, *args, **kwargs):
         sessions = ExaminationSession.objects.filter(term=term)
 
         student_marks = calculate_marks(student)
+        print(student_marks)
         pdf_data = {
             "marks": student_marks["data"],
             "student_data": student_marks,
@@ -137,3 +138,63 @@ def generate_report_card_pdf(request):
 
     else:
         return redirect(reverse("reports:reports"))
+
+
+from io import BytesIO
+from PyPDF2 import PdfMerger
+
+
+@login_required
+def create_report_cards(request):
+    if request.method == "POST":
+        selected_class_id = request.POST.get("selected_class_id")
+
+        # get class
+
+        classes = Class.objects.filter(pkid=selected_class_id)
+
+        if classes.exists():
+            klass = classes.first()
+        else:
+            messages.error(request, "No class found with given id.")
+            return redirect(reverse("reports:reports"))
+
+        # Get all students for the class
+        students = StudentProfile.objects.filter(current_class=klass)
+
+        academic_year = AcademicYear.objects.filter(is_current=True).first()
+        term = Term.objects.filter(is_current=True).first()
+
+        sessions = ExaminationSession.objects.filter(term=term)
+
+        # Initialize a BytesIO object to write PDF content
+        pdf_file = BytesIO()
+        pdf_merger = PdfMerger()
+
+        for student in students:
+            student_marks = calculate_marks(student)
+            pdf_data = {
+                "marks": student_marks["data"],
+                "student_data": student_marks,
+                "term": term,
+                "term_name": term.term.upper(),
+                "sessions": sessions,
+                "year": academic_year,
+            }
+            context = {"data": pdf_data}
+            template_path = "reports/report-card-generation-template.html"
+            template = get_template(template_path)
+            html = template.render(context)
+            pisa_status = pisa.CreatePDF(html, dest=pdf_file)
+            if pisa_status.err:
+                return HttpResponse("Error generating PDF")
+            pdf_merger.append(BytesIO(pdf_file.getvalue()))
+            pdf_file.seek(0)
+
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="report_cards.pdf"'
+        pdf_merger.write(response)
+
+        return response
+    else:
+        return redirect("reports:reports")

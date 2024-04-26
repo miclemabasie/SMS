@@ -108,6 +108,7 @@ def calculate_marks(student):
 
     student_data = {
         "data": data,
+        "name": student.user.get_fullname,
         "sum_of_coefs": sum_of_coef,
         "sequence1_total": session_1_total_marks,
         "sequence2_total": session_2_total_marks,
