@@ -590,7 +590,7 @@ def upload_students_from_file(request, *args, **kwargs):
                 row[5],
                 row[6],
             )
-            attributes = [first_name, last_name, email, gender, phone]
+            attributes = [first_name, last_name, gender, phone]
             for value in attributes:
                 if not value:
                     messages.error(request, "Invalid file, missing information")
@@ -649,10 +649,7 @@ def upload_students_from_file(request, *args, **kwargs):
 
             print("Saving student")
             student.save()
-            print(student)
-            student.delete()
 
-            user.delete()
         messages.success(
             request,
             f"Students have been uploaded for the class {klass.grade_level}-{klass.class_name}",
