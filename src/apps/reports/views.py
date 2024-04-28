@@ -12,6 +12,9 @@ from apps.terms.models import AcademicYear, Term, ExaminationSession
 import tempfile
 from PyPDF2 import PdfMerger
 import os
+from .utils import calculate_marks
+
+from io import BytesIO
 
 from xhtml2pdf import pisa
 from django.template.loader import get_template
@@ -32,9 +35,6 @@ def reports(request, *args, **kwargs):
     return render(request, template_name, context)
 
 
-from .utils import calculate_marks
-
-
 @login_required
 def create_one_report_card(request, *args, **kwargs):
 
@@ -53,7 +53,6 @@ def create_one_report_card(request, *args, **kwargs):
             messages.error(request, "No student with given id and matricule found.")
             return redirect(reverse("reports:reports"))
 
-        print(calculate_marks(student))
         #     # current year
         academic_year = AcademicYear.objects.filter(is_current=True).first()
         term = Term.objects.filter(is_current=True).first()
@@ -61,7 +60,6 @@ def create_one_report_card(request, *args, **kwargs):
         sessions = ExaminationSession.objects.filter(term=term)
 
         student_marks = calculate_marks(student)
-        print(student_marks)
         pdf_data = {
             "marks": student_marks["data"],
             "student_data": student_marks,
@@ -90,60 +88,6 @@ def create_one_report_card(request, *args, **kwargs):
         return redirect(reverse("reports:reports"))
 
 
-import pdfkit
-
-
-@login_required
-def generate_report_card_pdf(request):
-    if request.method == "POST":
-        class_id = request.POST.get("selected_class_id")
-        students = StudentProfile.objects.filter(current_class__pkid=class_id)
-
-        # Create a temporary directory to store individual PDF files
-        temp_dir = tempfile.mkdtemp()
-
-        # Generate individual PDF files for each student's report card
-        for student in students:
-            # Generate HTML content for the student's report card
-            html_content = render_to_string(
-                "reports/report-card-generation-template.html",
-                {"student": student},
-            )
-
-            # Generate PDF file from HTML content
-            pdf_filename = os.path.join(temp_dir, f"{student.id}_report_card.pdf")
-            pdfkit.from_string(html_content, pdf_filename)
-
-        # Merge individual PDF files into a single PDF file
-        merged_pdf_path = os.path.join(temp_dir, "class_report_cards.pdf")
-        pdf_files = [
-            os.path.join(temp_dir, f"{student.id}_report_card.pdf")
-            for student in students
-        ]
-        pdf_merger = PdfMerger()
-        for pdf_file in pdf_files:
-            pdf_merger.append(pdf_file)
-        pdf_merger.write(merged_pdf_path)
-        pdf_merger.close()
-
-        # Send the merged PDF file as a response for download
-        with open(merged_pdf_path, "rb") as merged_pdf_file:
-            response = HttpResponse(
-                merged_pdf_file.read(), content_type="application/pdf"
-            )
-            response["Content-Disposition"] = (
-                'attachment; filename="class_report_cards.pdf"'
-            )
-            return response
-
-    else:
-        return redirect(reverse("reports:reports"))
-
-
-from io import BytesIO
-from PyPDF2 import PdfMerger
-
-
 @login_required
 def create_report_cards(request):
     if request.method == "POST":
@@ -170,9 +114,32 @@ def create_report_cards(request):
         # Initialize a BytesIO object to write PDF content
         pdf_file = BytesIO()
         pdf_merger = PdfMerger()
+        total_avgs = 0
+        class_performance = []
+        for s in students:
+            s_marks = calculate_marks(s)["term_avg"]
+            total_avgs += s_marks
+            class_performance.append((s, s_marks))
+
+        class_performance = sorted(
+            class_performance,
+            key=lambda x: x[1],
+            reverse=True,
+        )
+
+        # calculate class avg
+        class_avg = (total_avgs * 20) / (len(students) * 20)
 
         for student in students:
             student_marks = calculate_marks(student)
+            student_ranking = [
+                rank + 1
+                for rank, (s, _) in enumerate(class_performance)
+                if s.pkid == student.pkid
+            ][0]
+
+            print("class avg: ", class_avg)
+
             pdf_data = {
                 "marks": student_marks["data"],
                 "student_data": student_marks,
@@ -180,6 +147,9 @@ def create_report_cards(request):
                 "term_name": term.term.upper(),
                 "sessions": sessions,
                 "year": academic_year,
+                "student_rank": student_ranking,
+                "class_total": len(students),
+                "class_avg": class_avg,
             }
             context = {"data": pdf_data}
             template_path = "reports/report-card-generation-template.html"
@@ -192,7 +162,9 @@ def create_report_cards(request):
             pdf_file.seek(0)
 
         response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = 'attachment; filename="report_cards.pdf"'
+        response["Content-Disposition"] = (
+            f'attachment; filename="{klass.grade_level}-{klass.class_name}-report-cards.pdf"'
+        )
         pdf_merger.write(response)
 
         return response

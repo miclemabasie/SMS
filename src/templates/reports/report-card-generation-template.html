@@ -187,8 +187,8 @@
                     <th colspan="2">
                         <h1>CLASS POSITION:</h1>
                     </th>
-                    <th style="color: {% if data.student_data.term_avg < 10 %} red {% else %} green {% endif %} ;">
-                        <h1>N0. 4 / 9</h1>
+                    <th>
+                        <h1>N0. {{data.student_rank}} / {{data.class_total}}</h1>
                     </th>
                     <th>ldl</th>
                     <th>ldl</th>
@@ -202,7 +202,7 @@
                 </tr>
                 <tr>
                     <td colspan="6">TOTAL ENROLLMENT:</td>
-                    <td>192</td>
+                    <td>{{data.class_total}}</td>
                     <td></td>
                 </tr>
 

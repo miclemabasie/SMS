@@ -4,7 +4,6 @@ from apps.terms.models import Term, AcademicYear, ExaminationSession
 
 
 def calculate_marks(student):
-
     # get all subjects for the current student
 
     subjects = student.get_all_subjects()
@@ -30,8 +29,6 @@ def calculate_marks(student):
             subject=subject, exam_session=session1, student=student
         )
 
-        print("first mark", subject_mark_session1)
-
         if not subject_mark_session1.exists():
             score1 = "/"
         else:
@@ -41,8 +38,6 @@ def calculate_marks(student):
         subject_mark_session2 = Mark.objects.filter(
             subject=subject, exam_session=session2, student=student
         )
-
-        print("first mark", subject_mark_session2)
 
         if not subject_mark_session2.exists():
             score2 = "/"
