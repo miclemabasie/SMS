@@ -180,7 +180,7 @@
                         <h1>{{ data.student_data.term_avg }}</h1>
                     </th>
                     <th>Class Avg.</th>
-                    <th>5.4</th>
+                    <th>{{data.class_avg}}</th>
                 </tr>
 
                 <tr>
@@ -198,7 +198,15 @@
             <tfoot>
                 <tr>
                     <td colspan="6">CLASS LEVEL</td>
-                    <td colspan="2"><i>weak</i></td>
+                    {% if data.class_avg < 10 %}
+                        <td style="color: red;" colspan="2"><i>Weak</i></td>
+                    {% elif data.class_avg < 13 %}
+                        <td style="color: yellow;" colspan="2"><i>Average</i></td>
+                    {% elif data.class_avg < 16 %}
+                        <td style="color: green;" colspan="2"><i>Good</i></td>
+                    {% else %}
+                        <td style="color: green;" colspan="2"><i>Excellent</i></td>
+                    {% endif %}
                 </tr>
                 <tr>
                     <td colspan="6">TOTAL ENROLLMENT:</td>

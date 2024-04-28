@@ -149,7 +149,7 @@ def create_report_cards(request):
                 "year": academic_year,
                 "student_rank": student_ranking,
                 "class_total": len(students),
-                "class_avg": class_avg,
+                "class_avg": round(class_avg, 2),
             }
             context = {"data": pdf_data}
             template_path = "reports/report-card-generation-template.html"
