@@ -12,7 +12,7 @@ from apps.terms.models import AcademicYear, Term, ExaminationSession
 import tempfile
 from PyPDF2 import PdfMerger
 import os
-from .utils import calculate_marks
+from .utils import calculate_marks, create_student_academic_records
 
 from io import BytesIO
 
@@ -96,6 +96,7 @@ def create_report_cards(request):
         # get class
 
         classes = Class.objects.filter(pkid=selected_class_id)
+        term = Term.objects.get(is_current=True)
 
         if classes.exists():
             klass = classes.first()
@@ -107,6 +108,7 @@ def create_report_cards(request):
         students = StudentProfile.objects.filter(current_class=klass)
 
         academic_year = AcademicYear.objects.filter(is_current=True).first()
+        # get the current term
         term = Term.objects.filter(is_current=True).first()
 
         sessions = ExaminationSession.objects.filter(term=term)
@@ -139,6 +141,14 @@ def create_report_cards(request):
             ][0]
 
             print("class avg: ", class_avg)
+
+            # call the method to save the student report data to the database
+            if create_student_academic_records(
+                term, student, student_marks, student_ranking, klass
+            ):
+                pass
+            else:
+                return HttpResponse("Something happened while saving student records")
 
             pdf_data = {
                 "marks": student_marks["data"],

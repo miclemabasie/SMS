@@ -113,6 +113,11 @@ class StudentProfile(TimeStampedUUIDModel):
 
         return list(distinct_subjects)
 
+    def get_sum_of_subjects_coef(self):
+        subjects = self.get_all_subjects()
+        total_coef = sum([s.coef for s in subjects])
+        return total_coef
+
 
 class Attendance(TimeStampedUUIDModel):
     is_present = models.BooleanField(default=False)

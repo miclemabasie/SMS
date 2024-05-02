@@ -7,6 +7,7 @@ from datetime import datetime, timezone, time
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
+
 @login_required
 def create_academic_year(request):
 
@@ -15,7 +16,7 @@ def create_academic_year(request):
         session_name = request.POST.get("academic_session_name")
         session_start_date = request.POST.get("academic_session_start_date")
 
-        print( session_start_date, session_name)
+        print(session_start_date, session_name)
 
         if not session_start_date:
             session_start_date = tz.now()
@@ -23,17 +24,17 @@ def create_academic_year(request):
             # Convert the date to an appropriate date and recalculate
             date_string_from_form = session_start_date
 
-            dob = datetime.strptime(date_string_from_form, '%Y-%m-%d').date()
+            dob = datetime.strptime(date_string_from_form, "%Y-%m-%d").date()
             # Create a specific time
             specific_time = time(8, 51, 2)
 
-            session_start_date = datetime.combine(dob, specific_time, tzinfo=timezone.utc)
-
+            session_start_date = datetime.combine(
+                dob, specific_time, tzinfo=timezone.utc
+            )
 
         # Crete the session
         session = AcademicYear.objects.create(
-            name = session_name,
-            start_date = session_start_date
+            name=session_name, start_date=session_start_date
         )
 
         session.save()
@@ -51,7 +52,7 @@ def edit_academic_year(request, pkid):
         session_name = request.POST.get("academic_session_name")
         session_start_date = request.POST.get("academic_session_start_date")
 
-        print( session_start_date, session_name)
+        print(session_start_date, session_name)
         # Crete the session
         session.name = session_name
 
@@ -59,11 +60,13 @@ def edit_academic_year(request, pkid):
             # Convert the date to an appropriate date and recalculate
             date_string_from_form = session_start_date
 
-            dob = datetime.strptime(date_string_from_form, '%Y-%m-%d').date()
+            dob = datetime.strptime(date_string_from_form, "%Y-%m-%d").date()
             # Create a specific time
             specific_time = time(8, 51, 2)
 
-            session_start_date = datetime.combine(dob, specific_time, tzinfo=timezone.utc)
+            session_start_date = datetime.combine(
+                dob, specific_time, tzinfo=timezone.utc
+            )
 
             session.start_date = session_start_date
         session.save()
@@ -111,20 +114,19 @@ def create_term_view(request):
         # make sure not term is current create with the same for the given year
         test_term = Term.objects.filter(academic_year=year, term=term_name)
         if test_term.exists():
-            messages.error(request, "Term with same name already exist for the given year.")
+            messages.error(
+                request, "Term with same name already exist for the given year."
+            )
             return redirect(reverse("settings:setting-terms"))
-        
+
         # proceed to create the term
 
-        term = Term.objects.create(
-            term=term_name,
-            academic_year = year
-        )
+        term = Term.objects.create(term=term_name, academic_year=year)
 
         term.save()
         messages.success(request, "Term has successfully been created")
         return redirect(reverse("settings:setting-terms"))
-    
+
     return redirect(reverse("settings:setting-terms"))
 
 
@@ -158,7 +160,6 @@ def edit_term_view(request, pkid):
             messages.error(request, "Term not found")
             return redirect(reverse("settings:setting-terms"))
 
-        
     return redirect(reverse("settings:setting-terms"))
 
 
@@ -195,16 +196,19 @@ def add_exam_session_view(request):
 
         # make sure the same exam_session/term/year combination is not double created
         # Check if this combination already exists
-        exam_combition = ExaminationSession.objects.filter(exam_session=exam_session_name, term=term)
+        exam_combition = ExaminationSession.objects.filter(
+            exam_session=exam_session_name, term=term
+        )
         if exam_combition.exists():
-            messages.warning(request, "Examination Session with same term already exist for the given year")
+            messages.warning(
+                request,
+                "Examination Session with same term already exist for the given year",
+            )
             return redirect(reverse("settings:setting-exam-sessions"))
-        
 
         # Create the examination session instance
         exam_session = ExaminationSession.objects.create(
-            term = term,
-            exam_session = exam_session_name
+            term=term, exam_session=exam_session_name
         )
 
         exam_session.save()
@@ -227,14 +231,18 @@ def edit_exam_session_view(request, pkid, *args, **kwargs):
         # Check if term exists
         term = get_object_or_404(Term, pkid=int(exam_session_term_id))
 
-
         # Check if this combination of examination session and term does not already exists
-        exam_combition = ExaminationSession.objects.filter(exam_session=exam_session_name, term=term)
+        exam_combition = ExaminationSession.objects.filter(
+            exam_session=exam_session_name, term=term
+        )
         print(exam_combition)
         if exam_combition.exists():
-            messages.warning(request, "Examination Session with same term already exist for the given year")
+            messages.warning(
+                request,
+                "Examination Session with same term already exist for the given year",
+            )
             return redirect(reverse("settings:setting-exam-sessions"))
-        
+
         # update the examination term
         exam_session.exam_session = exam_session_name
         exam_session.term = term
@@ -265,4 +273,3 @@ def mark_exam_session_as_current_view(request, pkid, *args, **kwargs):
 
     messages.success(request, "Exam Session Successfully Marked as Active")
     return redirect(reverse("settings:setting-exam-sessions"))
-    
