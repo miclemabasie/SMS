@@ -23,7 +23,7 @@ class ReportCard(TimeStampedUUIDModel):
 
 class AcademicRecord(TimeStampedUUIDModel):
     student = models.ForeignKey(
-        StudentProfile, related_name="record_report", on_delete=models.CASCADE
+        StudentProfile, related_name="academic_record", on_delete=models.CASCADE
     )
     exam_term = models.ForeignKey(
         Term, related_name="record_report", on_delete=models.CASCADE

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 
 
-class PerformStudentReportAnalysis:
+class ClassPerformanceReport:
 
     def __init__(self, class_id, term_id):
         self.__class_id = class_id
@@ -13,6 +13,7 @@ class PerformStudentReportAnalysis:
         self.data = []
 
     def get_class(self):
+        print("get class")
         klasses = Class.objects.filter(pkid=self.__class_id)
         if klasses.exists():
             klass = klasses.first()
@@ -21,6 +22,7 @@ class PerformStudentReportAnalysis:
             return None
 
     def get_student(self, student_id):
+        print("get student")
         students = StudentProfile.objects.filter(pkid=student_id)
         if students.exists():
             student = students.first()
@@ -28,11 +30,13 @@ class PerformStudentReportAnalysis:
         else:
             return HttpResponse("No student found with given ID.")
 
-    def get_all_subjects_for_a_given_student(student):
+    def get_all_subjects_for_a_given_student(self, student):
+        print("get all subjects for a given student")
         subjects = student.get_all_subjects()
         return subjects
 
     def get_term(self):
+        print("get term")
         # get the term
         terms = Term.objects.filter(pkid=self.__term_id)
         if terms.exists():
@@ -40,7 +44,8 @@ class PerformStudentReportAnalysis:
         else:
             return HttpResponse("No term matched your query.")
 
-    def get_term_remark(term_avg) -> str:
+    def get_term_remark(self, term_avg) -> str:
+        print("get term remark")
         if term_avg < 5:
             term_remark = "V. Poor"
 
@@ -55,27 +60,30 @@ class PerformStudentReportAnalysis:
         return term_remark
 
     def get_total_coefs(self, student):
-        total_coef = student.get_sum_of_subjects_coef
+        print("get total coefs")
+        total_coef = student.get_sum_of_subjects_coef()
         return total_coef
 
     def calculate_student_session_avg(self, student, session1_total):
+        print("calculating student session avg")
         sum_of_coef = self.get_total_coefs(student)
         session_avg = session1_total / sum_of_coef
 
         return round(session_avg, 2)
 
     def get_term_avg(self, student, mxc_total):
+        print("get term avg")
         sum_of_coef = self.get_total_coefs(student)
         term_avg = mxc_total / sum_of_coef
         return round(term_avg, 2)
 
-    def generate_student_report_data(self, student_id):
+    def generate_student_report_data(self, student):
+        print("Generating student data")
         # get all subjects for the current student
-        student = self.get_student(student_id)
 
         subjects = self.get_all_subjects_for_a_given_student(student)
 
-        term = self.get_term(self.__term_id)
+        term = self.get_term()
 
         # get the sessions for the current term
         session1, session2 = ExaminationSession.objects.filter(term=term)
@@ -87,7 +95,10 @@ class PerformStudentReportAnalysis:
         session_2_total_marks = 0
         mxc_total = 0
 
+        data = []
+
         for subject in subjects:
+            print("finding subjects")
             # check if subject has marks
 
             subject_mark_session1 = Mark.objects.filter(
@@ -132,7 +143,7 @@ class PerformStudentReportAnalysis:
                     remark = "Excellent"
                 teacher = teacher
 
-            self.data.append(
+            data.append(
                 {
                     "subject_name": subject.name,
                     "first_sequence": score1,
@@ -158,8 +169,8 @@ class PerformStudentReportAnalysis:
 
         term_remark = self.get_term_remark(term_avg)
 
-        self.student_data = {
-            "data": self.data,
+        student_data = {
+            "data": data,
             "name": student.user.get_fullname,
             "sum_of_coefs": sum_of_coef,
             "sequence1_total": session_1_total_marks,
@@ -172,25 +183,79 @@ class PerformStudentReportAnalysis:
             "term_avg": term_avg,
             "term_remark": term_remark,
         }
-        return self.student_data
 
-    def create_student_academic_records(self, student_id, klass):
+        return student_data
+
+    def create_student_academic_records(self, student, data, rank):
         """
         Create and save a student academic record after all the marks have been calculated.
         """
-        student = self.get_student(student_id)
-        academic_record = AcademicRecord.objects.create(
+        print("saving information to database")
+        academic_record, created = AcademicRecord.objects.get_or_create(
             student=student,
-            exam_term=self.get_term(self.__term_id),
-            total_marks_obtained=self.data["mxc_sum"],
-            student_rank=self.rank,
-            term_avg=self.data["term_avg"],
-            klass=klass,
-            session_1_avg=self.data["session1_avg"],
-            session_2_avg=self.data["session1_avg"],
+            exam_term=self.get_term(),
+            total_marks_obtained=data["mxc_sum"],
+            student_rank=rank,
+            term_avg=data["term_avg"],
+            klass=self.get_class(),
+            session_1_avg=data["session1_avg"],
+            session_2_avg=data["session1_avg"],
         )
         try:
             academic_record.save()
             return True
         except Exception as e:
             return f"Error saving student records due to the following error \n {e}"
+
+    def get_all_students_for_current_class(self):
+        print("get all students in class")
+        students = StudentProfile.objects.filter(current_class=self.get_class())
+        return students
+
+    def get_total_students_per_class(self):
+        print("get total students from class")
+        klass = self.get_class()
+        students = StudentProfile.objects.filter(current_class=klass)
+        return len(students)
+
+    def get_class_avg(self):
+        print("calling get class avg")
+        class_avg = (self.generate_performacne_rank_list()["total_avg"] * 20) / (
+            self.get_total_students_per_class() * 20
+        )
+        return round(class_avg, 2)
+
+    def generate_performacne_rank_list(self) -> list:
+        # get all students for the current class
+        total_avgs = 0
+        students = self.get_all_students_for_current_class()
+        class_performance = []
+        for s in students:
+            print("inside the students")
+            s_marks = self.generate_student_report_data(s)["term_avg"]
+            total_avgs += s_marks
+            class_performance.append((s, s_marks))
+
+        class_performance = sorted(
+            class_performance,
+            key=lambda x: x[1],
+            reverse=True,
+        )
+
+        data = {"class_performance": class_performance, "total_avg": total_avgs}
+
+        return data
+
+    def get_student_rank(self, student, class_performance):
+        print("get sudent rank")
+        student_ranking = [
+            rank + 1
+            for rank, (s, _) in enumerate(class_performance)
+            if s.pkid == student.pkid
+        ][0]
+        return student_ranking
+
+    def generate_file_name(self):
+        print("get file name")
+        klass = self.get_class()
+        return klass.get_full_name()

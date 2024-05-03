@@ -39,6 +39,9 @@ class Class(TimeStampedUUIDModel):
     )
     subjects = models.ManyToManyField("Subject", related_name="subjects", blank=True)
 
+    def get_full_name(self):
+        return f"{self.grade_level}-{self.class_name}"
+
 
 class StudentProfile(TimeStampedUUIDModel):
     user = models.OneToOneField(
