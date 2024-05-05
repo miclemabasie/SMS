@@ -10,6 +10,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.common.models import TimeStampedUUIDModel
+from django.db.models import Sum, Count
 
 # from apps.teachers.models import TeacherProfile
 from apps.terms.models import ExaminationSession
@@ -38,9 +39,25 @@ class Class(TimeStampedUUIDModel):
         verbose_name=_("Class Prefect"), max_length=200, blank=True, null=True
     )
     subjects = models.ManyToManyField("Subject", related_name="subjects", blank=True)
+    pass_avg = models.IntegerField(default=10)
+
+    best_subject = models.CharField(max_length=255, blank=True, null=True)
+    worst_subject = models.CharField(max_length=255, blank=True, null=True)
 
     def get_full_name(self):
         return f"{self.grade_level}-{self.class_name}"
+
+    def get_total_girls(self):
+        total_female_students_qs = self.students.filter(gender="Female").aggregate(
+            total_females_students=Count("id")
+        )
+        return total_female_students_qs["total_female_students"]
+
+    def get_total_boys(self):
+        total_male_students_qs = self.students.filter(gender="Male").aggregate(
+            total_male_students=Count("id")
+        )
+        return total_male_students_qs["total_male_students"]
 
 
 class StudentProfile(TimeStampedUUIDModel):

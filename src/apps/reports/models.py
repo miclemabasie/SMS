@@ -64,11 +64,60 @@ class AcademicRecord(TimeStampedUUIDModel):
         )
         return worst_students
 
+    @staticmethod
+    def get_number_passed_in_a_term(term, class_, pass_avg):
+        # get all records for this class that patten to this term
+        acadmic_records = AcademicRecord.objects.filter(
+            klass=class_, exam_term=term, term_avg__gte=pass_avg
+        )
+        if acadmic_records.exists():
+            # students passed in this term
+            # get students with term avg > 10
+            return acadmic_records
+        else:
+            return None
+
+    @staticmethod
+    def get_highest_student_in_a_term(term, class_):
+        # Get the student with the highest avg for a given class in a particular term
+        acadmic_records = AcademicRecord.objects.filter(
+            exam_term=term, klass=class_
+        ).order_by("-term_avg")
+        if acadmic_records.exists():
+            # get the first student in the queryset
+            return acadmic_records.first()
+        else:
+            return None
+
+    @staticmethod
+    def get_lowest_student_in_a_term(term, class_):
+        # Get the student with the lowest avg for a given class in a particular term
+        acadmic_records = AcademicRecord.objects.filter(
+            exam_term=term, klass=class_
+        ).order_by("-term_avg")
+        if acadmic_records.exists():
+            # get the first student in the queryset
+            return acadmic_records.last()
+        else:
+            return None
+
+    # @staticmethod
+    # def get_number_failed_in_a_term(term, class_, pass_avg):
+    #     # get all records for this class that patten to this term
+    #     acadmic_records = AcademicRecord.objects.filter(
+    #         klass=class_, exam_term=term, term_avg__lt=pass_avg
+    #     )
+    #     if acadmic_records.exists():
+    #         # students passed in this term
+    #         # get students with term avg > 10
+    #         return acadmic_records
+    #     else:
+    #         return None
+
     def generate_class_master_report(self):
         data = {}
         data["class_master"] = self.klass.class_master
         data["best_students"] = self.get_best_three_students
         data["last_studenst"] = self.get_last_three_students
         data["class_master_report"] = "Some logic to be implemented"
-
         return data

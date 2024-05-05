@@ -133,7 +133,6 @@ def create_report_cards(request):
             student_ranking = performance_obj.get_student_rank(
                 student, class_performance
             )
-
             print(student_marks)
 
             pdf_data = {
@@ -147,7 +146,6 @@ def create_report_cards(request):
                 "class_total": len(students),
                 "class_avg": class_avg,
             }
-            print("starting to write pdf")
             context = {"data": pdf_data}
             template_path = "reports/report-card-generation-template.html"
             template = get_template(template_path)
@@ -159,9 +157,10 @@ def create_report_cards(request):
             performance_obj.create_student_academic_records(
                 student, student_marks, student_ranking
             )
-            pdf_file.seek(0)
-            print("end write")
 
+            pdf_file.seek(0)
+        print("Final score: ", performance_obj.sub_dicts)
+        performance_obj.set_highest_subject_score_to_class()
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = (
             f'attachment; filename="{performance_obj.generate_file_name()}-report-cards.pdf"'
@@ -171,6 +170,7 @@ def create_report_cards(request):
         return response
     else:
         return redirect("reports:reports")
+
 
 # @login_required
 # def create_report_cards(request):

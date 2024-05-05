@@ -137,3 +137,8 @@ def exam_session_view(request):
     }
 
     return render(request, template_name, context)
+
+
+# To be done later
+def add_class_pass_avg(request):
+    pass

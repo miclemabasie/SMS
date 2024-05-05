@@ -11,6 +11,7 @@ class ClassPerformanceReport:
         self.__class_id = class_id
         self.__term_id = term_id
         self.data = []
+        self.sub_dicts = self.get_all_subjects_for_class()
 
     def get_class(self):
         print("get class")
@@ -34,6 +35,12 @@ class ClassPerformanceReport:
         print("get all subjects for a given student")
         subjects = student.get_all_subjects()
         return subjects
+
+    def get_all_subjects_for_class(self):
+        class_ = self.get_class()
+        subjects = class_.subjects.all()
+        subjects_dict = {sub.name: 0 for sub in subjects}
+        return subjects_dict
 
     def get_term(self):
         print("get term")
@@ -96,11 +103,9 @@ class ClassPerformanceReport:
         mxc_total = 0
 
         data = []
-
         for subject in subjects:
             print("finding subjects")
             # check if subject has marks
-
             subject_mark_session1 = Mark.objects.filter(
                 subject=subject, exam_session=session1, student=student
             )
@@ -156,6 +161,8 @@ class ClassPerformanceReport:
                 }
             )
 
+            self.update_subject_total_score(self.sub_dicts, subject.name, mxc)
+
         avg_sum = (session_1_total_marks + session_2_total_marks) / 2
 
         # calculate first_sequence avg
@@ -184,7 +191,13 @@ class ClassPerformanceReport:
             "term_remark": term_remark,
         }
 
+        print("This is the total subject score: ", self.sub_dicts)
+
         return student_data
+
+    def update_subject_total_score(self, subject_dict, subject, mxc):
+        if mxc != "/":
+            subject_dict[subject] += mxc
 
     def create_student_academic_records(self, student, data, rank):
         """
@@ -259,3 +272,23 @@ class ClassPerformanceReport:
         print("get file name")
         klass = self.get_class()
         return klass.get_full_name()
+
+    def find_largest_subject_score(self):
+        highest_score = 0
+        highest_subject = None
+
+        for subject, score in self.sub_dicts.items():
+            if score > highest_score:
+                highest_score = score
+                highest_subject = subject
+        if highest_subject is not None:
+            data = {highest_subject: score}
+            return data
+        return None
+
+    def set_highest_subject_score_to_class(self):
+        class_ = self.get_class()
+        subject = self.find_largest_subject_score()
+        if subject is not None:
+            class_.best_subject = list(subject.keys())[0]
+            class_.save()
