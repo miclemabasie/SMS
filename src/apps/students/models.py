@@ -49,7 +49,7 @@ class Class(TimeStampedUUIDModel):
 
     def get_total_girls(self):
         total_female_students_qs = self.students.filter(gender="Female").aggregate(
-            total_females_students=Count("id")
+            total_female_students=Count("id")
         )
         return total_female_students_qs["total_female_students"]
 
@@ -58,6 +58,9 @@ class Class(TimeStampedUUIDModel):
             total_male_students=Count("id")
         )
         return total_male_students_qs["total_male_students"]
+
+    def get_total_enrol(self):
+        return self.get_total_boys() + self.get_total_girls()
 
 
 class StudentProfile(TimeStampedUUIDModel):

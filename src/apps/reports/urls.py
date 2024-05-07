@@ -16,4 +16,9 @@ urlpatterns = [
         views.create_one_report_card,
         name="generate_single_report_card",
     ),
+    path(
+        "generate-class-master-report",
+        views.create_class_master_report,
+        name="genereate_class_master_report",
+    ),
 ]

@@ -286,9 +286,25 @@ class ClassPerformanceReport:
             return data
         return None
 
+    def find_lowest_subject_score(self):
+        if self.find_largest_subject_score() is not None:
+            lowest_score = list(self.find_largest_subject_score().values())[0]
+            lowest_subject = list(self.find_largest_subject_score().keys())[0]
+            
+            for subject, score in self.sub_dicts.items():
+                if score < lowest_score:
+                    lowest_score = score
+                    lowest_subject = subject
+            if lowest_subject is not None:
+                data = {lowest_subject: score}
+                return data
+        return None
+
     def set_highest_subject_score_to_class(self):
         class_ = self.get_class()
         subject = self.find_largest_subject_score()
+        subject_lowest = self.find_lowest_subject_score()
         if subject is not None:
             class_.best_subject = list(subject.keys())[0]
+            class_.worst_subject = list(subject_lowest.keys())[0]
             class_.save()

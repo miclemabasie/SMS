@@ -67,7 +67,10 @@
 
                 <div class="form-group mb-4 text-end float-right">
                     <div class="settings-btns">
-                        <a href="">
+                        {% comment %} <a href=""  >
+                            <button class="btn ribbon-secondary text-white">Generate</button>
+                        </a> {% endcomment %}
+                        <a href="" data-bs-toggle="modal" data-bs-target="#generate_classmaster_report">
                             <button class="btn ribbon-success text-white">Generate</button>
                         </a>
                     </div>
@@ -168,6 +171,51 @@
     </div>
 </div>
 
+{% comment %} modal for class master report generationg {% endcomment %}
+<div class="modal custom-modal fade" id="generate_classmaster_report" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Generate Report Card</h3>
+                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Select the target class
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'reports:genereate_class_master_report' %}" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Class <span class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_class_id">
+
+                                            {% for class in classes %}
+                                            <option value="{{class.pkid}}">{{class.grade_level}}-{{class.class_name}}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 {% comment %} testing {% endcomment %}

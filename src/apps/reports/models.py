@@ -4,7 +4,7 @@ from apps.students.models import StudentProfile, Class
 from apps.terms.models import Term, ExaminationSession
 from apps.staff.models import AdminProfile
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Max
+from django.db.models import Q, Max
 
 
 class ReportCard(TimeStampedUUIDModel):
@@ -40,27 +40,29 @@ class AcademicRecord(TimeStampedUUIDModel):
     class Meta:
         unique_together = ("student", "exam_term")
 
-    def get_best_three_students(self):
+    @staticmethod
+    def get_best_three_students(class_):
         """
         Returns to get the first 3 students from a particular class based on the highest score in academic record
         """
         top_students = (
-            AcademicRecord.objects.filter(klass=self.klass)
+            AcademicRecord.objects.filter(klass=class_)
             .annotate(max_score=Max("total_marks_obtained"))
             .order_by("-max_score")[:3]
         )
 
         return top_students
 
-    def get_last_three_students(self):
+    @staticmethod
+    def get_last_three_students(class_):
         """
         Returns to get the last 3 students from a particular class based on the lowest score in academic record
         """
 
         worst_students = (
-            AcademicRecord.objects.filter(klass=self.klass)
+            AcademicRecord.objects.filter(klass=class_)
             .annotate(max_score=Max("total_marks_obtained"))
-            .order_by("-max_score")[-3:]
+            .order_by("max_score")[:3]
         )
         return worst_students
 
@@ -78,7 +80,9 @@ class AcademicRecord(TimeStampedUUIDModel):
             return None
 
     @staticmethod
-    def get_highest_student_in_a_term(term, class_):
+    def get_highest_student_in_a_term(term, class_, pass_avg=None):
+        if pass_avg is None:
+            pass_avg = class_.pass_avg
         # Get the student with the highest avg for a given class in a particular term
         acadmic_records = AcademicRecord.objects.filter(
             exam_term=term, klass=class_
@@ -90,7 +94,9 @@ class AcademicRecord(TimeStampedUUIDModel):
             return None
 
     @staticmethod
-    def get_lowest_student_in_a_term(term, class_):
+    def get_lowest_student_in_a_term(term, class_, pass_avg=None):
+        if pass_avg is None:
+            pass_avg = class_.pass_avg
         # Get the student with the lowest avg for a given class in a particular term
         acadmic_records = AcademicRecord.objects.filter(
             exam_term=term, klass=class_
@@ -114,10 +120,12 @@ class AcademicRecord(TimeStampedUUIDModel):
     #     else:
     #         return None
 
-    def generate_class_master_report(self):
-        data = {}
-        data["class_master"] = self.klass.class_master
-        data["best_students"] = self.get_best_three_students
-        data["last_studenst"] = self.get_last_three_students
-        data["class_master_report"] = "Some logic to be implemented"
-        return data
+    @staticmethod
+    def perform_grading(term, class_, lower_bound, upper_bound):
+
+        students = AcademicRecord.objects.filter(
+            Q(term_avg__gte=lower_bound) & Q(term_avg__lte=upper_bound),
+            klass=class_,
+            exam_term=term,
+        )
+        return students
