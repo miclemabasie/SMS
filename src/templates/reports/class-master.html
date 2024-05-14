@@ -44,58 +44,43 @@
         <th>WORST SUBJECT</th>
       </tr>
       <tr>
-        <td>Class Name: </td>
-        <td>GIRLS: </td>
-        <td>BOYS: </td>
-        <td>TOTAL: </td>
+        <td>Class Name: {{class.grade_level}} - {{class.class_name}}</td>
+        <td>GIRLS: {{total_girls}}</td>
+        <td>BOYS: {{total_boys}}</td>
+        <td>TOTAL: {{sum_boys_girls}}</td>
         <td>BOYS: </td>
         <td>GIRLS: </td>
         <td>TOTAL</td>
-        <td>BOYS:  GIRLS: </td>
+        <td>BOYS: {{boys_passed}} | GIRLS: {{girls_passed}}</td>
        
-        <td>.........</td>
-        <td>.........</td>
-          <td>........</td>
+        <td>{{highest_avg}}</td>
+        <td>{{lowest_avg}}</td>
+        <td>{{best_subject}}</td>
+        <td>{{worst_subject}}</td>
       </tr>
     </table>
   </div>
   <div class="report-section">
     <h3>THREE BEST STUDENTS</h3>
     <table>
-      <tr>
-        <th>1.</th>
-        <td>[Student Name]</td>
-        <td>[Average]</td>
-      </tr>
-      <tr>
-        <th>2.</th>
-        <td>[Student Name]</td>
-        <td>[Average]</td>
-      </tr>
-      <tr>
-        <th>3.</th>
-        <td>[Student Name]</td>
-        <td>[Average]</td>
-      </tr>
+      {% for s in first_three_students %}
+        <tr>
+          <th>{{forloop.counter}}</th>
+          <td>{{s.student.user.first_name}} {{s.student.user.last_name}}</td>
+          <td>{{s.term_avg}}</td>
+        </tr>
+      {% endfor %}
     </table>
     <div class="report-section">
     <h3>THREE WORST STUDENTS</h3>
     <table>
+      {% for s in last_three_students %}
       <tr>
-        <th>1.</th>
-        <td>[Student Name]</td>
-        <td>[Average]</td>
+        <th>{{forloop.counter}}</th>
+        <td>{{s.student.user.first_name}} {{s.student.user.last_name}}</td>
+        <td>{{s.term_avg}}</td>
       </tr>
-      <tr>
-        <th>2.</th>
-        <td>[Student Name]</td>
-        <td>[Average]</td>
-      </tr>
-      <tr>
-        <th>3.</th>
-        <td>[Student Name]</td>
-        <td>[Average]</td>
-      </tr>
+    {% endfor %}
     </table>
     <h3>NUMBER OF STUDENTS WITH AVERAGES OF:</h3>
      <table>
@@ -112,15 +97,14 @@
       </tr>
        <tr>
         
-        <td>TOTAL</td>
-        <td>TOTAL</td>
-        <td>TOTAL</td>
-         <td>TOTAL</td>
-          <td>TOTAL</td>
-           <td>TOTAL</td>
-            <td>TOTAL</td>
-             <td>TOTAL</td>
-              <td>TOTAL</td>
+        <td>TOTAL: {{first}}</td>
+        <td>TOTAL: {{second}}</td>
+        <td>TOTAL: {{third}}</td>
+         <td>TOTAL: {{fourth}}</td>
+          <td>TOTAL: {{fifth}}</td>
+           <td>TOTAL: {{sixth}}</td>
+            <td>TOTAL: {{seventh}}</td>
+             <td>TOTAL: {{eigth}}</td>
        
         </tr>
       </table>
@@ -140,14 +124,14 @@
       </tr>
        <tr>
         
-        <td>TOTAL</td>
-        <td>TOTAL</td>
-        <td>TOTAL</td>
-         <td>TOTAL</td>
-          <td>TOTAL</td>
-           <td>TOTAL</td>
-            <td>TOTAL</td>
-             <td>TOTAL</td>
+        <td>TOTAL: {{first}}</td>
+        <td>TOTAL: {{second}}</td>
+        <td>TOTAL: {{third}}</td>
+         <td>TOTAL: {{fourth}}</td>
+          <td>TOTAL: {{fifth}}</td>
+           <td>TOTAL: {{sixth}}</td>
+            <td>TOTAL: {{seventh}}</td>
+             <td>TOTAL: {{eigth}}</td>
        
         </tr>
       </table>

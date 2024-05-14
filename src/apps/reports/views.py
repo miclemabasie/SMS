@@ -192,7 +192,7 @@ def create_class_master_report(request):
         # create a class report instance
 
         cmr = ClassMasterReport(klass.pkid, term.pkid)
-        pdf_data = {
+        context = {
             "total_girls": klass.get_total_girls(),
             "total_boys": klass.get_total_boys(),
             "sum_boys_girls": klass.get_total_enrol(),
@@ -214,8 +214,8 @@ def create_class_master_report(request):
             "seventh": cmr.calculate_grading(16, 17.99),
             "eigth": cmr.calculate_grading(18, 20),
         }
-        template_name = "reports/class-master.html"
-        context = {"data": pdf_data}
+        template_name = "reports/class_master_report_internal.html"
+        # context = {"data": pdf_data}
         return render(request, template_name, context)
         # print("This is the class data: ", context)
 
