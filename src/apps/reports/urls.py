@@ -21,4 +21,9 @@ urlpatterns = [
         views.create_class_master_report,
         name="genereate_class_master_report",
     ),
+    path(
+        "download-class-master-report/<int:class_pkid>",
+        views.download_class_master_report,
+        name="download_class_master_report",
+    ),
 ]

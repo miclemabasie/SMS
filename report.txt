@@ -1,0 +1,66 @@
+TITLE: Advancements in Soil Classification: An In-Depth Analysis of Current Deep Learning Techniques and Emerging Trends
+AUTHOR: Emmanuel Kwabena Gyasi and Swarnalatha Purushotham
+URL: https://journals.sagepub.com/doi/full/10.1177/11786221231214069
+
+
+ABSTRACT
+Deep learning models have shown significant potential for soil classification, yet reproducibility and deployment on edge devices like smartphones remain challenging. This paper reviews various deep-learning approaches, highlights reproducibility issues, and discusses the deployment on resource-constrained devices. Future research should prioritize field soil datasets and lightweight models to ensure practical applications.
+
+INTRODUCTION
+Soil classification is essential for various applications, including agriculture, environmental monitoring, and land use planning. Traditional methods are time-consuming and often lack the precision required for large-scale analysis. Deep learning models offer a promising alternative due to their ability to process large volumes of data and identify intricate patterns. However, deploying these models on resource-constrained devices and ensuring reproducibility remains a challenge.
+
+MOTIVATION
+Deep learning offers a promising approach for soil classification, with potential applications in agriculture, environmental monitoring, and land management. This report aims to explore the benefits and challenges of implementing deep learning models for soil classification. By understanding these factors, organizations can harness the power of deep learning to improve soil analysis and decision-making processes.
+
+Literacy Survey
+Recent literature on deep learning for soil classification reveals significant variability in methodologies and results. Many studies fail to provide sufficient details on dataset partitioning, model parameters, and experimental setups, hindering reproducibility. Furthermore, the deployment of these models on edge devices like smartphones and UAVs necessitates lightweight and efficient models.
+
+MATERIALS AND METHODS
+The implementation of a deep learning model on resource-constrained devices involves several steps, from model selection to deployment. The model must be optimized for size and computational efficiency, making it suitable for mobile applications.
+
+SYSTEM FRAMEWORK
+The system framework for deploying a soil classification model on edge devices includes the following components:
+
+Image Uploading
+Users can upload soil images via the smartphone's camera or other input devices.
+
+Image Filtering
+The uploaded images are filtered to remove noise and enhance quality for better analysis.
+
+Image Pre-processing
+Pre-processing techniques are applied to standardize the images, ensuring consistency in the input data.
+
+Image Masking
+Relevant features of the images are isolated through masking techniques, which help in focusing the model on significant aspects of the soil images.
+
+ANN (Artificial Neural Network)
+An ANN is employed to classify the soil images based on the extracted features. The network architecture is designed to balance accuracy and computational efficiency.
+
+Back Propagation
+The back propagation algorithm is used for training the ANN, adjusting the weights to minimize the classification error.
+
+Gray Level Co-Occurrence
+Gray Level Co-Occurrence Matrix (GLCM) techniques are utilized to extract texture features from the soil images, enhancing the model's ability to distinguish between different soil types.
+
+Algorithm
+The final classification algorithm combines the ANN and GLCM features to accurately classify the soil types.
+
+RESULTS AND DISCUSSION
+The performance of the soil classification model is evaluated using metrics such as precision, recall, F1-score, and overall accuracy. The results are summarized in a confusion matrix and a classification report, demonstrating the model's effectiveness.
+
+Performance Analysis
+- Table 6: Classification report indicating precision, recall, and F1-score for various soil types, with an overall accuracy of 0.96.
+- Figure 11: Confusion matrix showing the distribution of true positives, true negatives, false positives, and false negatives.
+
+The model achieves high accuracy and efficiency, making it suitable for deployment on edge devices. However, reproducibility issues and the need for comprehensive reporting are highlighted.
+
+LIMITATIONS
+
+This paper matches our objectives, particularly in its reliance on images for processing, which is advantageous for our organization. However, it has some limitations:
+
+1. Evaluation Metrics: The paper does not provide a comprehensive evaluation of the deep learning models. It lacks detailed metrics for CNN results, making it difficult to assess the accuracy and effectiveness of the classification model.
+
+2. Generalizability: The methods may not generalize well to new datasets, especially those with different conditions or image qualities than the ones used for training.
+
+CONCLUSION
+The deployment of deep learning models for soil classification on resource-constrained devices like smartphones offers significant benefits for sustainable agriculture and environmental monitoring. Future research should focus on using field soil datasets, lightweight models, and comprehensive reporting standards to enhance reproducibility and practical applications.

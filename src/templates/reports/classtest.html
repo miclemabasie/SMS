@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="content container-fluid" id="printableSection">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Class</th>
+                <th scope="col" colspan="3">Class Number on roll</th>
+                <th scope="col" colspan="3">Number Present</th>
+                <th scope="col" colspan="3">Number Passed</th>
+                <th scope="col">Highest Average</th>
+                <th scope="col">Lowest Average</th>
+                <th scope="col">Best Subject</th>
+                <th scope="col">Worst Subject</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">{{class.grade_level}} - {{class.class_name}}</th>
+                {% comment %} students enroled {% endcomment %}
+                <td>Girls: {{total_girls}}</td>
+                <td>Boys: {{total_boys}}</td>
+                <td>Total: {{sum_boys_girls}}</td>
+                {% comment %} present {% endcomment %}
+                <td>Total: {{sum_boys_girls}}</td>
+                <td>Total: {{sum_boys_girls}}</td>
+                <td>Total: {{sum_boys_girls}}</td>
+                {% comment %} Number passed {% endcomment %}
+                <td>Girls: {{girls_passed}}</td>
+                <td>Boys: {{boys_passed}}</td>
+                <td>Total: {{sum_boys_girls}}</td>
+                {% comment %} Highest avg {% endcomment %}
+                <td>{{highest_avg}}</td>
+                <td>{{lowest_avg}}</td>
+                {% comment %}best and worst subject {% endcomment %}
+                <td>{{best_subject}}</td>
+                <td>{{worst_subject}}</td>
+
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <h4 class="mt-3">Top Three students</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Student Name</th>
+                <th scope="col">Student Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in first_three_students %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{s.student.user.first_name}} {{s.student.user.last_name}} {{s.term_avg}}</td>
+                <td>{{s.term_avg}}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    <h4 class="mt-3">Worst three students</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Student Name</th>
+                <th scope="col">Student Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in last_three_students %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{s.student.user.first_name}} {{s.student.user.last_name}} {{s.term_avg}}</td>
+                <td>{{s.term_avg}}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    <h4 class="mt-3 text-capitalized">Student Grading Analysis</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">0 - 5.6</th>
+                <th scope="col">6 - 7.99</th>
+                <th scope="col">8 - 9.99</th>
+                <th scope="col">10 - 11.99</th>
+                <th scope="col">12 - 13.99</th>
+                <th scope="col">14 - 15.99</th>
+                <th scope="col">16 - 17.99</th>
+                <th scope="col">18 - 20</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{first}}</td>
+                <td>{{second}}</td>
+                <td>{{third}}</td>
+                <td>{{fourth}}</td>
+                <td>{{fifth}}</td>
+                <td>{{sixth}}</td>
+                <td>{{seventh}}</td>
+                <td>{{eigth}}</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <h4 class="mt-3 text-capitalized">General Remarks</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Bad</th>
+                <th scope="col">Poor</th>
+                <th scope="col">Below Average</th>
+                <th scope="col">Average Passed</th>
+                <th scope="col">Fairly Good</th>
+                <th scope="col">Good</th>
+                <th scope="col">Very Good</th>
+                <th scope="col">Excellent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{first}}</td>
+                <td>{{second}}</td>
+                <td>{{third}}</td>
+                <td>{{fourth}}</td>
+                <td>{{fifth}}</td>
+                <td>{{sixth}}</td>
+                <td>{{seventh}}</td>
+                <td>{{eigth}}</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+
+</div>
+
+<div class="content container-fluid" id="printableSection">
+    <div class="form-group mb-4 text-end float-right">
+        <div class="settings-btns">
+            <button type="submit" id="downlaodReport" class="btn btn-orange">Download Report</button>
+            <!-- <a id="downlaodReport" class="btn btn-orange"
+            href="{% url 'reports:download_class_master_report' class.pkid %}">Download Report</a> -->
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    console.log("the script is connected")
+    function printSection() {
+        let printContents = document.getElementById('printableSection').innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+
+        window.location.reload();  // Reload the page to restore the original content
+    }
+
+    let downloadBtn = document.getElementById("downlaodReport");
+    downloadBtn.addEventListener("click", () => {
+        console.log("Downloading the content")
+        printSection()
+    })
+</script>
+{% endblock script %}

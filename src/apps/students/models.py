@@ -61,6 +61,11 @@ class Class(TimeStampedUUIDModel):
 
     def get_total_enrol(self):
         return self.get_total_boys() + self.get_total_girls()
+    
+    @property
+    def get_total_template_enrol(self):
+        return self.get_total_enrol()
+    
 
 
 class StudentProfile(TimeStampedUUIDModel):
@@ -113,6 +118,7 @@ class StudentProfile(TimeStampedUUIDModel):
         default=DOMAINCHOICES.OTHER,
         max_length=20,
     )
+    is_activated = models.BooleanField(default=True)
 
     # Adding optional subjects for the student
     optional_subjects = models.ManyToManyField(

@@ -1,9 +1,9 @@
 import pytest
 from pytest_factoryboy import register
 
-from tests.factories import ProfileFactory, UserFactory
+from tests.factories import UserFactory
 
-register(ProfileFactory)
+# register(ProfileFactory)
 register(UserFactory)
 
 
@@ -26,7 +26,7 @@ def super_user(db, user_factory):
     return new_user
 
 
-@pytest.fixture
-def user_profile(db, profile_factory):
-    new_profile = ProfileFactory.create()
-    return new_profile
+# @pytest.fixture
+# def user_profile(db, profile_factory):
+#     new_profile = ProfileFactory.create()
+#     return new_profile

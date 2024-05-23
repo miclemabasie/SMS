@@ -109,6 +109,15 @@ def create_report_cards(request):
 
         performance_obj = ClassPerformanceReport(selected_class_id, term.pkid)
 
+        # check if class has any subject attatched to it, if not, return.
+        if len(performance_obj.sub_dicts) < 1:
+            messages.warning(request, "No subjects associated to the given class.")
+            return redirect(reverse("reports:reports"))
+
+        if performance_obj.get_total_students_per_class() < 1:
+            messages.warning(request, "No students for the given class")
+            return redirect(reverse("reports:reports"))
+
         # Get all students for the class
         students = performance_obj.get_all_students_for_current_class()
 
@@ -147,6 +156,8 @@ def create_report_cards(request):
                 "class_total": len(students),
                 "class_avg": class_avg,
             }
+
+            print("This is the pdf data", pdf_data)
             context = {"data": pdf_data}
             template_path = "reports/report-card-generation-template.html"
             template = get_template(template_path)
@@ -155,6 +166,7 @@ def create_report_cards(request):
             if pisa_status.err:
                 return HttpResponse("Error generating PDF")
             pdf_merger.append(BytesIO(pdf_file.getvalue()))
+            print("##### doing the thing")
             performance_obj.create_student_academic_records(
                 student, student_marks, student_ranking
             )
@@ -214,29 +226,74 @@ def create_class_master_report(request):
             "seventh": cmr.calculate_grading(16, 17.99),
             "eigth": cmr.calculate_grading(18, 20),
         }
-        template_name = "reports/class_master_report_internal.html"
+        template_name = "reports/classtest.html"
         # context = {"data": pdf_data}
         return render(request, template_name, context)
-        # print("This is the class data: ", context)
-
-        # report_name = f"{klass.get_full_name()}-classmaster-report"
-        # response = HttpResponse(content_type="application/pdf")
-        # response["Content-Dispositon"] = f'attachment; filename="{report_name}.pdf"'
-
-        # template_path = "reports/class-master.html"
-
-        # # find the template and render it.
-        # template = get_template(template_path)
-        # html = template.render(context)
-        # # create a pdf
-        # pisa_status = pisa.CreatePDF(html, dest=response)
-
-        # # if error then show some funny view
-        # if pisa_status.err:
-        #     return HttpResponse("We had some errors <pre>" + html + "</pre>")
-        # return response
     else:
         return redirect(reverse("reports:reports"))
+
+
+def download_class_master_report(request, class_pkid):
+
+    # # get class Id
+    # if request.method == "POST":
+    # requires more work
+    term = Term.objects.get(is_current=True)
+
+    classes = Class.objects.filter(pkid=class_pkid)
+    if classes.exists():
+        klass = classes.first()
+    else:
+        messages.error(request, "Class with given ID could not be found")
+        return reverse("reports:reports")
+    # term = Term.objects.filter(pkid=term_id)
+    term = Term.objects.get(is_current=True)
+
+    # create a class report instance
+
+    cmr = ClassMasterReport(klass.pkid, term.pkid)
+    pdf_data = {
+        "total_girls": klass.get_total_girls(),
+        "total_boys": klass.get_total_boys(),
+        "sum_boys_girls": klass.get_total_enrol(),
+        "class": klass,
+        "best_subject": klass.best_subject,
+        "worst_subject": klass.worst_subject,
+        "boys_passed": cmr.get_total_boys_passed(),
+        "girls_passed": cmr.get_total_girls_passed(),
+        "highest_avg": cmr.get_highest_student_avg(),
+        "lowest_avg": cmr.get_lowest_student_avg(),
+        "first_three_students": cmr.get_best_students_from_class(),
+        "last_three_students": cmr.get_last_three_studenst(),
+        "first": cmr.calculate_grading(0, 5.99),
+        "second": cmr.calculate_grading(6, 7.99),
+        "third": cmr.calculate_grading(8, 9.99),
+        "fourth": cmr.calculate_grading(10, 11.99),
+        "fifth": cmr.calculate_grading(12, 13.99),
+        "sixth": cmr.calculate_grading(14, 15.99),
+        "seventh": cmr.calculate_grading(16, 17.99),
+        "eigth": cmr.calculate_grading(18, 20),
+    }
+    template_name = "reports/classtest.html"
+    context = {"data": pdf_data}
+
+    report_name = f"{klass.get_full_name()}-classmaster-report"
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Dispositon"] = f'attachment; filename="{report_name}.pdf"'
+
+    template_path = "reports/class-master.html"
+
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+    # create a pdf
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    # if error then show some funny view
+    if pisa_status.err:
+        return HttpResponse("We had some errors <pre>" + html + "</pre>")
+    return response
+
 
 
 # @login_required
