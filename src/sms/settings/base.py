@@ -46,10 +46,10 @@ THRID_PARTY_APPS = [
     # 'allauth',
     # 'allauth.account',
     # 'allauth.socialaccount',
-
     # # social media apps
     # 'allauth.socialaccount.providers.google',
-
+    "crispy_forms",
+    "crispy_bootstrap4"
 ]
 
 LOCAL_APPS = [
@@ -68,7 +68,7 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THRID_PARTY_APPS + LOCAL_APPS
 
-
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 
 MIDDLEWARE = [
@@ -87,7 +87,7 @@ ROOT_URLCONF = "sms.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -95,7 +95,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                 # `allauth` needs this from django
+                # `allauth` needs this from django
                 # 'django.template.context_processossages",rs.request',
             ],
         },
@@ -115,8 +115,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
-
 
 
 STATIC_URL = "/staticfiles/"

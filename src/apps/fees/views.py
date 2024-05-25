@@ -6,7 +6,7 @@ from apps.staff.models import AdminProfile
 from apps.terms.models import AcademicYear
 from datetime import datetime, time, timezone
 from decimal import Decimal
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 
 

@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from apps.teachers import views
+from django.contrib.auth.views import PasswordResetCompleteView
 
 
 urlpatterns = [
@@ -23,6 +24,11 @@ urlpatterns = [
     path("delete/<int:pkid>/", views.class_delete_view, name="class-delete"),
     # auth
     path("accounts/", include("apps.users.urls", namespace="users")),
+    path(
+        "password-reset-complete",
+        PasswordResetCompleteView.as_view(),
+        name="password_reset_complete",
+    ),
 ]
 
 if settings.DEBUG:
