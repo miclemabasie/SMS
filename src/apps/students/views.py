@@ -1,8 +1,26 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-
-from .utils import check_student_is_owing, check_student_is_repeater
-from .models import StudentProfile, Class, Subject, Mark, TeacherProfile
+from .forms import VerifyPinForm
+from .utils import (
+    check_student_is_owing,
+    check_student_is_repeater,
+    create_student_pin,
+    get_student_temp_account,
+    get_teacher_temp_account,
+    send_account_creation_email,
+    send_password_reset_email,
+    format_date,
+    generate_random_pin,
+)
+from .models import (
+    StudentProfile,
+    Class,
+    Subject,
+    Mark,
+    TeacherProfile,
+    StudentTempCreateProfile,
+    TeacherTempCreateProfile,
+)
 from apps.terms.models import ExaminationSession, AcademicYear
 from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
@@ -66,6 +84,12 @@ def student_detail_view(request, matricule, pkid):
 
     distinct_subjects = set(list(subjects1) + list(optional_subjects))
 
+    pin = StudentTempCreateProfile.objects.filter(student=student)
+    if pin.exists():
+        pin = pin.first()
+    else:
+        pin = None
+
     template_name = "students/details.html"
     context = {
         "section": "student-area",
@@ -76,6 +100,7 @@ def student_detail_view(request, matricule, pkid):
         "marks": marks,
         "subjects": distinct_subjects,
         "fee": fee,
+        "pin": pin,
     }
 
     return render(request, template_name, context)
@@ -87,6 +112,7 @@ def add_student_view(request):
     if request.method == "POST":
         print(request.POST)
 
+        pin = request.POST.get("password_reset_pin")
         parent_fname = request.POST.get("first_name")
         parent_occupation = request.POST.get("parent-occupation")
         parent_phone = request.POST.get("parent-phone")
@@ -95,6 +121,18 @@ def add_student_view(request):
         parent_role = request.POST.get("parent-role")
 
         st_class = request.POST.get("student_class")
+
+        # Check if student pin is valid
+        # should not be greater or less than 4 in length
+        if len(pin) == 4:
+            # create temp
+            pass
+        else:
+            messages.error(
+                "Password reset pin has incorrect length, should be exactly 4."
+            )
+            return redirect(reverse("students:student-add"))
+
         # Get class in which student is part of
         student_class = get_object_or_404(Class, pkid=int(st_class))
 
@@ -168,6 +206,8 @@ def add_student_view(request):
         if st_image:
             student.profile_photo = st_image
         student.save()
+        create_student_pin(student, student.user.email)
+        send_account_creation_email(request, student.user)
         return redirect(reverse("students:student-list"))
 
     else:
@@ -196,8 +236,6 @@ def edit_student_profile(request, pkid, matricule):
         st_phone = request.POST.get("phone")
         st_domain = request.POST.get("domain")
         st_image = request.FILES.get("profile_photo")
-
-        print("This is the image", st_image)
 
         # Parse date string from form
         dob = datetime.strptime(st_dob, "%Y-%m-%d").date()
@@ -612,14 +650,15 @@ def upload_students_from_file(request, *args, **kwargs):
             )
 
             # Create user
-            print("this is the date", type(dob))
-            email = None
+
+            dob = format_date(dob)
+            print(dob)
             if not email:
                 intial_string = first_name
                 email = f"{intial_string}{random.randint(1, 10)}@gmail.com"
                 print(email)
-            user = User.objects.create(
-                username=f"{first_name}{random.randint(1, 10)}",
+            user, created = User.objects.get_or_create(
+                username=f"{first_name}",
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
@@ -628,28 +667,34 @@ def upload_students_from_file(request, *args, **kwargs):
                 dob = datetime.combine(dob, dob.time(), tzinfo=timezone.utc)
                 user.dob = dob
 
-            user.save()
-            print(user)
-            print("user was saved")
+            if created:
+                user.save()
+                print(user)
+                print("user was saved")
 
             # create student profile instance
-            if gender.lower() == "M":
+            if gender.lower() == "m" or gender.lower() == "male":
                 gender = "Male"
             else:
                 gender = "Female"
-            student = StudentProfile.objects.create(
+            student, created = StudentProfile.objects.get_or_create(
                 user=user,
                 current_class=klass,
                 gender=gender,
                 phone_number=str(phone),
             )
 
-            if not address:
-                student.address = faker.address()
+            if created:
 
-            print("Saving student")
-            student.save()
+                if not address:
+                    student.address = faker.address()
 
+                print("Saving student")
+                student.save()
+                create_student_pin(student, generate_random_pin())
+                send_account_creation_email(request, student.user)
+            else:
+                continue
         messages.success(
             request,
             f"Students have been uploaded for the class {klass.grade_level}-{klass.class_name}",
@@ -704,3 +749,33 @@ def download_sample_student_file(request, *args, **kwargs):
     wb.save(response)
 
     return response
+
+
+def verify_student_pin(request):
+    if request.method == "POST":
+        pin = request.POST.get("pin")
+        email = request.POST.get("email")
+        # Check if student exists with this email
+        students = StudentProfile.objects.filter(user__email=email)
+        if students.exists():
+            student = students.first()
+        else:
+            messages.error(request, "No student found with given email.")
+            return redirect(reverse("users:user-login"))
+
+        # Check if student temp profile exist with this information
+        student_temp = get_student_temp_account(pin, email, student)
+
+        if student_temp:
+            # go ahead and send them the email to perform a reset
+            send_password_reset_email(request, student.user, student_temp)
+            return redirect(reverse("users:password_reset_done"))
+        else:
+            messages.error(request, "No pending setup for the given account")
+            return redirect(reverse("users:user-login"))
+    else:
+        template_name = "accounts/verifypin.html"
+        form = VerifyPinForm()
+        context = {"form": form}
+
+        return render(request, template_name, context)

@@ -61,11 +61,30 @@ class Class(TimeStampedUUIDModel):
 
     def get_total_enrol(self):
         return self.get_total_boys() + self.get_total_girls()
-    
+
     @property
     def get_total_template_enrol(self):
         return self.get_total_enrol()
-    
+
+
+# used to hold students's information until they change their password after they are being created,
+# Then this record is deleted
+class StudentTempCreateProfile(models.Model):
+    pin = models.CharField(max_length=10, verbose_name=_("PIN"))
+    email = models.EmailField(verbose_name=_("Email"), unique=True)
+    student = models.OneToOneField(
+        "StudentProfile", verbose_name=_("Student"), on_delete=models.SET_NULL, null=True
+    )
+
+
+# used to hold teacher's information until they change their password after they are being created,
+# Then this record is deleted
+class TeacherTempCreateProfile(models.Model):
+    pin = models.CharField(max_length=10, verbose_name=_("PIN"))
+    email = models.EmailField(verbose_name=_("Email"), unique=True)
+    teacher = models.OneToOneField(
+        "TeacherProfile", verbose_name=_("Student"), on_delete=models.SET_NULL, null=True
+    )
 
 
 class StudentProfile(TimeStampedUUIDModel):

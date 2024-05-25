@@ -31,8 +31,6 @@
 
 <body>
 
-    {% include 'utils/message-alert.html' %}
-
     <div class="main-wrapper login-body">
         <div class="login-wrapper">
             <div class="container">
@@ -46,7 +44,7 @@
                             <p class="account-subtitle">Need an account? <a href="register.html">Sign Up</a></p>
                             <h2>Sign in</h2>
 
-                            <form action="{% url 'users:user-login' %}" method="post">
+                            <form action="{% url 'students:verify_pin' %}" method="post">
                                 {% csrf_token %}
                                 {{form.errors}}
                                 <div class="form-group">
@@ -55,11 +53,11 @@
                                     <span class="profile-views"><i class="fas fa-user-circle"></i></span>
                                 </div>
                                 <div class="form-group">
-                                    <label>Password <span class="login-danger">*</span></label>
-                                    {{form.password}}
+                                    <label>PIN <span class="login-danger">*</span></label>
+                                    {{form.pin}}
                                     <span class="profile-views feather-eye toggle-password"></span>
                                 </div>
-                                <div class="forgotpass">
+                                {% comment %} <div class="forgotpass">
                                     <div class="remember-me">
                                         <label class="custom_check mr-2 mb-0 d-inline-flex remember-me"> Remember me
                                             <input type="checkbox" name="radio">
@@ -67,9 +65,9 @@
                                         </label>
                                     </div>
                                     <a href="{% url 'users:reset_password' %}">Forgot Password?</a>
-                                </div>
+                                </div> {% endcomment %}
                                 <div class="form-group">
-                                    <button class="btn btn-primary btn-block" type="submit">Login</button>
+                                    <button class="btn btn-primary btn-block" type="submit">Verify</button>
                                 </div>
                             </form>
 
