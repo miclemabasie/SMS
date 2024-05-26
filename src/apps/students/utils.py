@@ -113,12 +113,14 @@ def send_password_reset_email(request, user, student_temp):
     student_temp.delete()
 
 
-def send_account_creation_email(request, user):
+def send_account_creation_email(request, user, type=None):
     school_setting = Setting.objects.all().first()
     current_site = get_current_site(request)
     domain = current_site.domain
     protocol = "https" if request.is_secure() else "http"
-    reset_url = f"{protocol}://{domain}{reverse('students:verify_pin')}"
+    student_url = f"{protocol}://{domain}{reverse('students:verify_pin')}"
+    teacher_url = f"{protocol}://{domain}{reverse('teachers:verify_pin')}"
+    url = teacher_url if type == "teacher" else student_url
 
     subject = f"Welcome to {school_setting.school_name}"
     message = f"""
@@ -128,7 +130,7 @@ def send_account_creation_email(request, user):
 
     To complete your account setup and set your password, please follow the link below for identity check:
 
-    {reset_url}
+    {url}
 
     If you did not request this email, please ignore it.
 

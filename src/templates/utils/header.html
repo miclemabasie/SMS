@@ -148,7 +148,7 @@
                         alt="Soeng Souy">
                     <div class="user-text">
                         {% if user.is_authenticated %}
-                            <h6>{{user.username}}</h6>
+                            <h6>{{user.username | capfirst}}</h6>
                         {% else %}   
                             <h6>Unknown</h6>
 
@@ -174,7 +174,7 @@
                     <div class="user-text">
                         
                         {% if user.is_authenticated %}
-                            <h6>Bello</h6>
+                            <h6>{{user.get_fullname}}</h6>
                         {% else %}   
                             <h6>Unknown</h6>
 

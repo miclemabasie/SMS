@@ -1,7 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from apps.students.models import TeacherProfile, StudentProfile, Mark, Class
+from apps.students.forms import VerifyPinForm
+from apps.students.models import (
+    TeacherProfile,
+    StudentProfile,
+    Mark,
+    Class,
+    TeacherTempCreateProfile,
+)
 from faker import Faker
 from datetime import datetime, time, timezone
 from django.http import Http404
@@ -10,6 +17,14 @@ from django.contrib.auth.decorators import login_required
 from openpyxl import workbook, load_workbook
 from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
+from apps.students.utils import (
+    get_student_temp_account,
+    get_teacher_temp_account,
+    send_account_creation_email,
+    generate_random_pin,
+    create_teacher_pin,
+    send_password_reset_email,
+)
 
 faker_factory = Faker()
 
@@ -32,9 +47,15 @@ def teacher_list_view(request, *args, **kwargs):
 def teacher_detail_view(request, matricule, pkid, *args, **kwargs):
     teacher = get_object_or_404(TeacherProfile, matricule=matricule, pkid=pkid)
     template_name = "teachers/teacher-detail.html"
+    pin = TeacherTempCreateProfile.objects.filter(teacher=teacher)
+    if pin.exists():
+        pin = pin.first()
+    else:
+        pin = None
     context = {
         "section": "teachers-area",
         "teacher": teacher,
+        "pin": pin,
     }
 
     return render(request, template_name, context)
@@ -149,6 +170,16 @@ def teacher_add_view(request, *args, **kwargs):
         username = request.POST.get("username")
         email = request.POST.get("email")
         profile_photo = request.FILES.get("photo")
+        pin = request.POST.get("pin")
+
+        if len(pin) == 4:
+            # create temp
+            pass
+        else:
+            messages.error(
+                "Password reset pin has incorrect length, should be exactly 4."
+            )
+            return redirect(reverse("teachers:teachers-add"))
 
         # Create user instance for the teacher
         # construct a valid date out of the html date
@@ -174,31 +205,36 @@ def teacher_add_view(request, *args, **kwargs):
 
         # Create teacher profile instance
 
-        teacher = TeacherProfile.objects.create(
+        teacher, created = TeacherProfile.objects.get_or_create(
             user=user,
             gender=gender,
             phone_number=phone,
             main_subject=subject,
             address=address,
         )
-        teacher.save()
-        if location:
-            teacher.location = location
-        if profile_photo:
-            teacher.profile_photo = profile_photo
-        if remark:
-            teacher.remark = remark
-        if country:
-            teacher.country = country
+        if created:
+            teacher.save()
+            if location:
+                teacher.location = location
+            if profile_photo:
+                teacher.profile_photo = profile_photo
+            if remark:
+                teacher.remark = remark
+            if country:
+                teacher.country = country
 
-        teacher.save()
-
-        return redirect(
-            reverse(
-                "teachers:teachers-detail",
-                kwargs={"pkid": teacher.pkid, "matricule": teacher.matricule},
+            teacher.save()
+            create_teacher_pin(teacher, pin)
+            send_account_creation_email(request, teacher.user, "teacher")
+            return redirect(
+                reverse(
+                    "teachers:teachers-detail",
+                    kwargs={"pkid": teacher.pkid, "matricule": teacher.matricule},
+                )
             )
-        )
+        else:
+            messages.warning(request, "Teacher already exist.")
+            return redirect(reverse("teachers:teachers-list"))
 
     template_name = "teachers/teacher-add.html"
     context = {"section": "teachers-area"}
@@ -231,7 +267,6 @@ def class_add_view(request, *args, **kwargs):
 
             klass.save()
         save_and_add_flag = request.POST.get("save_and_add")
-        print("%%%%%%%%%%%%%%%%%%%", save_and_add_flag)
 
         if save_and_add_flag:
             print(save_and_add_flag)
@@ -299,3 +334,33 @@ def class_delete_view(request, pkid, *args, **kwargs):
     messages.success(request, "Class has been successfully deleted")
 
     return redirect(reverse("class-list"))
+
+
+def verify_teacher_pin(request):
+    if request.method == "POST":
+        pin = request.POST.get("pin")
+        email = request.POST.get("email")
+        # Check if teacher exists with this email
+        teachers = TeacherProfile.objects.filter(user__email=email)
+        if teachers.exists():
+            teacher = teachers.first()
+        else:
+            messages.error(request, "No teacher found with given email.")
+            return redirect(reverse("users:user-login"))
+
+        # Check if teacher temp profile exist with this information
+        teacher_temp = get_teacher_temp_account(pin, email, teacher)
+
+        if teacher_temp:
+            # go ahead and send them the email to perform a reset
+            send_password_reset_email(request, teacher.user, teacher_temp)
+            return redirect(reverse("users:password_reset_done"))
+        else:
+            messages.error(request, "No pending setup for the given account")
+            return redirect(reverse("users:user-login"))
+    else:
+        template_name = "accounts/verifypin-teacher.html"
+        form = VerifyPinForm()
+        context = {"form": form}
+
+        return render(request, template_name, context)
