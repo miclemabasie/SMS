@@ -50,4 +50,5 @@ urlpatterns = [
     path("upload-marks/<int:class_pkid>", views.upload_marks, name="marks-upload"),
     path("marks", views.marks, name="marks"),
     path("verify-pin/", views.verify_student_pin, name="verify_pin"),
+    path("student-dashboard", views.student_dashboard, name="student-dashboard"),
 ]

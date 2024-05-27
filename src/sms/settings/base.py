@@ -49,7 +49,7 @@ THRID_PARTY_APPS = [
     # # social media apps
     # 'allauth.socialaccount.providers.google',
     "crispy_forms",
-    "crispy_bootstrap4"
+    "crispy_bootstrap4",
 ]
 
 LOCAL_APPS = [
@@ -64,7 +64,9 @@ LOCAL_APPS = [
     "apps.students.apps.StudentsConfig",
     "apps.terms.apps.TermsConfig",
     "apps.settings.apps.SettingsConfig",
+    "apps.announcements.apps.AnnouncementsConfig",
 ]
+
 
 INSTALLED_APPS = DJANGO_APPS + THRID_PARTY_APPS + LOCAL_APPS
 

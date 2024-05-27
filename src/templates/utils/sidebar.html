@@ -12,7 +12,7 @@
                     <ul>
                         <li><a href="{% url 'staff:admin-dashboard' %}" class="{% if request.path == '/'  %}active{% endif %}">Admin Dashboard</a></li>
                         <li><a href="teacher-dashboard.html">Teachers Dashboard</a></li>
-                        <li><a href="student-dashboard.html">Student Dashboard</a></li>
+                        <li><a href="{% url 'students:student-dashboard' %}" class="{% if request.resolver_match.url_name == 'student-dashboard'  %}active{% endif %}">Admin Dashboard</a></li>
                     </ul>
                 </li>
                 <li class="submenu {% if section == 'student-area'  %}active{% endif %}">

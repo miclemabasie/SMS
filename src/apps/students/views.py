@@ -21,7 +21,7 @@ from .models import (
     StudentTempCreateProfile,
     TeacherTempCreateProfile,
 )
-from apps.terms.models import ExaminationSession, AcademicYear
+from apps.terms.models import ExaminationSession, AcademicYear, Term
 from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
 from apps.fees.models import Fee
@@ -214,7 +214,7 @@ def add_student_view(request):
         else:
             messages.error(request, "Student already exist.")
             return redirect(reverse("students:student-list"))
-            
+
     template_name = "students/add.html"
 
     context = {"section": "student-area", "classes": classes}
@@ -782,3 +782,66 @@ def verify_student_pin(request):
         context = {"form": form}
 
         return render(request, template_name, context)
+
+
+from apps.announcements.models import Announcement, Event, Category
+
+
+def student_dashboard(request):
+    print(request.user.username)
+    announcements = Announcement.objects.filter(visible_to_students=True)
+
+    # grap the current user from the request
+    user = request.user
+    # check if the current user is of a student type
+    if isinstance(user.student_profile, StudentProfile):
+        student = user.student_profile
+    else:
+        messages.error(request, "Not a valid student instance")
+        template_name = "base.html"
+        context = {}
+        return render(request, template_name, context)
+
+    courses = student.get_all_subjects()
+    total_courses = len(courses)
+
+    passed_cources = []
+
+    term = Term.objects.get(is_current=True)
+
+    current_year = AcademicYear.objects.get(is_current=True)
+    # Get the payment history for the current year
+    fees = Fee.objects.filter(student=student, academic_year=current_year)
+    payment_history = None
+
+    if fees.exists:
+        fee = fees.first()
+        payment_history = student.payment_history.filter(fee=fee)
+
+    # get all the exam sessions ids so far for that term
+    examination_session_ids = ExaminationSession.objects.filter(term=term).values_list(
+        "pkid", flat=True
+    )
+    # Grab all the mark records associated to this student for that year.
+    marks = student.student_marks.filter(exam_session__pkid__in=examination_session_ids)
+
+    pass_courses_count = marks.filter(score__gte=10).count()
+
+    # get all evernts that have to with the students
+    events = Event.objects.filter(visible_to_students=True)
+
+    class_enrolment = StudentProfile.objects.filter(current_class=student.current_class)
+
+    template_name = "students/student-dashboard.html"
+    context = {
+        "announcements": announcements,
+        "student": student,
+        "total_pass_courses": pass_courses_count,
+        "total_cources_writen": marks.count(),
+        "total_courses": total_courses,
+        "payment_history": payment_history,
+        "events": events,
+        "class": student.current_class,
+        "class_enrolment": class_enrolment.count(),
+    }
+    return render(request, template_name, context)

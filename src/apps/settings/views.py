@@ -3,6 +3,7 @@ from django.urls import reverse
 from apps.terms.models import ExaminationSession, Term, AcademicYear
 from .models import Setting
 from django.contrib import messages
+from django.contrib.auth.models import Group, Permission
 
 
 def settings_view(request):
@@ -17,6 +18,32 @@ def settings_view(request):
 
         setting = Setting.objects.create()
         setting.save()
+
+        # Create the different groups needed to run the system
+        students_group, created = Group.objects.get_or_create(name="students")
+        teachers_group, created = Group.objects.get_or_create(name="teachers")
+        admin_group, created = Group.objects.get_or_create(name="administrator")
+
+        # Define the permissions to add (adjust these to fit your needs)
+        student_permissions = [
+            "change_studentprofile",
+            "change_class",
+            "view_subject",
+            "view_reportcard",
+            "view_studentprofile",
+        ]
+
+        teacher_permissions = []
+
+        # Add student_permissions to the group
+        for perm in student_permissions:
+            try:
+                permission = Permission.objects.get(codename=perm)
+                students_group.permissions.add(permission)
+                message += f'Permission "{perm}" added to group "students".\n'
+            except Permission.DoesNotExist:
+                message += f'Permission "{perm}" does not exist.\n'
+
         messages.success(request, "Setting have been successfully initialized.")
         return redirect(reverse("settings:settings-home"))
 
@@ -26,6 +53,40 @@ def settings_view(request):
     context = {"section": "settings", "setting": setting}
 
     return render(request, template_name, context)
+
+
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.contrib.auth.models import Group, Permission
+
+
+def create_student_group(request):
+    # Create the students group
+    group, created = Group.objects.get_or_create(name="students")
+
+    if created:
+        message = 'Group "students" created successfully.\n'
+    else:
+        message = 'Group "students" already exists.\n'
+
+    # Define the permissions to add (adjust these to fit your needs)
+    permissions = [
+        "add_mymodel",
+        "change_mymodel",
+        "delete_mymodel",
+        "view_mymodel",
+    ]
+
+    # Add permissions to the group
+    for perm in permissions:
+        try:
+            permission = Permission.objects.get(codename=perm)
+            group.permissions.add(permission)
+            message += f'Permission "{perm}" added to group "students".\n'
+        except Permission.DoesNotExist:
+            message += f'Permission "{perm}" does not exist.\n'
+
+    return HttpResponse(message, content_type="text/plain")
 
 
 def update_settings(request):
