@@ -224,6 +224,7 @@ def teacher_add_view(request, *args, **kwargs):
                 teacher.country = country
 
             teacher.save()
+            teacher.user.is_teacher = True
             create_teacher_pin(teacher, pin)
             send_account_creation_email(request, teacher.user, "teacher")
             return redirect(

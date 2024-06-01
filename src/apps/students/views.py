@@ -694,6 +694,7 @@ def upload_students_from_file(request, *args, **kwargs):
 
                 print("Saving student")
                 student.save()
+                student.user.is_student = True
                 create_student_pin(student, generate_random_pin())
                 send_account_creation_email(request, student.user)
             else:
@@ -805,6 +806,9 @@ def student_dashboard(request):
     courses = student.get_all_subjects()
     total_courses = len(courses)
 
+    # calculate fee percentage of fee payment
+    percentage = 0
+
     passed_cources = []
 
     term = Term.objects.get(is_current=True)
@@ -817,6 +821,7 @@ def student_dashboard(request):
     if fees.exists:
         fee = fees.first()
         payment_history = student.payment_history.filter(fee=fee)
+        percentage = None
 
     # get all the exam sessions ids so far for that term
     examination_session_ids = ExaminationSession.objects.filter(term=term).values_list(
