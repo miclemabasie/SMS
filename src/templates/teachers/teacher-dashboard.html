@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+{% if error_message %}
+    <div class="main-wrapper login-body">
+        <div class="login-wrapper">
+            <div class="container">
+                <div class="d-flex justify-content-center align-items-center vh-100">
+                    <div class="text-center">
+                        <h1>{{error_message}}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+<div class="content container-fluid">
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">Welcome {{request.user.get_fullname}}! <br> {% if teacher %} <a href="{% url 'teachers:teachers-detail' teacher.pkid teacher.matricule %}">Visit profile</a>{% endif %}</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item active">Student</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-4 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-info">
+                            <h6>All Courses</h6>
+                            <h3>{{total_courses}}</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img src="{% static 'assets/img/icons/teacher-icon-01.svg' %} " alt="Dashboard Icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-info">
+                            <h6>Class Enrollment</h6>
+                            <h3>{{class_enrolment}}</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img src="{% static 'assets/img/icons/teacher-icon-02.svg' %}" alt="Dashboard Icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% comment %} <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-info">
+                            <h6>Test Attended</h6>
+                            <h3>30/50</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img src="{% static 'assets/img/icons/student-icon-01.svg' %}" alt="Dashboard Icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+        <div class="col-xl-4 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-info">
+                            <h6>Test Passed</h6>
+                            <h3>{{total_pass_courses}}/{{total_courses_writen}}</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img src="{% static 'assets/img/icons/student-icon-02.svg' %}" alt="Dashboard Icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12 col-lg-12 col-xl-8">
+            <div class="card flex-fill comman-shadow">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <h5 class="card-title">Fee Status</h5>
+                        </div>
+                        {% comment %} <div class="col-6">
+                            <ul class="chart-list-out">
+                                <li><span class="circle-blue"></span><span class="circle-gray"></span><span
+                                        class="circle-gray"></span></li>
+                                <li class="lesson-view-all"><a href="#">View All</a></li>
+                                <li class="star-menus"><a href="javascript:;"><i
+                                            class="fas fa-ellipsis-v"></i></a></li>
+                            </ul>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="col-12 col-lg-12 col-xl-12 d-flex">
+                    <div class="card flex-fill comman-shadow">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col-6">
+                                    <h5 class="card-title">Announcements</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% for ann in announcements %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card shadow-sm bg-light">
+                                        <div class="card-body">
+                                            <h3 class="card-title">{{ ann.title }}</h3>
+                                            <p class="card-text">{{ ann.description }}</p>
+                                            <p class="text-muted">Published on: {{ ann.publish_date|date:"F j, Y, g:i a" }}</p>
+                                            {% if ann.attachments.all %}
+                                                <h5 class="card-subtitle mb-2 text-muted">Attachments</h5>
+                                                <ul class="list-group list-group-flush">
+                                                    {% for attachment in ann.attachments.all %}
+                                                        <li class="list-group-item">
+                                                            <a href="{{ attachment.file.url }}" class="text-primary">{{ attachment.file.name }}</a> - {{ attachment.description }}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-12 col-xl-12 d-flex">
+                    <div class="card flex-fill comman-shadow">
+                        <div class="card-header d-flex align-items-center">
+                            <h5 class="card-title">Teaching History</h5>
+                            <ul class="chart-list-out student-ellips">
+                                <li class="star-menus"><a href="javascript:;"><i
+                                            class="fas fa-ellipsis-v"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="teaching-card">
+                                <ul class="steps-history">
+                                    <li>Sep22</li>
+                                    <li>Sep23</li>
+                                    <li>Sep24</li>
+                                </ul>
+                                <ul class="activity-feed">
+                                    <li class="feed-item d-flex align-items-center">
+                                        <div class="dolor-activity">
+                                            <span class="feed-text1"><a>Mathematics</a></span>
+                                            <ul class="teacher-date-list">
+                                                <li><i class="fas fa-calendar-alt me-2"></i>September 5,
+                                                    2022</li>
+                                                <li>|</li>
+                                                <li><i class="fas fa-clock me-2"></i>09:00 am - 10:00 am (60
+                                                    Minutes)</li>
+                                            </ul>
+                                        </div>
+                                        <div class="activity-btns ms-auto">
+                                            <button type="submit" class="btn btn-info">In Progress</button>
+                                        </div>
+                                    </li>
+                                    <li class="feed-item d-flex align-items-center">
+                                        <div class="dolor-activity">
+                                            <span class="feed-text1"><a>Geography </a></span>
+                                            <ul class="teacher-date-list">
+                                                <li><i class="fas fa-calendar-alt me-2"></i>September 5,
+                                                    2022</li>
+                                                <li>|</li>
+                                                <li><i class="fas fa-clock me-2"></i>09:00 am - 10:00 am (60
+                                                    Minutes)</li>
+                                            </ul>
+                                        </div>
+                                        <div class="activity-btns complete ms-auto">
+                                            <button type="submit" class="btn btn-info">Completed</button>
+                                        </div>
+                                    </li>
+                                    <li class="feed-item d-flex align-items-center">
+                                        <div class="dolor-activity">
+                                            <span class="feed-text1"><a>Botony</a></span>
+                                            <ul class="teacher-date-list">
+                                                <li><i class="fas fa-calendar-alt me-2"></i>September 5,
+                                                    2022</li>
+                                                <li>|</li>
+                                                <li><i class="fas fa-clock me-2"></i>09:00 am - 10:00 am (60
+                                                    Minutes)</li>
+                                            </ul>
+                                        </div>
+                                        <div class="activity-btns ms-auto">
+                                            <button type="submit" class="btn btn-info">In Progress</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-12 col-xl-4 d-flex">
+            <div class="card flex-fill comman-shadow">
+                <div class="card-body">
+                    <div id="calendar-doctor" class="calendar-container"></div>
+                    <div class="calendar-info calendar-info1">
+                        <div class="up-come-header">
+                            <h2>Upcoming Events</h2>
+                            <span><a href="javascript:;"><i class="feather-plus"></i></a></span>
+                        </div>
+                        {% comment %} <div class="upcome-event-date">
+                            <h3>10 Jan</h3>
+                            <span><i class="fas fa-ellipsis-h"></i></span>
+                        </div> {% endcomment %}
+                        {% for event in events %}
+                        <div class="calendar-details">
+                            <p>{{event.starttime}}</p>
+                            <div class="calendar-box normal-bg">
+                                <div class="calandar-event-name">
+                                    <h4>{{event.name}}</h4>
+                                    <h5>{{event.description}}</h5>
+                                </div>
+                                <span>{{event.starttime}} - {{event.endtime}}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock content %}
+
+
+
+{% block scripttags %}
+
+<script src="{% static 'assets/js/circle-progress.min.js'%}"></script>
+{% endblock scripttags %}

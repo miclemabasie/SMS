@@ -153,14 +153,14 @@
                             <h6>Unknown</h6>
 
                         {% endif %}
-                        {% if is_student_profile %}
+                        {% if user.is_student %}
                             <p class="text-muted mb-0">Student</p>
-                        {% elif is_admin_profile %}                           
+                        {% elif user.is_admin %}                           
                             <p class="text-muted mb-0">Administrator</p>
-                        {% elif is_teacher_profile %}
+                        {% elif user.is_teacher %}
                             <p class="text-muted mb-0">Teacher</p>
                         {% elif user.is_staff %}
-                            <p class="text-muted mb-0">Technician</p>
+                            <p class="text-muted mb-0">Super</p>
                         {% endif %}
                     </div>
                 </span>

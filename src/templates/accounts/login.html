@@ -48,42 +48,56 @@
 
                             <form action="{% url 'users:user-login' %}" method="post">
                                 {% csrf_token %}
-                                {{form.errors}}
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.non_field_errors }}
+                                    </div>
+                                {% endif %}
                                 <div class="form-group">
                                     <label>Email <span class="login-danger">*</span></label>
-                                    {{form.email}}
+                                    {{ form.email }}
                                     <span class="profile-views"><i class="fas fa-user-circle"></i></span>
+                                    {% if form.email.errors %}
+                                        <div class="text-danger">
+                                            {{ form.email.errors }}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="form-group">
                                     <label>Password <span class="login-danger">*</span></label>
-                                    {{form.password}}
+                                    {{ form.password }}
                                     <span class="profile-views feather-eye toggle-password"></span>
+                                    {% if form.password.errors %}
+                                        <div class="text-danger">
+                                            {{ form.password.errors }}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="forgotpass">
-                                    <div class="remember-me">
+                                    {% comment %} <div class="remember-me">
                                         <label class="custom_check mr-2 mb-0 d-inline-flex remember-me"> Remember me
                                             <input type="checkbox" name="radio">
                                             <span class="checkmark"></span>
                                         </label>
-                                    </div>
+                                    </div> {% endcomment %}
                                     <a href="{% url 'users:reset_password' %}">Forgot Password?</a>
                                 </div>
                                 <div class="form-group">
                                     <button class="btn btn-primary btn-block" type="submit">Login</button>
                                 </div>
                             </form>
-
-                            <div class="login-or">
+                            
+                            {% comment %} <div class="login-or">
                                 <span class="or-line"></span>
                                 <span class="span-or">or</span>
-                            </div>
+                            </div> {% endcomment %}
 
-                            <div class="social-login">
+                            {% comment %} <div class="social-login">
                                 <a href="#"><i class="fab fa-google-plus-g"></i></a>
                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
                                 <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
+                            </div> {% endcomment %}
 
                         </div>
                     </div>

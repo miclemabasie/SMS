@@ -11,6 +11,7 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="{% url 'staff:admin-dashboard' %}" class="{% if request.path == '/'  %}active{% endif %}">Admin Dashboard</a></li>
+                        
                         <li><a href="teacher-dashboard.html">Teachers Dashboard</a></li>
                         
                     </ul>
@@ -37,6 +38,7 @@
                         <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
                         <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
                         <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Teacher Add</a></li>
+                        <li><a href="{% url 'teachers:teacher-dashboard' %}" class="{% if request.resolver_match.url_name == 'teacher-dashboard'  %}active{% endif %}">Teacher Dashboard</a></li>
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>

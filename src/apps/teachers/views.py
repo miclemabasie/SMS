@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from apps.announcements.models import Announcement, Event
+from apps.fees.models import Fee
 from apps.students.forms import VerifyPinForm
 from apps.students.models import (
     TeacherProfile,
@@ -25,6 +27,7 @@ from apps.students.utils import (
     create_teacher_pin,
     send_password_reset_email,
 )
+from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 faker_factory = Faker()
 
@@ -365,3 +368,96 @@ def verify_teacher_pin(request):
         context = {"form": form}
 
         return render(request, template_name, context)
+
+
+@login_required
+def teacher_dashboard(request):
+    # check if current user is user of type teacher
+    template_name = "teachers/teacher-dashboard.html"
+    if request.user.is_teacher or request.user.is_staff:
+        announcements = Announcement.objects.filter(visible_to_students=True)
+        teacher = None
+        if request.user.is_teacher:
+            teacher = request.user.teacher_profile
+
+        context = {
+            "announcements": announcements,
+            "teacher": teacher,
+            # "total_pass_courses": pass_courses_count,
+            # "total_cources_writen": marks.count(),
+            # "total_courses": total_courses,
+            # "payment_history": payment_history,
+            # "events": events,
+            # "class": student.current_class,
+            # "class_enrolment": class_enrolment.count(),
+        }
+        return render(request, template_name, context)
+    else:
+        messages.error(request, "You are not allowed to be here.")
+        return render(
+            request, template_name, {"error_message": "You are not allowed to be here."}
+        )
+
+
+def student_dashboard(request):
+    print(request.user.username)
+    announcements = Announcement.objects.filter(visible_to_students=True)
+
+    # grap the current user from the request
+    user = request.user
+    # check if the current user is of a student type
+    if isinstance(user.student_profile, StudentProfile):
+        student = user.student_profile
+    else:
+        messages.error(request, "Not a valid student instance")
+        template_name = "base.html"
+        context = {}
+        return render(request, template_name, context)
+
+    courses = student.get_all_subjects()
+    total_courses = len(courses)
+
+    # calculate fee percentage of fee payment
+    percentage = 0
+
+    passed_cources = []
+
+    term = Term.objects.get(is_current=True)
+
+    current_year = AcademicYear.objects.get(is_current=True)
+    # Get the payment history for the current year
+    fees = Fee.objects.filter(student=student, academic_year=current_year)
+    payment_history = None
+
+    if fees.exists:
+        fee = fees.first()
+        payment_history = student.payment_history.filter(fee=fee)
+        percentage = None
+
+    # get all the exam sessions ids so far for that term
+    examination_session_ids = ExaminationSession.objects.filter(term=term).values_list(
+        "pkid", flat=True
+    )
+    # Grab all the mark records associated to this student for that year.
+    marks = student.student_marks.filter(exam_session__pkid__in=examination_session_ids)
+
+    pass_courses_count = marks.filter(score__gte=10).count()
+
+    # get all evernts that have to with the students
+    events = Event.objects.filter(visible_to_students=True)
+
+    class_enrolment = StudentProfile.objects.filter(current_class=student.current_class)
+
+    template_name = "students/student-dashboard.html"
+    context = {
+        "announcements": announcements,
+        "student": student,
+        "total_pass_courses": pass_courses_count,
+        "total_cources_writen": marks.count(),
+        "total_courses": total_courses,
+        "payment_history": payment_history,
+        "events": events,
+        "class": student.current_class,
+        "class_enrolment": class_enrolment.count(),
+    }
+    return render(request, template_name, context)

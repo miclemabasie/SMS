@@ -4,34 +4,38 @@ from .forms import LoginForm
 from django.contrib.auth import login, authenticate, logout
 
 
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from .forms import LoginForm
+
+
 def login_view(request):
-
     if request.method == "POST":
-
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-
-        user = authenticate(request, email=email, password=password)
-        if user:
-            login(request, user=user)
-
-            # Check user type and redirect to proper page
-            if user.is_student:
-                return redirect(reverse("students:student-dashboard"))
-            if user.is_teacher:
-                return redirect(reverse("teachers:teacher-dashboard"))
-            if user.is_admin:
-                return redirect("staff:admin-dashboard")
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
+            user = authenticate(request, email=email, password=password)
+            if user:
+                login(request, user=user)
+                if user.is_student:
+                    return redirect(reverse("students:student-dashboard"))
+                if user.is_teacher:
+                    return redirect(reverse("teachers:teacher-dashboard"))
+                if user.is_admin:
+                    return redirect(reverse("staff:admin-dashboard"))
+            else:
+                form.add_error(None, "Invalid email or password")
+        # If form is not valid, it will be passed back with errors
+    else:
+        form = LoginForm()
 
     template_name = "accounts/login.html"
-
-    form = LoginForm()
-
     context = {
         "section": "accounts",
         "form": form,
     }
-
     return render(request, template_name, context)
 
 
