@@ -89,7 +89,7 @@
                     </ul>
                 </li> -->
                
-                <li class="submenu">
+                {% comment %} <li class="submenu">
                     <a href="#"><i class="fas fa-clipboard"></i> <span> Invoices</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
@@ -100,20 +100,16 @@
                         <li><a href="view-invoice.html">Invoices Details</a></li>
                         <li><a href="invoices-settings.html">Invoices Settings</a></li>
                     </ul>
-                </li>
+                </li> {% endcomment %}
                 <li class="menu-title">
                     <span>Management</span>
                 </li>
                 <li class="submenu">
-                    <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Accounts</span> <span
+                    <a href="#"><i class="fas fa-users"></i> <span> Accounts</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="fees-collections.html">Fees Collection</a></li>
-                        <li><a href="expenses.html">Expenses</a></li>
-                        <li><a href="salary.html">Salary</a></li>
-                        <li><a href="add-fees-collection.html">Add Fees</a></li>
-                        <li><a href="add-expenses.html">Add Expenses</a></li>
-                        <li><a href="add-salary.html">Add Salary</a></li>
+                        <li><a href="{% url 'staff:create-admin' %}" class="{% if request.resolver_match.url_name == 'create-admin'  %}active{% endif %}">Add User</a></li>
+                        <li><a href="{% url 'staff:list-admin' %}" class="{% if request.resolver_match.url_name == 'list-admin'  %}active{% endif %}">List Admin</a></li>
                     </ul>
                 </li>
                 <li>

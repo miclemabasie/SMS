@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content%}
+<div class="content container-fluid">
+
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Add Staff</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="teachers.html">Administrators</a></li>
+                    <li class="breadcrumb-item active">Add Staff</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{% url 'staff:create-admin' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="row">
+
+
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Basic Details</span></h5>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>First Name<span style="color: red;">*</span></label>
+                                        <input type="text" name="first_name" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Last Name<span style="color: red;">*</span></label>
+                                        <input type="text" name="last_name" class="form-control" required>
+                                    </div>
+                                </div>
+                                {% comment %} <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Subject<span style="color: red;">*</span></label>
+                                        <input type="text" name="subject" class="form-control" required>
+                                    </div>
+                                </div> {% endcomment %}
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Gender</label>
+                                        <select class="form-control" name="gender">
+                                            <option value="Other" selected>Others</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Phone<span style="color: red;">*</span></label>
+                                        <input type="text" name="phone" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Date of Birth<span style="color: red;">*</span></label>
+                                        <input type="date" name="dob" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Address<span style="color: red;">*</span></label>
+                                        <input type="text" name="address" class="form-control" required>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Location</label>
+                                        <input type="text" name="location" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Country</label>
+                                        <input type="text" name="country" class="form-control">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Photo</label>
+                                        <input type="file" name="photo" class="form-control">
+                                    </div>
+                                </div>
+                                
+
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                       <label>Role</label>
+                                       <select name="selected_role" class="form-control">
+                                         <option value="Other">Other</option>
+                                         <option value="Principal">Principal</option>
+                                         <option value="Vice Principal">Vice Principal</option>
+                                         <option value="Burser">Burser</option>
+                                         <option value="IT">IT</option>
+                                         <option value="DM">DM</option>
+                                         <option value="Secretary">Secretary</option>
+                                      </select>
+                                    </div>
+                                 </div>
+                                {% comment %} <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Staff is a teacher</label>
+                                        <input type="checkbox" name="manage_subjects">
+                                    </div>
+                                </div> {% endcomment %}
+
+                                {% comment %} <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>PIN</label>
+                                        <input type="text" name="pin" class="form-control">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Remark</label>
+                                        <input type="text" name="remark" class="form-control">
+                                    </div>
+                                </div> {% endcomment %}
+
+
+                                <!-- <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Qualification</label>
+                                    <input class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Experience</label>
+                                    <input class="form-control" type="text">
+                                </div>
+                            </div> -->
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Login Details</span></h5>
+                                </div>
+                                <div class="col-md-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Email ID<span style="color: red;">*</span></label>
+                                        <input type="email" name="email" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Username<span style="color: red;">*</span></label>
+                                        <input type="text" name="username" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>password<span style="color: red;">*</span></label>
+                                        <input type="password" name="password" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Permissions</span></h5>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Generate Reports</label>
+                                        <input type="checkbox" name="generate_reports">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Manage Students</label>
+                                        <input type="checkbox" name="manage_students">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Manage Teachers</label>
+                                        <input type="checkbox" name="manage_teachers">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Manage Administrators</label>
+                                        <input type="checkbox" name="manage_admins">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Manage Sessions</label>
+                                        <input type="checkbox" name="manage_sessions">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Manage Subjects</label>
+                                        <input type="checkbox" name="manage_subjects">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content%}
+
+
+
+{% block scripttags %}
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+{% endblock scripttags %}

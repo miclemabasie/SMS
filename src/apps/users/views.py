@@ -11,14 +11,23 @@ from .forms import LoginForm
 
 
 def login_view(request):
+    remember_me = False
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
+            remember_me = request.POST.get("remember_me") == "yes"
+
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user=user)
+
+                if remember_me:
+                    request.session.set_expiry(1209600)  # 2 weeks
+                else:
+                    request.session.set_expiry(0)  # Browser close
+
                 if user.is_student:
                     return redirect(reverse("students:student-dashboard"))
                 if user.is_teacher:

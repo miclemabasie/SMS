@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
+{% endblock stylelinks %}
+
+
+
+{% block content %}
+<div class="content container-fluid">
+
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Administrators</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Administrators</a></li>
+                    <li class="breadcrumb-item active">List</li>
+                </ul>
+            </div>
+            <div class="col-auto text-right float-right ml-auto">
+                <a href="#" class="btn btn-outline-primary mr-2"><i class="fas fa-download"></i> Download</a>
+                <a href="{% url 'staff:create-admin' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0 datatable">
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Matricule</th>
+                                    <th>Name</th>
+                                    {% comment %} <th>Class</th> {% endcomment %}
+                                    <th>Gender</th>
+                                    <th>DOB</th>
+                                    <th>Location</th>
+                                    <th>Mobile Number</th>
+                                    <th>Address</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for admin in admins %}        
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{ admin.matricule }}</td>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                {{admin.user.get_fullname}}
+                                                {% comment %} <a href="{% url 'admins:admins-detail' pkid=admin.pkid matricule=admin.matricule %}" class="avatar avatar-sm mr-2"><img
+                                                        class="avatar-img rounded-circle"
+                                                        src="{{ admin.profile_photo.url }}" alt="User Image"></a> {% endcomment %}
+                                                {% comment %} <a href="{% url 'admins:admins-detail' pkid=admin.pkid matricule=admin.matricule %}">{{ admin.user.first_name}} {{admin.user.last_name}}</a> {% endcomment %}
+                                            </h2>
+                                        </td>
+                                        {% comment %} <td></td> {% endcomment %}
+                                        <td>{{admin.gender}}</td>
+                                        <td>{{admin.user.dob}}</td>
+                                        <td>{{admin.location}}</td>
+                                        <td>{{admin.phone_number}}</td>
+                                        <td>{{admin.address}}</td>
+                                        {% comment %} <td class="text-right">
+                                            <div class="actions">
+                                                <a href="{% url 'admins:admins-edit' pkid=admin.pkid matricule=admin.matricule %}" class="btn btn-sm bg-success-light mr-2">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="{% url 'admins:admins-delete' pkid=admin.pkid matricule=admin.matricule %}" class="btn btn-sm bg-danger-light">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td> {% endcomment %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripttags %}
+<script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
+{% endblock scripttags %}
