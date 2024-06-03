@@ -6,13 +6,17 @@ from django.contrib import messages
 from django.contrib.auth.models import Group, Permission
 
 
-def settings_view(request):
+from django.contrib.auth.models import Group, Permission
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.urls import reverse
 
+
+def settings_view(request):
     if request.method == "POST":
-        # initialize a new setting object
-        # Check if setting already exist in the database
-        setting = Setting.objects.filter()
-        if setting.exists():
+        # Check if settings already exist in the database
+        setting = Setting.objects.all().first()
+        if setting:
             messages.error(request, "Settings already initialized.")
             return redirect(reverse("settings:settings-home"))
 
@@ -20,22 +24,109 @@ def settings_view(request):
         setting.save()
 
         # Create the different groups needed to run the system
-        students_group, created = Group.objects.get_or_create(name="students")
-        teachers_group, created = Group.objects.get_or_create(name="teachers")
-        admin_group, created = Group.objects.get_or_create(name="administrator")
+        students_group, _ = Group.objects.get_or_create(name="students")
+        teachers_group, _ = Group.objects.get_or_create(name="teachers")
+        admin_group, _ = Group.objects.get_or_create(name="administrator")
 
-        # Define the permissions to add (adjust these to fit your needs)
+        # Define the permissions to add
         student_permissions = [
             "change_studentprofile",
             "change_class",
             "view_subject",
             "view_reportcard",
             "view_studentprofile",
+            "view_announcement",
         ]
 
-        teacher_permissions = []
+        teacher_permissions = [
+            "add_mark",
+            "change_mark",
+            "view_mark",
+            "add_attendance",
+            "change_attendance",
+            "view_attendance",
+            "view_announcement",
+        ]
 
-        # Add student_permissions to the group
+        admin_permissions = [
+            "add_announcement",
+            "change_announcement",
+            "delete_announcement",
+            "view_announcement",
+            # admin profile
+            "add_adminprofile",
+            "change_adminprofile",
+            "view_adminprofile",
+            "delete_adminprofile",
+            # sessions
+            "add_session",
+            "change_session",
+            "view_session",
+            "delete_session",
+            # subjects
+            "add_subject",
+            "change_subject",
+            "view_subject",
+            "delete_subject",
+            # Attendance
+            "add_attendance",
+            "change_attendance",
+            "delete_attendance",
+            "view_attendance",
+            # Managring clasess
+            "add_class",
+            "change_class",
+            "delete_class",
+            "view_class",
+            # Marks management
+            "add_mark",
+            "change_mark",
+            "delete_mark",
+            "view_mark",
+            # Managing students
+            "add_studentprofile",
+            "change_studentprofile",
+            "delete_studentprofile",
+            "view_studentprofile",
+            # Managring teacher profiles
+            "add_teacherprofile",
+            "change_teacherprofile",
+            "delete_teacherprofile",
+            "view_teacherprofile",
+            # Session management
+            "add_academicyear",
+            "change_academicyear",
+            "delete_academicyear",
+            "view_academicyear",
+            "add_examinationsession",
+            "change_examinationsession",
+            "delete_examinationsession",
+            "view_examinationsession",
+            # Term Management
+            "add_term",
+            "change_term",
+            "delete_term",
+            "view_term",
+            # Fee manaagement
+            "add_fee",
+            "change_fee",
+            "delete_fee",
+            "view_fee",
+            "add_feepaymenthistory",
+            "change_feepaymenthistory",
+            "delete_feepaymenthistory",
+            "view_feepaymenthistory",
+            # Reportcards
+            "add_reportcard",
+            "change_reportcard",
+            "delete_reportcard",
+            "view_reportcard",
+        ]
+
+        # Initialize message container
+        message = ""
+
+        # Add student permissions to the group
         for perm in student_permissions:
             try:
                 permission = Permission.objects.get(codename=perm)
@@ -44,7 +135,28 @@ def settings_view(request):
             except Permission.DoesNotExist:
                 message += f'Permission "{perm}" does not exist.\n'
 
-        messages.success(request, "Setting have been successfully initialized.")
+        # Add teacher permissions to the group
+        for perm in teacher_permissions:
+            try:
+                permission = Permission.objects.get(codename=perm)
+                teachers_group.permissions.add(permission)
+                message += f'Permission "{perm}" added to group "teachers".\n'
+            except Permission.DoesNotExist:
+                message += f'Permission "{perm}" does not exist.\n'
+
+        # Add admin permissions to the group
+        for perm in admin_permissions:
+            try:
+                permission = Permission.objects.get(codename=perm)
+                admin_group.permissions.add(permission)
+                message += f'Permission "{perm}" added to group "administrator".\n'
+            except Permission.DoesNotExist:
+                message += f'Permission "{perm}" does not exist.\n'
+
+        # Flash success message
+        messages.success(
+            request, "Settings have been successfully initialized.\n" + message
+        )
         return redirect(reverse("settings:settings-home"))
 
     setting = Setting.objects.all().first()
@@ -53,40 +165,6 @@ def settings_view(request):
     context = {"section": "settings", "setting": setting}
 
     return render(request, template_name, context)
-
-
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.contrib.auth.models import Group, Permission
-
-
-def create_student_group(request):
-    # Create the students group
-    group, created = Group.objects.get_or_create(name="students")
-
-    if created:
-        message = 'Group "students" created successfully.\n'
-    else:
-        message = 'Group "students" already exists.\n'
-
-    # Define the permissions to add (adjust these to fit your needs)
-    permissions = [
-        "add_mymodel",
-        "change_mymodel",
-        "delete_mymodel",
-        "view_mymodel",
-    ]
-
-    # Add permissions to the group
-    for perm in permissions:
-        try:
-            permission = Permission.objects.get(codename=perm)
-            group.permissions.add(permission)
-            message += f'Permission "{perm}" added to group "students".\n'
-        except Permission.DoesNotExist:
-            message += f'Permission "{perm}" does not exist.\n'
-
-    return HttpResponse(message, content_type="text/plain")
 
 
 def update_settings(request):

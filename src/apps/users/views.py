@@ -28,12 +28,12 @@ def login_view(request):
                 else:
                     request.session.set_expiry(0)  # Browser close
 
-                if user.is_student:
-                    return redirect(reverse("students:student-dashboard"))
-                if user.is_teacher:
-                    return redirect(reverse("teachers:teacher-dashboard"))
                 if user.is_admin:
                     return redirect(reverse("staff:admin-dashboard"))
+                if user.is_teacher:
+                    return redirect(reverse("teachers:teacher-dashboard"))
+                if user.is_student:
+                    return redirect(reverse("students:student-dashboard"))
             else:
                 form.add_error(None, "Invalid email or password")
         # If form is not valid, it will be passed back with errors

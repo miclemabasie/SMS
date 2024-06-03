@@ -4,16 +4,16 @@ from apps.terms.models import AcademicYear, Term, ExaminationSession
 
 register = template.Library()
 
-print("This is the tags file")
+# print("This is the tags file")
 
 
 @register.simple_tag
 def current_working_session():
-    current_year = AcademicYear.objects.get(is_current=True)
-    current_term = Term.objects.get(is_current=True)
-    current_exam_session = ExaminationSession.objects.get(is_current=True)
-    info = f"Year: {current_year.name}-{current_term.term}-{current_exam_session.exam_session}"
-    print("This is the same infor message: ", info)
+    # current_year = AcademicYear.objects.get(is_current=True)
+    # current_term = Term.objects.get(is_current=True)
+    # current_exam_session = ExaminationSession.objects.get(is_current=True)
+    # info = f"Year: {current_year.name}-{current_term.term}-{current_exam_session.exam_session}"
+    # print("This is the same infor message: ", info)
     return "info"
 
 

@@ -58,7 +58,7 @@
             {% for s in first_three_students %}
             <tr>
                 <td>{{forloop.counter}}</td>
-                <td>{{s.student.user.first_name}} {{s.student.user.last_name}} {{s.term_avg}}</td>
+                <td>{{s.student.user.first_name}} {{s.student.user.last_name}}</td>
                 <td>{{s.term_avg}}</td>
             </tr>
             {% endfor %}
@@ -79,7 +79,7 @@
             {% for s in last_three_students %}
             <tr>
                 <td>{{forloop.counter}}</td>
-                <td>{{s.student.user.first_name}} {{s.student.user.last_name}} {{s.term_avg}}</td>
+                <td>{{s.student.user.first_name}} {{s.student.user.last_name}}</td>
                 <td>{{s.term_avg}}</td>
             </tr>
             {% endfor %}
