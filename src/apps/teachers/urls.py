@@ -22,4 +22,10 @@ urlpatterns = [
     ),
     path("verify-teacher", views.verify_teacher_pin, name="verify_pin"),
     path("teacher-dashboard", views.teacher_dashboard, name="teacher-dashboard"),
+    # assign subjects
+    path(
+        "assign-subjects/<int:teacher_pkid>/<str:teacher_mat>/",
+        views.assign_class_to_teacher,
+        name="assign-subjects",
+    ),
 ]

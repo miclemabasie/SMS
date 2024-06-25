@@ -210,21 +210,24 @@
         </div>
     </div>
     {% else %}
-
-    <div class="col-md-6 col-sm-12">
-        <div class="ribbon-wrapper card">
-            <div class="card-body">
-                <div class="ribbon ribbon-primary">Ribbon</div>
-                <p class="text"><strong>The settings for allow you to customize the system in different way with
-                        different settings, to proceed with this, click on the the <mark>initialize</mark> button below
-                        and you can then start to customize the system.</strong></p>
-                <form action="{% url 'settings:settings-home' %}" method='post'>
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-warning ml-auto">Initialize Settings.</button>
-                </form>
+    
+    <div class="main-wrapper login-body">
+        <div class="login-wrapper">
+            <div style="max-width: 600px;" class="container">
+                <div class="card d-flex justify-content-center align-items-center">
+                    <div class="card-body text-center p-5">
+                        <p class="text fs-3">The settings allow you to customize the system in different ways with
+                            different options, to proceed with this, click on the the <mark>initialize</mark> button below
+                            and you can then start to customize the system.</p>
+                    <form action="{% url 'settings:settings-home' %}" method='post'>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning ml-auto">Initialize Settings.</button>
+                    </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </div> 
 
     {% endif %}
 

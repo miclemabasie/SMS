@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/dragula/css/dragula.min.css'  %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/scrollbar/scroll.min.css' %}">
+{% endblock stylelinks %}
+
+
+{% block content %}
+
+<div class="content container-fluid">
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Assign Subjects To The Teacher: {{teacher.user.get_fullname}}</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Components</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="col-md-12">
+            <div class="card" id="dd-handle">
+                <div class="card-header">
+                    <h5>Using the <span class="handle px-4 py-2 bg-warning" >+</span> button, Drag and Drop subjects to the selected subjects list and click the update button to updat the list.</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h4 class="my-1 mb-4">Unselected Subjects</h4>
+                            <ul class="list-group vertical-scroll scroll-demo" id="handle-list-1">
+                                
+                                {% for subject in subjects %}
+                                    
+                                    <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-warning" >+</span>{{subject.name}}</li>
+                                {% endfor %}
+                                    
+                            </ul>
+                        </div>
+                        <div class="col-sm-6">
+                            <h4 class="my-1 mb-4">Selected Subjects</h4>
+                            <ul class="list-group vertical-scroll scroll-demo" id="handle-list-2">
+                                
+                                {% for subject in assigned_subjects %}
+                                    
+                                    <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-success">+</span> {{subject.name}}</li>
+                                {% endfor %}
+                                    
+                            </ul>
+
+                            <button id="updateButton" class="btn btn-primary align-self-end mt-4 form-control text-white">Update</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>
+{% endblock content %}
+
+
+
+{% block scripttags %}
+<script src="{% static 'assets/plugins/dragula/js/dragula.min.js' %}"></script>
+<script src="{% static 'assets/plugins/dragula/js/drag-drop.min.js' %}"></script>
+
+<script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'assets/plugins/scrollbar/scrollbar.min.js' %}"></script>
+<script src="{% static 'assets/plugins/scrollbar/custom-scroll.js' %}"></script>
+
+
+<script src="{% static 'assets/plugins/alertify/alertify.min.js' %}"></script>
+<script src="{% static 'assets/plugins/alertify/custom-alertify.min.js' %}"></script>
+{% endblock scripttags %}
+
+{% block script %}
+<script>
+
+window.addEventListener("DOMContentLoaded", function() {
+    let scrollObject = documentl.getElementById("scrollobj")
+    scrollObject.style.height = 600;
+})
+
+console.log("This is linked")
+$(document).ready(function () {
+    // Dragula initialization code
+
+    // Fetch CSRF token from the cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Search for the CSRF token cookie
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Add event listener to the update button
+    document.getElementById("updateButton").addEventListener("click", function () {
+        // Get selected subjects from the second list
+        var selectedSubjects = [];
+        $("#handle-list-2 li").each(function () {
+            console.log($(this).data())
+            // selectedSubjects.push($(this).text().trim());
+            selectedSubjects.push($(this).data());
+        });
+
+        // Get the CSRF token
+        const csrftoken = getCookie('csrftoken');
+
+        // Send selected subjects to the server via AJAX
+        $.ajax({
+            url: "{% url 'teachers:assign-subjects' teacher_pkid=teacher.pkid teacher_mat=teacher.matricule %}",
+            method: "POST",
+            // data: {id: 2},
+            data: JSON.stringify({ selectedSubjects: selectedSubjects }),
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": csrftoken  // Include the CSRF token in the headers
+            },
+            success: function (response) {
+                alertify.success("Subjects updated successfully")
+                console.log("Subjects updated successfully:", response);
+                // Optionally, you can perform any actions here after successful update
+
+            },
+            error: function (xhr, status, error) {
+                console.error("Error updating subjects:", error);
+                alertify.error("Error, something went wrong.")
+            }
+        });
+    });
+});
+
+</script>
+{% endblock script %}
+

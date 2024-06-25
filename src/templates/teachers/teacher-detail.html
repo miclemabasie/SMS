@@ -69,7 +69,9 @@
                                     <a href="{% url 'teachers:teachers-edit' matricule=teacher.matricule pkid=teacher.pkid %}">
                                         <button type="submit" class="btn btn-info follow-btns">Edit Teacher's Info</button>
                                     </a>
-                                    <button type="submit" class="btn btn-info message-btns">Message</button>
+                                    <a href="{% url 'teachers:assign-subjects' teacher.pkid teacher.matricule %}">
+                                        <button type="submit" class="btn btn-info message-btns">Assign Subjects</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

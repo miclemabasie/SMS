@@ -73,7 +73,10 @@ class StudentTempCreateProfile(models.Model):
     pin = models.CharField(max_length=10, verbose_name=_("PIN"))
     email = models.EmailField(verbose_name=_("Email"), unique=True)
     student = models.OneToOneField(
-        "StudentProfile", verbose_name=_("Student"), on_delete=models.SET_NULL, null=True
+        "StudentProfile",
+        verbose_name=_("Student"),
+        on_delete=models.SET_NULL,
+        null=True,
     )
 
 
@@ -83,7 +86,10 @@ class TeacherTempCreateProfile(models.Model):
     pin = models.CharField(max_length=10, verbose_name=_("PIN"))
     email = models.EmailField(verbose_name=_("Email"), unique=True)
     teacher = models.OneToOneField(
-        "TeacherProfile", verbose_name=_("Student"), on_delete=models.SET_NULL, null=True
+        "TeacherProfile",
+        verbose_name=_("Student"),
+        on_delete=models.SET_NULL,
+        null=True,
     )
 
 
@@ -256,6 +262,9 @@ class TeacherProfile(TimeStampedUUIDModel):
     main_subject = models.CharField(
         verbose_name=_("Main Subject"), blank=True, null=True, max_length=200
     )
+
+    # assign classes to teacher
+    classes = models.ManyToManyField(Subject, related_name="teachers")
 
     def save(self, *args, **kwargs):
         if not self.matricule:
