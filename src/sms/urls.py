@@ -29,6 +29,7 @@ urlpatterns = [
         PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
+    path("attendance/", include("apps.attendance.urls", namespace="attendance")),
 ]
 
 if settings.DEBUG:

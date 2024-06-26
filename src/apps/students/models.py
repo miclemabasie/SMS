@@ -173,17 +173,18 @@ class StudentProfile(TimeStampedUUIDModel):
         return total_coef
 
 
-class Attendance(TimeStampedUUIDModel):
-    is_present = models.BooleanField(default=False)
-    student = models.ForeignKey(
-        StudentProfile, related_name="attendance", on_delete=models.CASCADE
-    )
-    teacher = models.ForeignKey(
-        "TeacherProfile", related_name="student_attendance", on_delete=models.CASCADE
-    )
-    subject = models.ForeignKey(
-        "Subject", related_name="attendance", on_delete=models.CASCADE
-    )
+# class Attendance(TimeStampedUUIDModel):
+#     is_present = models.BooleanField(default=False)
+#     student = models.ForeignKey(
+#         StudentProfile, related_name="attendance", on_delete=models.CASCADE
+#     )
+#     teacher = models.ForeignKey(
+#         "TeacherProfile", related_name="student_attendance", on_delete=models.CASCADE
+#     )
+#     subject = models.ForeignKey(
+#         "Subject", related_name="attendance", on_delete=models.CASCADE
+#     )
+#     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Subject(TimeStampedUUIDModel):
@@ -194,6 +195,16 @@ class Subject(TimeStampedUUIDModel):
         verbose_name=_("Subject Code"), max_length=10, blank=True, null=True
     )
     coef = models.PositiveIntegerField(verbose_name=_("Subject Coef"), default=1)
+
+    assigned_to = models.ForeignKey(
+        "TeacherProfile",
+        related_name="assigned_subjects",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    assigned = models.BooleanField(default=False)
 
     # Add a ManyToManyField for teachers
     # teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)
@@ -262,9 +273,6 @@ class TeacherProfile(TimeStampedUUIDModel):
     main_subject = models.CharField(
         verbose_name=_("Main Subject"), blank=True, null=True, max_length=200
     )
-
-    # assign classes to teacher
-    classes = models.ManyToManyField(Subject, related_name="teachers")
 
     def save(self, *args, **kwargs):
         if not self.matricule:

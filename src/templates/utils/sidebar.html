@@ -79,6 +79,10 @@
                     </ul>
                 </li>
 
+                <li class="{% if request.resolver_match.url_name == 'take-attendance'  %}active{% endif %}">
+                    <a href="{% url 'attendance:take-attendance' %} " ><i class="fas fa-user"></i> <span>Take Attendance</span></a>
+                </li>
+
                 <!-- <li class="submenu">
                     <a href="#"><i class="fas fa-certificate"></i> <span> Marks</span> <span
                             class="menu-arrow"></span></a>

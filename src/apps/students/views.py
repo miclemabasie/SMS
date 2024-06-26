@@ -285,7 +285,7 @@ def edit_student_profile(request, pkid, matricule):
 
 
 @login_required
-def download_marksheet(request, subject_pkid, class_pkid,*args, **kwargs):
+def download_marksheet(request, subject_pkid, class_pkid, *args, **kwargs):
     # Get the class for which the mark sheet needs to be downloaded}|
 
     klass = get_object_or_404(Class, pkid=class_pkid)
@@ -347,8 +347,26 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
 
     subject = Subject.objects.get(pkid=subject_pkid)
     klass = Class.objects.get(pkid=class_pkid)
+    academic_year = AcademicYear.objects.filter(is_current=True).first()
+
+    terms = Term.objects.filter(academic_year=academic_year)
+
+    sequences = []
+
+    for term in terms:
+        for ex_session in term.examination_sessions.all():
+            sequences.append(ex_session)
+
     if request.method == "POST" and request.FILES["marks_file"]:
         marks_file = request.FILES["marks_file"]
+
+        selected_ex_session_id = request.POST.get("selected_ex_session")
+        exam_session = ExaminationSession.objects.filter(pkid=selected_ex_session_id)
+        if exam_session.exists():
+            exam_session = exam_session.first()
+        else:
+            messages.error(request, "Invalid Exam Session")
+            return redirect(reverse("students:marks-upload", kwargs={"subject_pkid": subject_pkid, "class_pkid": class_pkid}))
 
         # decoded_file = marks_file.read().decode('utf-8').splitlines()
 
@@ -357,8 +375,6 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
 
         # Get the subject from the database
 
-        # Get the session
-        exam_session = ExaminationSession.objects.get(is_current=True)
 
         wb = load_workbook(filename=marks_file)
 
@@ -399,6 +415,8 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
         "section": "marks-area",
         "subject": subject,
         "klass": klass,
+        "sessions": sequences,
+        "year": academic_year
     }
 
     return render(request, template_name, context)
@@ -497,7 +515,7 @@ def marks(request):
         if user.is_teacher:
             # get all assigned subject to the current teacher.
             teacher = user.teacher_profile
-            assigned_subjects = teacher.subjects.all()
+            assigned_subjects = Subject.objects.filter(assigned_to=teacher)
             filter_classes = []
             classes = []
             for sub in assigned_subjects:

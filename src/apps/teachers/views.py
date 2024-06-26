@@ -482,7 +482,7 @@ def assign_class_to_teacher(request, teacher_pkid, teacher_mat):
         data = json.loads(request.body)
 
         # get current assigned subject for the given teacher
-        assigned_subjects = teacher.subjects.all()
+        assigned_subjects = Subject.objects.filter(assigned_to=teacher)
 
         print(data)
         # extract all the IDs of the selected subjects and add them to list.
@@ -491,37 +491,33 @@ def assign_class_to_teacher(request, teacher_pkid, teacher_mat):
             print(subject["pkid"])
             selected_subjects_ids.append(subject.get("pkid"))
         # Flush out all the subjects that exist in the  and reset
-        
+
         if len(assigned_subjects) > 0 and len(selected_subjects_ids) > 0:
             for subject in assigned_subjects:
                 # remove the subject
-                teacher.subjects.remove(subject)
-                teacher.save()
+                subject.assigned_to = None
+                subject.assigned = False
+                subject.save()
 
         for pkid in selected_subjects_ids:
             sub = Subject.objects.filter(pkid=pkid).first()
             if sub:
-                teacher.subjects.add(sub)
-                teacher.save()
+                sub.assigned_to = teacher
+                sub.assigned = True
+                sub.save()
 
         return JsonResponse({"message": "updated.."})
 
-
     # continue if teacher exists....
     # get all subjects that are assigned to the current teacher
-    assigned_subjects = teacher.subjects.all()
+    assigned_subjects = Subject.objects.filter(assigned_to=teacher)
     # get remaining subjects...
-    subjects = Subject.objects.all()
+    subjects = Subject.objects.filter(assigned=False)
 
     # compile list of unique subjects
-    unique_subject_list = []
-    for sub in subjects:
-        if sub not in assigned_subjects:
-            unique_subject_list.append(sub)
-
     context = {
         "assigned_subjects": assigned_subjects,
-        "subjects": unique_subject_list,
+        "subjects": subjects,
         "teacher": teacher,
     }
     template_name = "teachers/assign-subjects.html"
