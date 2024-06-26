@@ -26,7 +26,7 @@
                     <h3 class="page-title">Welcome {{request.user.get_fullname}}! <br> {% if teacher %} <a href="{% url 'teachers:teachers-detail' teacher.pkid teacher.matricule %}">Visit profile</a>{% endif %}</h3>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item active">Student</li>
+                        <li class="breadcrumb-item active">Teacher</li>
                     </ul>
                 </div>
             </div>
