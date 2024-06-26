@@ -43,11 +43,15 @@ urlpatterns = [
     ),
     # Marks
     path(
-        "download-marks-sheet/<int:class_pkid>/",
+        "download-marks-sheet/<int:subject_pkid>/<int:class_pkid>",
         views.download_marksheet,
         name="mark-sheet-download",
     ),
-    path("upload-marks/<int:class_pkid>", views.upload_marks, name="marks-upload"),
+    path(
+        "upload-marks/<int:subject_pkid>/<int:class_pkid>",
+        views.upload_marks1,
+        name="marks-upload",
+    ),
     path("marks", views.marks, name="marks"),
     path("verify-pin/", views.verify_student_pin, name="verify_pin"),
     path("student-dashboard", views.student_dashboard, name="student-dashboard"),

@@ -80,6 +80,7 @@
                                     <th>#</th>
                                     <th>Grade Level</th>
                                     <th>Class Name</th>
+                                    <th>Subject</th>
                                     <th>Upload Marks</th>
                                     <!-- <th>Actions</th> -->
                                 </tr>
@@ -90,12 +91,13 @@
                                     <tr>
                                         
                                         <td>{{forloop.counter}}</td>
-                                        <td>{{class.grade_level}}</td>
+                                        <td>{{class.klass.grade_level}}</td>
                                         
-                                        <td>{{class.class_name}}</td>
+                                        <td>{{class.klass.class_name}}</td>
+                                        <td>{{class.subject}}</td>
                                         <td>
                                             <div class="col-auto ms-auto download-grp">
-                                                <a href="{% url 'students:marks-upload' class_pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2" ><i
+                                                <a href="{% url 'students:marks-upload' class.subject.pkid class.klass.pkid %}" style="color: white;" class="btn btn-outline-primary me-2" ><i
                                                 class="fas fa-plus"></i> Upload Marks</a>
 <!-- 
 
@@ -106,7 +108,7 @@
                                         </td>
                                         <!-- <td class="text-right">
                                             <div class="actions">
-                                                <a href="{% url 'class-edit' pkid=class.pkid %}" class="btn btn-sm bg-success-light mr-2">
+                                                <a href="{% url 'class-edit' pkid=class.klass.pkid %}" class="btn btn-sm bg-success-light mr-2">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
 
@@ -132,7 +134,7 @@
                                                     <div class="modal-btn delete-action">
                                                         <div class="row">
                                                             <div class="col-6">
-                                                                <a href="{% url 'class-delete' pkid=class.pkid %}" 
+                                                                <a href="{% url 'class-delete' pkid=class.klass.pkid %}" 
                                                                     class="btn btn-primary paid-continue-btn">Delete</a>
                                                             </div>
                                                             <div class="col-6">
@@ -154,7 +156,7 @@
                                                         <h3>Download Mark Sheet</h3>
                                                         <p>{{class.grade_level}} - {{class.class_name}}</p>
                                                     </div>
-                                                    <form action="{% url 'students:mark-sheet-download' class_pkid=class.pkid %}" method="post">
+                                                    <form action="{% url 'students:mark-sheet-download' class.subject.pkid class.klass.pkid %}" method="post">
                                                         {% csrf_token %}
                                                         <div class="row">
                                                             <div class="col-12">

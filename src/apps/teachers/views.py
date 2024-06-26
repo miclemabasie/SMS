@@ -383,9 +383,12 @@ def teacher_dashboard(request):
         if request.user.is_teacher:
             teacher = request.user.teacher_profile
 
+            assigned_subjects = teacher.subjects.all()
+
         context = {
             "announcements": announcements,
             "teacher": teacher,
+            "assigned_subjects": assigned_subjects,
             # "total_pass_courses": pass_courses_count,
             # "total_cources_writen": marks.count(),
             # "total_courses": total_courses,

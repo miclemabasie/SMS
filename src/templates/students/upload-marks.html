@@ -21,11 +21,10 @@
                         <p>2. Select the subject for which you wish to download the marks sheet for.</p>
                         <p>3. Click on the download button.</p>
                         <p>4. Open the file and modify only the row column for the marks, do this for all the students on the file and save the file to a know loacation.</p>
-
                         <a href="#" class="btn btn-primary" data-bs-toggle="modal"
                                                 data-bs-target="#download_class_{{class.pkid}}"><i
                                                     class="fas fa-download"></i> Download Marks Sheet</a>
-                        
+                       
                     </div>
 
                     <div class="card-body">
@@ -58,7 +57,7 @@
     <!-- modals -->
 
 <!-- downloading marks sheet modal -->
-    <div class="modal custom-modal fade" id="download_class_{{class.pkid}}" role="dialog">
+<div class="modal custom-modal fade" id="download_class_{{class.pkid}}" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
@@ -66,28 +65,15 @@
                         <h3>Download Mark Sheet</h3>
                         <p>{{class.grade_level}} - {{class.class_name}}</p>
                     </div>
-                    <form action="{% url 'students:mark-sheet-download' class_pkid=class.pkid %}" method="post">
+                    <form action="{% url 'students:mark-sheet-download' subject.pkid klass.pkid %}" method="post">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="col-12">
-                                <h5 class="form-title"><span>Select Subject</span></h5>
-                            </div>
                             
                             
-                            <div class="col-12">
-                                <div class="form-group local-forms">
-                                    <label>Subject Name <span class="login-danger">*</span></label>
-                                    <select class="form-control" name="selected_subject_id">
-                                        {% for subject in subjects %}
-                                        <option class="py-4" value="{{subject.pkid}}" {% if term.is_current %}selected{% endif %}>
-                                            {{subject.name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
+                        
                             <div class="col-12 row">
                                 <div class="student-submit col-6">
-                                    <button type="submit" class="btn btn-primary">Download</button>
+                                    <button type="submit" class="btn btn-primary">Download file</button>
                                 </div>
                                 <div class="student-submit col-6 ml-5">
                                     <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
@@ -98,7 +84,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
 
     <!-- upload -->
     <div class="modal custom-modal fade" id="upload_class_{{class.pkid}}" role="dialog">
@@ -109,30 +95,11 @@
                         <h3>Upload Mark Sheet</h3>
                         <p>{{class.grade_level}} - {{class.class_name}}</p>
                     </div>
-                    <form action="{% url 'students:marks-upload' class_pkid=class.pkid %}" method="post" enctype="multipart/form-data">
+                    <form action="{% url 'students:marks-upload' subject.pkid klass.pkid %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-12">
                                 <h5 class="form-title"><span>Select Subject</span></h5>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group local-forms">
-                                    <label>Teacher Matricule
-                                        <span class="login-danger">*</span></label>
-                                    <input name="teacher_matricule" type="text" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group local-forms">
-                                    <label>Subject Name <span class="login-danger">*</span></label>
-                                    <select class="form-control" name="selected_subject_id">
-                                        {% for subject in subjects %}
-                                        <option class="py-4" value="{{subject.pkid}}" {% if term.is_current %}selected{% endif %}>
-                                            {{subject.name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
                             </div>
 
                             <div class="col-12">

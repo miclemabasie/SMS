@@ -285,22 +285,16 @@ def edit_student_profile(request, pkid, matricule):
 
 
 @login_required
-def download_marksheet(request, class_pkid, *args, **kwargs):
+def download_marksheet(request, subject_pkid, class_pkid,*args, **kwargs):
     # Get the class for which the mark sheet needs to be downloaded}|
 
     klass = get_object_or_404(Class, pkid=class_pkid)
+
     current_academic_session = AcademicYear.objects.filter(is_current=True).first()
     current_exam_session = ExaminationSession.objects.filter(is_current=True).first()
     if request.method == "POST":
-        subject_id = request.POST.get("selected_subject_id")
-        # Make sure subject with id exist
-        subjects = Subject.objects.filter(pkid=subject_id)
-        if subjects.exists():
-            subject = subjects.first()
-        else:
-            messages.error(request, "Subject Does not exist")
-            return redirect("students:marks")
 
+        subject = get_object_or_404(Subject, pkid=subject_pkid)
         # Fetch all the students associated with the class
         students = klass.students.all()
         # Create a new workbook
@@ -312,12 +306,7 @@ def download_marksheet(request, class_pkid, *args, **kwargs):
         headers = [
             "Matricule",
             "Full Name",
-            "Class",
             "Mark",
-            "Acadmemic Session",
-            "Exam Session",
-            "Subject Name",
-            "SPKID",
         ]
 
         # Write headers to the first row
@@ -329,14 +318,6 @@ def download_marksheet(request, class_pkid, *args, **kwargs):
         for row_num, student in enumerate(students, start=2):
             ws.cell(row=row_num, column=1).value = student.matricule
             ws.cell(row=row_num, column=2).value = student.user.get_fullname
-            ws.cell(row=row_num, column=3).value = (
-                f"{student.current_class.grade_level}-{student.current_class.class_name}"
-            )
-            # ws.cell(row=row_num, column=4).value = current_academic_session.name
-            ws.cell(row=row_num, column=5).value = current_academic_session.name
-            ws.cell(row=row_num, column=6).value = current_exam_session.exam_session
-            ws.cell(row=row_num, column=7).value = subject.name
-            ws.cell(row=row_num, column=8).value = subject.pkid
 
         # Set column widths
         for col_num in range(1, len(headers) + 1):
@@ -347,7 +328,8 @@ def download_marksheet(request, class_pkid, *args, **kwargs):
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = "attachment; filename=student_profiles.xlsx"
+        filename = f"{klass.grade_level}-{klass.class_name}-{subject.name}.xlsx"
+        response["Content-Disposition"] = f"attachment; filename={filename}"
 
         # Save the workbook to the response
         wb.save(response)
@@ -360,42 +342,20 @@ def download_marksheet(request, class_pkid, *args, **kwargs):
 
 
 @login_required
-def upload_marks(request, class_pkid, *args, **kwargs):
+def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
     # Get the subject and all the students associated to thesubject from the database
 
-    klass = get_object_or_404(Class, pkid=class_pkid)
+    subject = Subject.objects.get(pkid=subject_pkid)
+    klass = Class.objects.get(pkid=class_pkid)
     if request.method == "POST" and request.FILES["marks_file"]:
         marks_file = request.FILES["marks_file"]
-        teacher_matricule = request.POST.get("teacher_matricule")
-        selected_subject_id = request.POST.get("selected_subject_id")
-
-        print(
-            "This is the information from the form: ",
-            teacher_matricule,
-            selected_subject_id,
-        )
 
         # decoded_file = marks_file.read().decode('utf-8').splitlines()
 
         # Get the teacher from the DB
-        teachers = TeacherProfile.objects.filter(matricule=teacher_matricule)
-        if teachers.exists():
-            teacher = teachers.first()
-        else:
-            messages.error(request, "No Teacher found with the given matricule")
-            return redirect(
-                reverse("students:marks-upload", kwargs={"class_pkid": class_pkid})
-            )
+        teacher = request.user.teacher_profile
 
         # Get the subject from the database
-        subjects = Subject.objects.filter(pkid=selected_subject_id)
-        if subjects.exists():
-            subject = subjects.first()
-        else:
-            messages.error(request, "Subject not found.")
-            return redirect(
-                reverse("students:marks-uploads", kwargs={"class_pkid": class_pkid})
-            )
 
         # Get the session
         exam_session = ExaminationSession.objects.get(is_current=True)
@@ -405,14 +365,13 @@ def upload_marks(request, class_pkid, *args, **kwargs):
         ws = wb["marks"]
 
         for row in ws.iter_rows(min_row=2, values_only=True):
-            student_matricule, marks, subject_name, subject_id = (
+            student_matricule, subject_name, marks = (
                 row[0],
-                row[3],
-                row[6],
-                row[7],
+                row[1],
+                row[2],
             )
             print(
-                f"this is the student information student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject_id}"
+                f"this is the student information student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject.name}"
             )
             student = StudentProfile.objects.get(matricule=student_matricule)
             # Check if a mark already exists for this student and subject
@@ -438,24 +397,128 @@ def upload_marks(request, class_pkid, *args, **kwargs):
     template_name = "students/upload-marks.html"
     context = {
         "section": "marks-area",
-        "class": klass,
-        "subjects": Subject.objects.all(),
+        "subject": subject,
+        "klass": klass,
     }
 
     return render(request, template_name, context)
+
+
+# @login_required
+# def upload_marks(request, class_pkid, *args, **kwargs):
+#     # Get the subject and all the students associated to thesubject from the database
+
+#     klass = get_object_or_404(Class, pkid=class_pkid)
+#     if request.method == "POST" and request.FILES["marks_file"]:
+#         marks_file = request.FILES["marks_file"]
+#         teacher_matricule = request.POST.get("teacher_matricule")
+#         selected_subject_id = request.POST.get("selected_subject_id")
+
+#         print(
+#             "This is the information from the form: ",
+#             teacher_matricule,
+#             selected_subject_id,
+#         )
+
+#         # decoded_file = marks_file.read().decode('utf-8').splitlines()
+
+#         # Get the teacher from the DB
+#         teachers = TeacherProfile.objects.filter(matricule=teacher_matricule)
+#         if teachers.exists():
+#             teacher = teachers.first()
+#         else:
+#             messages.error(request, "No Teacher found with the given matricule")
+#             return redirect(
+#                 reverse("students:marks-upload", kwargs={"class_pkid": class_pkid})
+#             )
+
+#         # Get the subject from the database
+#         subjects = Subject.objects.filter(pkid=selected_subject_id)
+#         if subjects.exists():
+#             subject = subjects.first()
+#         else:
+#             messages.error(request, "Subject not found.")
+#             return redirect(
+#                 reverse("students:marks-uploads", kwargs={"class_pkid": class_pkid})
+#             )
+
+#         # Get the session
+#         exam_session = ExaminationSession.objects.get(is_current=True)
+
+#         wb = load_workbook(filename=marks_file)
+
+#         ws = wb["marks"]
+
+#         for row in ws.iter_rows(min_row=2, values_only=True):
+#             student_matricule, marks, subject_name, subject_id = (
+#                 row[0],
+#                 row[3],
+#                 row[6],
+#                 row[7],
+#             )
+#             print(
+#                 f"this is the student information student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject_id}"
+#             )
+#             student = StudentProfile.objects.get(matricule=student_matricule)
+#             # Check if a mark already exists for this student and subject
+#             mark, created = Mark.objects.get_or_create(
+#                 student=student, subject=subject, exam_session=exam_session
+#             )
+
+#             mark.teacher = teacher
+
+#             # Update the score
+#             if not marks:
+#                 marks = 0
+#             mark.score = marks
+#             mark.save()
+#             print(mark)
+
+#         messages.success(
+#             request,
+#             f"Marks have been updated for the subject: `{subject.name}` by: `{teacher.user.username}` with matricule No: {teacher.matricule}",
+#         )
+#         return redirect(reverse("students:marks"))
+
+#     template_name = "students/upload-marks.html"
+#     context = {
+#         "section": "marks-area",
+#         "class": klass,
+#         "subjects": Subject.objects.all(),
+#     }
+
+#     return render(request, template_name, context)
 
 
 @login_required
 def marks(request):
+    user = request.user
+    if user.is_teacher or user.is_admin:
+        if user.is_teacher:
+            # get all assigned subject to the current teacher.
+            teacher = user.teacher_profile
+            assigned_subjects = teacher.subjects.all()
+            filter_classes = []
+            classes = []
+            for sub in assigned_subjects:
+                for cl in sub.classes.all():
+                    if cl.pkid not in filter_classes:
+                        filter_classes.append(cl.pkid)
+                        classes.append({"klass": cl, "subject": sub})
 
-    template_name = "students/marks.html"
-    context = {
-        "section": "marks-area",
-        "classes": Class.objects.all(),
-        "subjects": Subject.objects.all(),
-    }
+            print(classes)
 
-    return render(request, template_name, context)
+        template_name = "students/marks.html"
+        context = {
+            "section": "marks-area",
+            "classes": classes,
+            "subjects": Subject.objects.all(),
+        }
+
+        return render(request, template_name, context)
+    else:
+        messages.error(request, "Unauthorized..")
+        return redirect(reverse("users:user-login"))
 
 
 def list_student_record(request, pkid, matricule, *args, **kwargs):
