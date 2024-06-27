@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="content container-fluid">
+    {% include './sections/header.html' %}
+
+    <div class="row">
+      {% include './sections/overview.html' %}
+      {% include './sections/attendance-per-subject.html' %}
+    </div>
+    {% include './sections/total-student-per-class.html' %}
+    {% comment %} <div class="row">
+      {% include '../utils/staff/student-activity.html' %}
+    </div> {% endcomment %}
+
+    {% comment %} {% include '../utils/staff/sociallinks.html' %} {% endcomment %}
+  </div>
+{% endblock %}
+
+{% block scripttags %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+        $(document).ready(function(){
+            var donutData        = {
+                labels: ['Students', 'Teachers'],
+                datasets: [
+                  {
+                    data:[{{header.students}}, {{header.teachers}}],
+                    backgroundColor : ['#3d5ee1', '#18aefa',],
+                  }
+                ]
+              }
+            var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+            var pieData        = donutData;
+            var pieOptions     = {
+              maintainAspectRatio : false,
+              responsive : true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var pieChart = new Chart(pieChartCanvas, {
+              type: 'pie',
+              data: pieData,
+              options: pieOptions      
+            }); 
+
+            // End of staff and student overview
+
+            // Attendance per class
+            var subject_list = {{ subject_list|safe|escape }};
+            var attendance_list = {{ attendance_list }};
+
+                var barChartData = {
+            labels  : subject_list,
+            datasets: [
+                  {
+                  label               : 'Attendance Per Class in %',
+                  backgroundColor     : '#3d5ee1',
+                  borderColor         : 'rgba(60,141,188,0.8)',
+                  pointRadius          : false,
+                  pointColor          : '#3b8bba',
+                  pointStrokeColor    : 'rgba(60,141,188,1)',
+                  pointHighlightFill  : '#fff',
+                  pointHighlightStroke: 'rgba(60,141,188,1)',
+                  data                : attendance_list
+                  }, 
+
+            ]
+            }
+            var barChartCanvas = $('#barChart').get(0).getContext('2d')
+            var temp0 = barChartData.datasets[0]
+            //var temp1 = areaChartData.datasets[1]
+            barChartData.datasets[0] = temp0
+            // barChartData.datasets[1] = temp0
+
+            var stackedBarChartOptions = {
+            responsive              : true,
+            maintainAspectRatio     : false,
+            scales: {
+            xAxes: [{
+              stacked: true,
+            }],
+            yAxes: [{
+              stacked: true
+            }]
+            }
+            }
+
+            var barChart = new Chart(barChartCanvas, {
+              type: 'bar', 
+              data: barChartData,
+              options: stackedBarChartOptions
+            })
+
+            // Total students in a class
+
+            // Total Students in Each Course
+            //var donutChartCanvas = $('#pieChart2').get(0).getContext('2d')
+            var class_name_list = {{ class_name_list|safe }}
+            var student_count_per_class = {{ student_count_per_class }}
+            var pieData2 = {
+              labels: class_name_list,
+              datasets: [
+                {
+                  data: student_count_per_class,
+                  backgroundColor : ['#cc0404', '#00a65a', '#f39c12', '#00A4BD', '#045c8f', '#894e9c', '#9e4603', '#71bfb2'],
+                }
+              ]
+            }
+
+            //-------------
+            //- PIE CHART -
+            //-------------
+            // Get context with jQuery - using jQuery's .get() method.
+            var pieChartCanvas2 = $('#pieChart2').get(0).getContext('2d')
+            var pieData2        = pieData2;
+            var pieOptions2     = {
+              maintainAspectRatio : false,
+              responsive : true,
+            }
+
+            var pieChart2 = new Chart(pieChartCanvas2, {
+              type: 'bar',
+              data: pieData2,
+              options: pieOptions2      
+            })
+            
+       
+        })
+    </script>
+{% endblock %}

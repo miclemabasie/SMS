@@ -66,6 +66,10 @@ class Class(TimeStampedUUIDModel):
     def get_total_template_enrol(self):
         return self.get_total_enrol()
 
+    @property
+    def get_class_name(self):
+        return f"{self.grade_level}-{self.class_name}"
+
 
 # used to hold students's information until they change their password after they are being created,
 # Then this record is deleted

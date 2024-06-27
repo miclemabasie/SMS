@@ -1,0 +1,46 @@
+{% load static %}
+
+<div class="col-md-12 col-lg-6">
+
+    <div class="card card-chart">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h5 class="card-title">Student Teachers Overview</h5>
+                </div>
+                <div class="col-6">
+                    <ul class="chart-list-out">
+                        <li><span class="circle-blue"></span>Teacher</li>
+                        <li><span class="circle-green"></span>Student</li>
+                        <li class="star-menus"><a href="javascript:;"><i
+                                    class="fas fa-ellipsis-v"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="chart">
+                <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+        </div>
+    </div>
+</div>
+
+<!-- LINE CHART -->
+{% comment %} <div class="card card-dark">
+    <div class="card-header">
+      <h3 class="card-title">Staffs - Students Overview</h3>
+
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+        </button>
+        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="chart">
+        <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+      </div>
+    </div></div>
+    <!-- /.card-body -->
+  </div> {% endcomment %}

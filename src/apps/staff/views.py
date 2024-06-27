@@ -2,21 +2,89 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from .models import AdminProfile
 from apps.students.models import StudentProfile, TeacherProfile, Subject, Class
+from apps.profiles.models import ParentProfile
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
 from django.contrib.auth import get_user_model
+from apps.attendance.models import Attendance
 
 User = get_user_model()
 
 
 @login_required
 def admin_dashboard(request):
-    pass
 
-    template_name = "staff/dashboard.html"
-    context = {"section": "admin-area"}
+    students = StudentProfile.objects.all().count()
+    teachers = TeacherProfile.objects.all().count()
+    parents = ParentProfile.objects.all().count()
+    classes = Class.objects.all().count()
+
+    # construct data for the header
+    header = {
+        "students": students,
+        "teachers": teachers,
+        "parents": parents,
+        "classes": classes,
+    }
+
+    # Generate data about school attendance
+    attendance_list_tuples = []
+    class_list = []
+    student_total_list_perclass = []
+    for klass in Class.objects.all():
+        class_list.append(klass.get_class_name)
+        # got through all the students for a given klass
+        students = StudentProfile.objects.filter(current_class=klass)
+        total_present = 0
+        total_absent = 0
+        total_students = 0
+        for std in students:
+            total_students += 1
+            print(std)
+            # get all the attendance record of every student
+            std_attendance_present = Attendance.objects.filter(
+                student=std, is_present=True
+            )
+            std_attendance_absent = Attendance.objects.filter(
+                student=std, is_present=False
+            )
+            print(std_attendance_present)
+            print(std_attendance_absent)
+            total_present += std_attendance_present.count()
+            total_absent += std_attendance_absent.count()
+        attendance_list_tuples.append((total_present, total_absent))
+        student_total_list_perclass.append(total_students)
+
+    """
+    this is example output of the above operation
+    ['Form 4-Science', 'Form 5-Kyle Miles', 'Form 6-S2', 'Form 7-S1', 'form1-Form 1 a', 'Form 4-Arts'] [(0, 0), (0, 0), (7, 1), (0, 0), (0, 0), (0, 0)]
+    """
+    print(student_total_list_perclass)
+    # Calculate percentage of attendance
+    attendance_list = []
+    for att in attendance_list_tuples:
+        # sub absent and present to get the total
+        total_present = att[0]
+        total_absent = att[1]
+        total = total_present + total_absent
+        if total > 0:
+            # calculate percentage of attendance
+            att_percentage = (total_present / total) * 100
+            attendance_list.append(att_percentage)
+        else:
+            attendance_list.append(0)
+
+    template_name = "dashboards/staff/dashboard.html"
+    context = {
+        "section": "admin-area",
+        "header": header,
+        "subject_list": class_list,
+        "class_name_list": class_list,
+        "attendance_list": attendance_list,
+        "student_count_per_class": student_total_list_perclass,
+    }
 
     return render(request, template_name, context)
 
