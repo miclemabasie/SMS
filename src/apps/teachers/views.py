@@ -13,6 +13,7 @@ from apps.students.models import (
     Subject,
     TeacherTempCreateProfile,
 )
+from apps.leave.models import TeacherLeave
 import json
 from faker import Faker
 from datetime import datetime, time, timezone
@@ -383,17 +384,35 @@ def teacher_dashboard(request):
         if request.user.is_teacher:
             teacher = request.user.teacher_profile
 
-            assigned_subjects = teacher.subjects.all()
+            assigned_subjects = Subject.objects.filter(assigned_to=teacher)
+
+        # get the number of classes teacher is involved with
+        klasses = []
+        for sub in assigned_subjects:
+            if sub.klass not in klasses:
+                klasses.append(sub.klass)
+
+        # Get all the leave for this teacher
+        leaves = TeacherLeave.objects.filter(teacher=teacher).count()
+        total_leave = 0
+        if leaves > 0:
+            total_leave = leaves
+
+        # get all the events made for teachers
+        events = Event.objects.filter(visible_to_teachers=True)
 
         context = {
             "announcements": announcements,
             "teacher": teacher,
             "assigned_subjects": assigned_subjects,
+            "assigned_subjects_count": assigned_subjects.count(),
+            "total_classes": len(klasses),
+            "total_leaves": total_leave,
+            "events": events,
             # "total_pass_courses": pass_courses_count,
             # "total_cources_writen": marks.count(),
             # "total_courses": total_courses,
             # "payment_history": payment_history,
-            # "events": events,
             # "class": student.current_class,
             # "class_enrolment": class_enrolment.count(),
         }
@@ -403,70 +422,6 @@ def teacher_dashboard(request):
         return render(
             request, template_name, {"error_message": "You are not allowed to be here."}
         )
-
-
-def student_dashboard(request):
-    print(request.user.username)
-    announcements = Announcement.objects.filter(visible_to_students=True)
-
-    # grap the current user from the request
-    user = request.user
-    # check if the current user is of a student type
-    if isinstance(user.student_profile, StudentProfile):
-        student = user.student_profile
-    else:
-        messages.error(request, "Not a valid student instance")
-        template_name = "base.html"
-        context = {}
-        return render(request, template_name, context)
-
-    courses = student.get_all_subjects()
-    total_courses = len(courses)
-
-    # calculate fee percentage of fee payment
-    percentage = 0
-
-    passed_cources = []
-
-    term = Term.objects.get(is_current=True)
-
-    current_year = AcademicYear.objects.get(is_current=True)
-    # Get the payment history for the current year
-    fees = Fee.objects.filter(student=student, academic_year=current_year)
-    payment_history = None
-
-    if fees.exists:
-        fee = fees.first()
-        payment_history = student.payment_history.filter(fee=fee)
-        percentage = None
-
-    # get all the exam sessions ids so far for that term
-    examination_session_ids = ExaminationSession.objects.filter(term=term).values_list(
-        "pkid", flat=True
-    )
-    # Grab all the mark records associated to this student for that year.
-    marks = student.student_marks.filter(exam_session__pkid__in=examination_session_ids)
-
-    pass_courses_count = marks.filter(score__gte=10).count()
-
-    # get all evernts that have to with the students
-    events = Event.objects.filter(visible_to_students=True)
-
-    class_enrolment = StudentProfile.objects.filter(current_class=student.current_class)
-
-    template_name = "students/student-dashboard.html"
-    context = {
-        "announcements": announcements,
-        "student": student,
-        "total_pass_courses": pass_courses_count,
-        "total_cources_writen": marks.count(),
-        "total_courses": total_courses,
-        "payment_history": payment_history,
-        "events": events,
-        "class": student.current_class,
-        "class_enrolment": class_enrolment.count(),
-    }
-    return render(request, template_name, context)
 
 
 def assign_class_to_teacher(request, teacher_pkid, teacher_mat):
@@ -490,6 +445,14 @@ def assign_class_to_teacher(request, teacher_pkid, teacher_mat):
         for subject in data["selectedSubjects"]:
             print(subject["pkid"])
             selected_subjects_ids.append(subject.get("pkid"))
+
+        if len(selected_subjects_ids) < 1:
+            # remove all the subject currently assigned to the teacher
+            for sub in assigned_subjects:
+                sub.assigned_to = None
+                sub.assigned = False
+                sub.save()
+                return JsonResponse({"message": "updated.."})
         # Flush out all the subjects that exist in the  and reset
 
         if len(assigned_subjects) > 0 and len(selected_subjects_ids) > 0:
@@ -522,58 +485,3 @@ def assign_class_to_teacher(request, teacher_pkid, teacher_mat):
     }
     template_name = "teachers/assign-subjects.html"
     return render(request, template_name, context)
-
-
-# @login_required
-# def assign_subject_to_classes(request, pkid):
-#     subjects = Subject.objects.all()
-#     klass = get_object_or_404(Class, pkid=pkid)
-
-#     selected_subjects = klass.subjects.all()
-
-#     unselected_subjects = []
-#     for subject in subjects:
-#         if subject not in selected_subjects:
-#             unselected_subjects.append(subject)
-
-#     if request.method == "POST":
-#         print("This are the selected subjects", request.body)
-#         data = json.loads(request.body)
-
-#         selected_subjects_ids = []
-#         for subject in data["selectedSubjects"]:
-#             print(subject["pkid"])
-#             selected_subjects_ids.append(subject.get("pkid"))
-#         print(selected_subjects_ids)
-#         # Flush out all the subjects that exist in the class and reset
-#         print(
-#             "we are inside the loop", len(selected_subjects), len(selected_subjects_ids)
-#         )
-#         if len(selected_subjects) > 0 and len(selected_subjects_ids) > 0:
-#             for subject in selected_subjects:
-#                 print("This is the subject", subject)
-#                 klass.subjects.remove(subject)
-#                 klass.save()
-
-#         print(klass.subjects.all())
-
-#         # Reassign the subjects to the klass instance
-#         # Ge throught the incoming ids, and get the subjects associated the with the pkids
-#         for pkid in selected_subjects_ids:
-#             sub = Subject.objects.filter(pkid=pkid).first()
-#             if sub:
-#                 klass.subjects.add(sub)
-#                 klass.save()
-
-#         return JsonResponse({"message": "updated."})
-
-#     template_name = "subjects/subject-assign.html"
-
-#     context = {
-#         "section": "subjects",
-#         "class": klass,
-#         "unselected_subjects": unselected_subjects,
-#         "selected_subjects": selected_subjects,
-#     }
-
-#     return render(request, template_name, context)

@@ -24,10 +24,7 @@ def take_attendance(request):
     filter_classes = []
     classes = []
     for sub in assigned_subjects:
-        for cl in sub.classes.all():
-            if cl.pkid not in filter_classes:
-                filter_classes.append(cl.pkid)
-                classes.append({"klass": cl, "subject": sub})
+        classes.append({"klass": sub.klass, "subject": sub})
 
     subjects = Subject.objects.filter(assigned_to=teacher)
     template_name = "attendance/take-attendance.html"
@@ -101,10 +98,7 @@ def view_attendance(request):
     filter_classes = []
     classes = []
     for sub in assigned_subjects:
-        for cl in sub.classes.all():
-            if cl.pkid not in filter_classes:
-                filter_classes.append(cl.pkid)
-                classes.append({"klass": cl, "subject": sub})
+        classes.append({"klass": sub.klass, "subject": sub})
 
     subjects = Subject.objects.filter(assigned_to=teacher)
 

@@ -38,7 +38,7 @@ class Class(TimeStampedUUIDModel):
     class_prefect = models.CharField(
         verbose_name=_("Class Prefect"), max_length=200, blank=True, null=True
     )
-    subjects = models.ManyToManyField("Subject", related_name="classes", blank=True)
+    # subjects = models.ManyToManyField("Subject", related_name="classes", blank=True)
     pass_avg = models.IntegerField(default=10)
 
     best_subject = models.CharField(max_length=255, blank=True, null=True)
@@ -198,6 +198,11 @@ class Subject(TimeStampedUUIDModel):
     code = models.CharField(
         verbose_name=_("Subject Code"), max_length=10, blank=True, null=True
     )
+    klass = models.ForeignKey(
+        Class, related_name="subjects", on_delete=models.SET_NULL, blank=True, null=True
+    )
+
+    has_class = models.BooleanField(default=False)
     coef = models.PositiveIntegerField(verbose_name=_("Subject Coef"), default=1)
 
     assigned_to = models.ForeignKey(

@@ -525,10 +525,7 @@ def marks(request):
             filter_classes = []
             classes = []
             for sub in assigned_subjects:
-                for cl in sub.classes.all():
-                    if cl.pkid not in filter_classes:
-                        filter_classes.append(cl.pkid)
-                        classes.append({"klass": cl, "subject": sub})
+                classes.append({"klass": sub.klass, "subject": sub})
 
             print(classes)
 
