@@ -66,6 +66,7 @@ LOCAL_APPS = [
     "apps.settings.apps.SettingsConfig",
     "apps.announcements.apps.AnnouncementsConfig",
     "apps.attendance.apps.AttendanceConfig",
+    "apps.leave.apps.LeaveConfig",
 ]
 
 

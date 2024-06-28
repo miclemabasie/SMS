@@ -30,6 +30,7 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("attendance/", include("apps.attendance.urls", namespace="attendance")),
+    path("leave/", include("apps.leave.urls", namespace="leave")),
 ]
 
 if settings.DEBUG:
