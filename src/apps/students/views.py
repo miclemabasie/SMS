@@ -21,6 +21,7 @@ from .models import (
     StudentTempCreateProfile,
     TeacherTempCreateProfile,
 )
+
 from apps.terms.models import ExaminationSession, AcademicYear, Term
 from django.contrib.auth import get_user_model
 from apps.profiles.models import ParentProfile
@@ -37,6 +38,7 @@ from openpyxl import workbook, load_workbook
 import json
 from django.http import JsonResponse
 
+from apps.attendance.models import Attendance
 
 User = get_user_model()
 
@@ -366,7 +368,12 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
             exam_session = exam_session.first()
         else:
             messages.error(request, "Invalid Exam Session")
-            return redirect(reverse("students:marks-upload", kwargs={"subject_pkid": subject_pkid, "class_pkid": class_pkid}))
+            return redirect(
+                reverse(
+                    "students:marks-upload",
+                    kwargs={"subject_pkid": subject_pkid, "class_pkid": class_pkid},
+                )
+            )
 
         # decoded_file = marks_file.read().decode('utf-8').splitlines()
 
@@ -374,7 +381,6 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
         teacher = request.user.teacher_profile
 
         # Get the subject from the database
-
 
         wb = load_workbook(filename=marks_file)
 
@@ -416,7 +422,7 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
         "subject": subject,
         "klass": klass,
         "sessions": sequences,
-        "year": academic_year
+        "year": academic_year,
     }
 
     return render(request, template_name, context)
@@ -888,7 +894,7 @@ def student_dashboard(request):
     total_courses = len(courses)
 
     # calculate fee percentage of fee payment
-    percentage = 0
+    fee_percentage_paid = 100  # to be revisited.
 
     passed_cources = []
 
@@ -918,7 +924,36 @@ def student_dashboard(request):
 
     class_enrolment = StudentProfile.objects.filter(current_class=student.current_class)
 
-    template_name = "students/student-dashboard.html"
+    # get present absent data
+    student_attendance_present = Attendance.objects.filter(
+        student=student, is_present=True
+    )
+    student_attendance_absent = Attendance.objects.filter(
+        student=student, is_present=False
+    )
+
+    data_absent_list = []
+    data_present_list = []
+    data_name_list = []
+    for sub in courses:
+        data_name_list.append(sub.name)
+        # get the sum of all attendances for this subject
+        total_attendance_per_sub_present = student_attendance_present.filter(
+            subject=sub, is_present=True
+        ).count()
+        total_attendance_per_sub_absent = student_attendance_absent.filter(
+            subject=sub, is_present=False
+        ).count()
+        data_present_list.append(total_attendance_per_sub_present)
+        data_absent_list.append(total_attendance_per_sub_absent)
+
+    total_present = student_attendance_present.count()
+    total_absent = student_attendance_absent.count()
+    total = total_present + total_absent
+    percent_present = round(((total_present / total) * 100), 2)
+    percent_absent = round(((total_absent / total) * 100), 2)
+    template_name = "dashboards/student/student-dashboard.html"
+
     context = {
         "announcements": announcements,
         "student": student,
@@ -929,5 +964,15 @@ def student_dashboard(request):
         "events": events,
         "class": student.current_class,
         "class_enrolment": class_enrolment.count(),
+        "fee_percentage_paid": fee_percentage_paid,
+        "max_fee_percent": 0,
+        # chat information
+        "percent_present": percent_present,
+        "percent_absent": percent_absent,
+        "data_name": data_name_list,
+        "data_absent": data_absent_list,
+        "data_present": data_present_list,
     }
+
+    print(context)
     return render(request, template_name, context)

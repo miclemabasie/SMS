@@ -1,0 +1,64 @@
+{% load static %}
+{% comment %}  {% endcomment %}
+<div class="row">
+    <div class="col-xl-4 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-info">
+                        <h6>All Courses</h6>
+                        <h3>{{total_courses}}</h3>
+                    </div>
+                    <div class="db-icon">
+                        <img src="{% static 'assets/img/icons/teacher-icon-01.svg' %} " alt="Dashboard Icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-info">
+                        <h6>Class Enrollment</h6>
+                        <h3>{{class_enrolment}}</h3>
+                    </div>
+                    <div class="db-icon">
+                        <img src="{% static 'assets/img/icons/teacher-icon-02.svg' %}" alt="Dashboard Icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% comment %} <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-info">
+                        <h6>Test Attended</h6>
+                        <h3>30/50</h3>
+                    </div>
+                    <div class="db-icon">
+                        <img src="{% static 'assets/img/icons/student-icon-01.svg' %}" alt="Dashboard Icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+    <div class="col-xl-4 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-info">
+                        <h6>Test Passed</h6>
+                        <h3>{{total_pass_courses}}/{{total_courses_writen}}</h3>
+                    </div>
+                    <div class="db-icon">
+                        <img src="{% static 'assets/img/icons/student-icon-02.svg' %}" alt="Dashboard Icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

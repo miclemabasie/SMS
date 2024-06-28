@@ -9,17 +9,17 @@
       {% include './sections/overview.html' %}
       {% include './sections/attendance-per-subject.html' %}
     </div>
+    <div class="row">
     {% include './sections/total-student-per-class.html' %}
-    {% comment %} <div class="row">
-      {% include '../utils/staff/student-activity.html' %}
-    </div> {% endcomment %}
+      {% include './sections/fee-overview-per-class.html' %}
+    </div> 
 
     {% comment %} {% include '../utils/staff/sociallinks.html' %} {% endcomment %}
   </div>
 {% endblock %}
 
 {% block scripttags %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <script>
         $(document).ready(function(){
             var donutData        = {
@@ -125,6 +125,55 @@
               data: pieData2,
               options: pieOptions2      
             })
+
+            // endblock
+
+            // Attendance per class
+            var class_name_list2 = {{ class_name_list|safe|escape }};
+            var paid_list = {{ paid_list }};
+
+                var barChartData = {
+            labels  : class_name_list2,
+            datasets: [
+                  {
+                  label               : 'Attendance Per Class in %',
+                  backgroundColor     : '#18aefa',
+                  borderColor         : 'rgba(60,141,188,0.8)',
+                  pointRadius          : false,
+                  pointColor          : '#3b8bba',
+                  pointStrokeColor    : 'rgba(60,141,188,1)',
+                  pointHighlightFill  : '#fff',
+                  pointHighlightStroke: 'rgba(60,141,188,1)',
+                  data                : paid_list
+                  }, 
+
+            ]
+            }
+            var barChartCanvas = $('#barChartfee').get(0).getContext('2d')
+            var temp0 = barChartData.datasets[0]
+            //var temp1 = areaChartData.datasets[1]
+            barChartData.datasets[0] = temp0
+            // barChartData.datasets[1] = temp0
+
+            var stackedBarChartOptions = {
+            responsive              : true,
+            maintainAspectRatio     : false,
+            scales: {
+            xAxes: [{
+              stacked: true,
+            }],
+            yAxes: [{
+              stacked: true
+            }]
+            }
+            }
+
+            var barChart = new Chart(barChartCanvas, {
+              type: 'bar', 
+              data: barChartData,
+              options: stackedBarChartOptions
+            })
+
             
        
         })

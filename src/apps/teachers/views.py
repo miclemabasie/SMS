@@ -376,7 +376,7 @@ def verify_teacher_pin(request):
 @login_required
 def teacher_dashboard(request):
     # check if current user is user of type teacher
-    template_name = "teachers/teacher-dashboard.html"
+    template_name = "dashboards/teachers/teacher-dashboard.html"
     if request.user.is_teacher or request.user.is_staff:
         announcements = Announcement.objects.filter(visible_to_students=True)
         teacher = None

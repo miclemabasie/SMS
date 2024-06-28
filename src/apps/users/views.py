@@ -22,13 +22,14 @@ def login_view(request):
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user=user)
-
+                print("user information")
                 if remember_me:
                     request.session.set_expiry(1209600)  # 2 weeks
                 else:
                     request.session.set_expiry(0)  # Browser close
 
-                if user.is_admin:
+                if user.is_admin or user.is_staff:
+                    print("User data", user)
                     return redirect(reverse("staff:admin-dashboard"))
                 if user.is_teacher:
                     return redirect(reverse("teachers:teacher-dashboard"))

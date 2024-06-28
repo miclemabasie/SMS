@@ -1,0 +1,35 @@
+
+    <div class="col-md-6 col-lg-6 col-xl-6 d-flex">
+        <div class="card flex-fill comman-shadow">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-6">
+                        <h5 class="card-title">Announcements</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                {% for ann in announcements %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm bg-light">
+                            <div class="card-body">
+                                <h3 class="card-title">{{ ann.title }}</h3>
+                                <p class="card-text">{{ ann.description }}</p>
+                                <p class="text-muted">Published on: {{ ann.publish_date|date:"F j, Y, g:i a" }}</p>
+                                {% if ann.attachments.all %}
+                                    <h5 class="card-subtitle mb-2 text-muted">Attachments</h5>
+                                    <ul class="list-group list-group-flush">
+                                        {% for attachment in ann.attachments.all %}
+                                            <li class="list-group-item">
+                                                <a href="{{ attachment.file.url }}" class="text-primary">{{ attachment.file.name }}</a> - {{ attachment.description }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,30 @@
+<div class="col-lg-6 col-md-6 d-flex">
+    <div class="card flex-fill comman-shadow">
+        <div class="card-body">
+            <div id="calendar-doctor" class="calendar-container"></div>
+            <div class="calendar-info calendar-info1">
+                <div class="up-come-header">
+                    <h2>Upcoming Events</h2>
+                    <span><a href="javascript:;"><i class="feather-plus"></i></a></span>
+                </div>
+                {% comment %} <div class="upcome-event-date">
+                    <h3>10 Jan</h3>
+                    <span><i class="fas fa-ellipsis-h"></i></span>
+                </div> {% endcomment %}
+                {% for event in events %}
+                <div class="calendar-details">
+                    <p>{{event.starttime}}</p>
+                    <div class="calendar-box normal-bg">
+                        <div class="calandar-event-name">
+                            <h4>{{event.name}}</h4>
+                            <h5>{{event.description}}</h5>
+                        </div>
+                        <span>{{event.starttime}} - {{event.endtime}}</span>
+                    </div>
+                </div>
+                {% endfor %}
+               
+            </div>
+        </div>
+    </div>
+</div>
