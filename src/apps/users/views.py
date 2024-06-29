@@ -30,10 +30,13 @@ def login_view(request):
 
                 if user.is_admin or user.is_staff:
                     print("User data", user)
+                    request.session["user_type"] = "admin"
                     return redirect(reverse("staff:admin-dashboard"))
                 if user.is_teacher:
+                    request.session["user_type"] = "teacher"
                     return redirect(reverse("teachers:teacher-dashboard"))
                 if user.is_student:
+                    request.session["user_type"] = "student"
                     return redirect(reverse("students:student-dashboard"))
             else:
                 form.add_error(None, "Invalid email or password")

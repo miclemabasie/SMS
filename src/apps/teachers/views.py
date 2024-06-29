@@ -409,6 +409,7 @@ def teacher_dashboard(request):
             "total_classes": len(klasses),
             "total_leaves": total_leave,
             "events": events,
+            "section": "teacher-dashboard",
             # "total_pass_courses": pass_courses_count,
             # "total_cources_writen": marks.count(),
             # "total_courses": total_courses,

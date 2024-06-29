@@ -11,7 +11,12 @@ class LEAVESTATUSCHOICES(models.TextChoices):
     PENDING = "Pending", _("Pending")
     APPROVED = "Approved", _("Approved")
     REJECTED = "Rejected", _("Rejected")
-    EXPIRED = "Expired", _("Expired")
+
+
+class LEAVEAPPROVALSTATUS(models.TextChoices):
+    PENDING = "Pending", _("Pending")
+    APPROVED = "Approved", _("Approved")
+    REJECTED = "Rejected", _("Rejected")
 
 
 class TeacherLeave(TimeStampedUUIDModel):
@@ -19,6 +24,11 @@ class TeacherLeave(TimeStampedUUIDModel):
         TeacherProfile, related_name="teacher_leaves", on_delete=models.DO_NOTHING
     )
     reason = models.TextField()
+    approval_status = models.CharField(
+        max_length=30,
+        choices=LEAVEAPPROVALSTATUS.choices,
+        default=LEAVEAPPROVALSTATUS.PENDING,
+    )
     leave_date = models.DateField()
     duration = models.CharField(max_length=20)
     submitted_on = models.DateTimeField(auto_now_add=True)
@@ -37,6 +47,11 @@ class AdminLeave(TimeStampedUUIDModel):
         AdminProfile, related_name="teacher_leaves", on_delete=models.DO_NOTHING
     )
     reason = models.TextField()
+    approval_status = models.CharField(
+        max_length=30,
+        choices=LEAVEAPPROVALSTATUS.choices,
+        default=LEAVEAPPROVALSTATUS.PENDING,
+    )
     leave_date = models.DateField()
     duration = models.CharField(max_length=20)
     submitted_on = models.DateTimeField(auto_now_add=True)
@@ -55,6 +70,11 @@ class StudentLeave(TimeStampedUUIDModel):
         StudentProfile, related_name="teacher_leaves", on_delete=models.DO_NOTHING
     )
     reason = models.TextField()
+    approval_status = models.CharField(
+        max_length=30,
+        choices=LEAVEAPPROVALSTATUS.choices,
+        default=LEAVEAPPROVALSTATUS.PENDING,
+    )
     leave_date = models.DateField()
     duration = models.CharField(max_length=20)
     submitted_on = models.DateTimeField(auto_now_add=True)

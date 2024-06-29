@@ -15,10 +15,10 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-sub-header">
-                    <h3 class="page-title">Students</h3>
+                    <h3 class="page-title">All Leaves</h3>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="students.html">Student</a></li>
-                        <li class="breadcrumb-item active">All Students</li>
+                        <li class="breadcrumb-item"><a href="students.html">leave</a></li>
+                        <li class="breadcrumb-item active">all</li>
                     </ul>
                 </div>
             </div>
@@ -53,6 +53,8 @@
         <div class="col-sm-12">
             <div class="card card-table comman-shadow">
                 <div class="card-body">
+                    {% if user_type == "admin" %}
+                    
                     
                     <div class="page-header">
                         <div class="row align-items-center">
@@ -75,7 +77,7 @@
                         </div>
                     </div>
 
-                    <div class="">
+                    <div class="table-responsive">
                         <table
                             class="table border-0 star-student table-hover table-center mb-0 table-striped">
                             <thead class="student-thread">
@@ -87,12 +89,12 @@
                                     <th>Leave Date</th>
                                     <th>Submitted on</th>
                                     <th>Duration</th>
-                                    <th class="text-end">Action</th>
+                                    <th class="text-end">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 
-                                {% for leave in admins %}                                    
+                                {% for leave in leaves %}                                    
                                     <tr>
                                         <td>{{forloop.counter}}</td>
                                         <td>{{leave.admin.matricule}}</td>
@@ -103,16 +105,17 @@
                                         <td>{{ leave.leave_date|date:"j M Y" }}</td>
                                         <td>{{ leave.submitted_on|date:"j M Y" }}</td>
                                         <td>{{leave.duration}}</td>
-                                        <td style="text-align: right">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Actions
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                    <li id="approve-btn" class="dropdown-item"><a class="btn btn-sm btn-success" href="{% url 'leave:approve-leave' leave_pkid=leave.pkid leave_type='admin' %}">Approve Leave</a></li>
-                                                    <li id="reject-btn" class="dropdown-item"><a class="btn btn-sm btn-danger" href="{% url 'leave:reject-leave' leave_pkid=leave.pkid leave_type='admin' %}">Reject Leave</a></li>
-                                                </ul>
+                                        <td class="text-right">
+                                            <div class="actions">
+                                                <a href="#" class="btn btn-sm bg-success-light me-2">
+                                                    dsaldkjflj
+                                                </a>
+                                                <a href="#" class="btn btn-sm bg-success-light mr-2">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="" class="btn btn-sm bg-danger-light">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     {% endfor %}
@@ -121,7 +124,7 @@
                     </div>
 
                   
-                    <hr>
+                    {% elif user_type == "teacher" %}
                     <div class="page-header">
                         <div class="row align-items-center">
                             <div class="col">
@@ -143,7 +146,7 @@
                         </div>
                     </div>
 
-                    <div class="table">
+                    <div class="table-responsive">
                         <table
                             class="table border-0 star-student table-hover table-center mb-0 table-striped">
                             <thead class="student-thread">
@@ -160,7 +163,7 @@
                             </thead>
                             <tbody>
                                 
-                                {% for leave in teachers %}                                    
+                                {% for leave in leaves %}                                    
                                     <tr>
                                         <td>{{forloop.counter}}</td>
                                         <td>{{leave.teacher.matricule}}</td>
@@ -171,24 +174,23 @@
                                         <td>{{ leave.leave_date|date:"j M Y" }}</td>
                                         <td>{{ leave.submitted_on|date:"j M Y" }}</td>
                                         <td>{{leave.duration}}</td>
-                                        <td style="text-align: right">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Actions
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                    <li id="approve-btn" class="dropdown-item"><a class="btn btn-sm btn-success" href="{% url 'leave:approve-leave' leave_pkid=leave.pkid leave_type='teacher' %}">Approve Leave</a></li>
-                                                    <li id="reject-btn" class="dropdown-item"><a class="btn btn-sm btn-danger" href="{% url 'leave:reject-leave' leave_pkid=leave.pkid leave_type='teacher' %}">Reject Leave</a></li>
-                                                </ul>
+                                        <td class="text-right">
+                                            <div class="actions">
+                                                {% if leave.approval_status == "Pending" %}
+                                                    <button class="btn btn-warning">Pending</button>
+                                                {% elif leave.approval_status == "Approved" %}
+                                                
+                                                    <button class="btn btn-success">Approved</button>
+                                                {% else %}
+                                                    <button class="btn btn-danger">Rjected</button>
+                                                {% endif %}
                                             </div>
                                         </td>
                                     {% endfor %}
                             </tbody>
                         </table>
                     </div>
-
-                    <hr>
+                    {% else %}
                     <div class="page-header">
                         <div class="row align-items-center">
                             <div class="col">
@@ -209,8 +211,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="table">
+                   
+                    <div class="table-responsive">
                         <table
                             class="table border-0 star-student table-hover table-center mb-0">
                             <thead class="student-thread">
@@ -227,7 +229,7 @@
                             </thead>
                             <tbody>
                                 
-                                {% for leave in students %}                                    
+                                {% for leave in leaves %}                                    
                                     <tr>
                                         <td>{{forloop.counter}}</td>
                                         <td>{{leave.student.matricule}}</td>
@@ -236,23 +238,25 @@
                                         <td>{{ leave.leave_date|date:"j M Y" }}</td>
                                         <td>{{ leave.submitted_on|date:"j M Y" }}</td>
                                         <td>{{leave.duration}}</td>
-                                        <td style="text-align: right">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Actions
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                    <li id="approve-btn" class="dropdown-item"><a class="btn btn-sm btn-success" href="{% url 'leave:approve-leave' leave_pkid=leave.pkid leave_type='student' %}">Approve Leave</a></li>
-                                                    <li id="reject-btn" class="dropdown-item"><a class="btn btn-sm btn-danger" href="{% url 'leave:reject-leave' leave_pkid=leave.pkid leave_type='student' %}">Reject Leave</a></li>
-                                                </ul>
+                                        <td class="text-right">
+                                            <div class="actions">
+                                                <a href="#" class="btn btn-sm bg-success-light me-2">
+                                                    <i class="feather-eye"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-sm bg-success-light mr-2">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="" class="btn btn-sm bg-danger-light">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     {% endfor %}
                             </tbody>
                         </table>
                     </div>
-
+                    
+                    {% endif %}
                     <hr>
                 </div>
             </div>

@@ -31,9 +31,18 @@
         <div class="page-wrapper">
 
             {% include 'utils/header.html' %}
+            
+            {% if request.user.is_admin %}
+                {% include "./utils/sidebars/admin-sidebar.html" %}
+            {% elif request.user.is_teacher %}
+                {% include "./utils/sidebars/teachers-sidebar.html" %}
 
+            {% elif request.user.is_student %}
+                {% include "./utils/sidebars/student-sidebar.html" %}
 
-            {% include 'utils/sidebar.html' %}
+            {% else %}
+            {% endif %}
+
 
             {% include 'utils/message-alert.html' %}            
             {% block content %}
