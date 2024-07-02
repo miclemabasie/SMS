@@ -517,13 +517,13 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
 @login_required
 def marks(request):
     user = request.user
+    classes = []
     if user.is_teacher or user.is_admin:
         if user.is_teacher:
             # get all assigned subject to the current teacher.
             teacher = user.teacher_profile
             assigned_subjects = Subject.objects.filter(assigned_to=teacher)
-            filter_classes = []
-            classes = []
+
             for sub in assigned_subjects:
                 if sub.klass == None:
                     continue
