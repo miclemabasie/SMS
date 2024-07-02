@@ -5,7 +5,7 @@ app_name = "reports"
 
 
 urlpatterns = [
-    path("reports", views.reports, name="reports"),
+    path("", views.reports, name="reports"),
     path(
         "generate-report-card",
         views.create_report_cards,
