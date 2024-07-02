@@ -50,11 +50,11 @@ def create_one_report_card(request, *args, **kwargs):
         # Get the student
         student = StudentProfile.objects.filter(pkid=selected_student_id)
 
-        if len(student.get_all_subjects()) < 1:
-            messages.error(request, "No subjects associated to this student.")
-            return redirect(reverse("reports:reports"))
         if student.exists():
             student = student.first()
+            if len(student.get_all_subjects()) < 1:
+                messages.error(request, "No subjects associated to this student.")
+                return redirect(reverse("reports:reports"))
         else:
             messages.error(request, "No student with given id and matricule found.")
             return redirect(reverse("reports:reports"))
