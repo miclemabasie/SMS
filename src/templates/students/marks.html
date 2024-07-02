@@ -86,7 +86,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                            {% if classes %}
+                            
+                            
                                 {% for class in classes %}                                    
                                     <tr>
                                         
@@ -190,6 +192,9 @@
                                         </div>
                                     </div>
                                 {% endfor %}
+                                {% else %}
+                                <h1>No classes assigned</h1>
+                            {% endif %}
                             </tbody>
                         </table>
                     </div>

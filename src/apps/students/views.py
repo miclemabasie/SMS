@@ -528,6 +528,9 @@ def marks(request):
                 classes.append({"klass": sub.klass, "subject": sub})
 
             print(classes)
+        
+        if len(classes) < 1:
+            classes = None
 
         template_name = "students/marks.html"
         context = {
