@@ -525,12 +525,16 @@ def marks(request):
             filter_classes = []
             classes = []
             for sub in assigned_subjects:
+                if sub.klass == None:
+                    continue
                 classes.append({"klass": sub.klass, "subject": sub})
 
             print(classes)
         
         if len(classes) < 1:
             classes = None
+
+        print("########### this is the class", classes)
 
         template_name = "students/marks.html"
         context = {
