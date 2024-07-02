@@ -5,91 +5,28 @@
             <ul>
                 <li class="menu-title">
                     <span>Main Menu</span>
-                    <span>Main students</span>
-                </li>
-                <li class="submenu {% if section == 'admin-area'  %}active{% endif %}">
-                    <a href="#"><i class="feather-grid"></i> <span> Dashboard</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'staff:admin-dashboard' %}" class="{% if request.path == '/'  %}active{% endif %}">Admin Dashboard</a></li>
-                        
-                        <li><a href="teacher-dashboard.html">Teachers Dashboard</a></li>
-                        
-                    </ul>
-                </li>
-                <li class="submenu {% if section == 'student-area'  %}active{% endif %}">
-                    <a href="#"><i class="fas fa-graduation-cap"></i> <span> Students</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'students:student-list' %}" class="{% if request.path == '/students/'  %}active{% endif %}">Student List</a></li>
-                        <!-- <li><a href="student-details.html">Student View</a></li> -->
-                        <li><a href="{% url 'students:student-add' %}" class="{% if request.resolver_match.url_name == 'student-add'  %}active{% endif %}">Student Add</a></li>
-                        <li><a href="{% url 'students:student-dashboard' %}" class="{% if request.resolver_match.url_name == 'student-dashboard'  %}active{% endif %}">Student Dashboard</a></li>
-                        
-                        {% if student_detial_section %}
-                            <li><a href="" class="active">Student View</a></li>
-                        {% endif %}
-                            
-                    </ul>
-                </li>
-                <li class="submenu {% if section == 'teachers-area'  %}active{% endif %}">
-                    <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Teachers</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
-                        <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
-                        <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Teacher Add</a></li>
-                        <li><a href="{% url 'teachers:teacher-dashboard' %}" class="{% if request.resolver_match.url_name == 'teacher-dashboard'  %}active{% endif %}">Teacher Dashboard</a></li>
-                        <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
-                    </ul>
-                </li>
-                <li class="submenu {% if section == 'class-area'  %}active{% endif %}">
-                    <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Classes</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <!-- <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li> -->
-                        <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
-                        <li><a href="{% url 'class-list' %}" class="{% if request.resolver_match.url_name == 'class-list'  %}active{% endif %}">Classes</a></li>
-                        <li><a href="{% url 'class-add' %}" class="{% if request.resolver_match.url_name == 'class-add'  %}active{% endif %}">Class Add</a></li>
-                        <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
-                    </ul>
-                </li>
-                <li class="submenu {% if section == 'subjects-area'  %}active{% endif %}">
-                    <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'staff:subjects' %}">Subject List</a></li>
-                        <li><a href="add-subject.html">Subject Add</a></li>
-                        <li><a href="edit-subject.html">Subject Edit</a></li>
-                    </ul>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'settings-home'  %}active{% endif %}">
-                    <a href="{% url 'settings:settings-home' %} " ><i class="fas fa-cog"></i> <span>Settings</span></a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'marks'  %}active{% endif %}">
-                    <a href="{% url 'students:marks' %} " ><i class="fas fa-certificate"></i> <span>Marks</span></a>
                 </li>
 
-                <li class="submenu {% if section == 'reports-area'  %}active{% endif %}">
-                    <a href="#"><i class="fas fa-book-reader"></i> <span> Reports</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'reports:reports' %}">Generate Reports</a></li>
-                        <li><a href="add-subject.html">Subject Add</a></li>
-                        <li><a href="edit-subject.html">Subject Edit</a></li>
-                    </ul>
+                <li class="{% if section == 'student-dashboard' %}active{% endif %}">
+                    <a href="{% url 'students:student-dashboard' %}"><i class="feather-grid"></i> <span>Home</span></a>
+                  </li>
+                  
+                <li class="{% if section == 'student-dashboad' %}active{% endif %}">
+                <a href="{% url 'students:student-detail' student.pkid student.matricule %}"><i class="fas fa-user"></i> <span>Profile</span></a>
                 </li>
+                
 
-                <li class="submenu {% if section == 'attendance-area'  %}active{% endif %}">
-                    <a href="#"><i class="fas fa-book-reader"></i> <span> Attendance</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'attendance:take-attendance' %} ">Take Attendance</a></li>
-                        <li><a href="{% url 'attendance:view-attendance' %}">View Attendance</a></li>
-                    </ul>
+                <li class="{% if section == 'student-dashboad' %}active{% endif %}">
+                    <a href="{% url 'students:student-detail' student.pkid student.matricule %}"><i class="fas fa-book"></i> <span>View Subjects</span></a>
                 </li>
+                
+                
+                <li class="{% if section == 'student-dashbard' %}active{% endif %}">
+                    <a href="{% url 'students:student-academic-record' pkid=student.pkid matricule=student.matricule%}"><i class="fas fa-folder"></i> <span>View Academic Record</span></a>
+                </li> 
+              
 
-
+            
 
                 <!-- <li class="submenu">
                     <a href="#"><i class="fas fa-certificate"></i> <span> Marks</span> <span
@@ -113,17 +50,7 @@
                         <li><a href="invoices-settings.html">Invoices Settings</a></li>
                     </ul>
                 </li> {% endcomment %}
-                <li class="menu-title">
-                    <span>Management</span>
-                </li>
-                <li class="submenu">
-                    <a href="#"><i class="fas fa-users"></i> <span> Accounts</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'staff:create-admin' %}" class="{% if request.resolver_match.url_name == 'create-admin'  %}active{% endif %}">Add User</a></li>
-                        <li><a href="{% url 'staff:list-admin' %}" class="{% if request.resolver_match.url_name == 'list-admin'  %}active{% endif %}">List Admin</a></li>
-                    </ul>
-                </li>
+              
               
               
             </ul>

@@ -543,13 +543,15 @@ def marks(request):
 
 
 def list_student_record(request, pkid, matricule, *args, **kwargs):
+
     # Grab all the mark records associated to this student
     student = get_object_or_404(StudentProfile, pkid=pkid, matricule=matricule)
+
     marks = student.student_marks.all()
 
     template_name = "students/academic-records.html"
 
-    context = {"section": "student-area", "marks": marks}
+    context = {"section": "student-area", "marks": marks, "student": student}
 
     return render(request, template_name, context)
 
@@ -952,6 +954,7 @@ def student_dashboard(request):
     template_name = "dashboards/student/student-dashboard.html"
 
     context = {
+        "section": "student-dashboard",
         "announcements": announcements,
         "student": student,
         "total_pass_courses": pass_courses_count,
