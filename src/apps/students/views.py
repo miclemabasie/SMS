@@ -530,7 +530,7 @@ def marks(request):
                 classes.append({"klass": sub.klass, "subject": sub})
 
             print(classes)
-        
+
         if len(classes) < 1:
             classes = None
 
@@ -964,7 +964,7 @@ def student_dashboard(request):
         "announcements": announcements,
         "student": student,
         "total_pass_courses": pass_courses_count,
-        "total_cources_writen": marks.count(),-
+        "total_cources_writen": marks.count(),
         "total_courses": total_courses,
         "payment_history": payment_history,
         "events": events,
