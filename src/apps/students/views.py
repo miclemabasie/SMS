@@ -534,8 +534,6 @@ def marks(request):
         if len(classes) < 1:
             classes = None
 
-        print("########### this is the class", classes)
-
         template_name = "students/marks.html"
         context = {
             "section": "marks-area",
@@ -956,6 +954,7 @@ def student_dashboard(request):
     total_present = student_attendance_present.count()
     total_absent = student_attendance_absent.count()
     total = total_present + total_absent
+    total = total if total else 1
     percent_present = round(((total_present / total) * 100), 2)
     percent_absent = round(((total_absent / total) * 100), 2)
     template_name = "dashboards/student/student-dashboard.html"
@@ -965,7 +964,7 @@ def student_dashboard(request):
         "announcements": announcements,
         "student": student,
         "total_pass_courses": pass_courses_count,
-        "total_cources_writen": marks.count(),
+        "total_cources_writen": marks.count(),-
         "total_courses": total_courses,
         "payment_history": payment_history,
         "events": events,
