@@ -72,6 +72,7 @@
                     </div> -->
 
                     <div class="table-responsive">
+                        {% if classes %}
                         <table
                             class="table border-0 star-student table-hover table-center mb-0 table-striped" id="classesTable">
                             <thead class="student-thread">
@@ -86,7 +87,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            {% if classes %}
+                            
                             
                             
                                 {% for class in classes %}                                    
@@ -192,10 +193,11 @@
                                         </div>
                                     </div>
                                 {% endfor %}
-                                {% else %}
+                                
+                            </tbody>
+                            {% else %}
                                 <h1>No classes assigned</h1>
                             {% endif %}
-                            </tbody>
                         </table>
                     </div>
                 </div>
