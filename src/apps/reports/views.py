@@ -28,11 +28,14 @@ def reports(request, *args, **kwargs):
     classes = Class.objects.all()
     template_name = "reports/reports.html"
     students = StudentProfile.objects.all()
+    current_year = AcademicYear.objects.get(is_current=True)
+    terms = Term.objects.filter(academic_year=current_year)
 
     context = {
         "section": "reports",
         "classes": classes,
         "students": students,
+        "terms": terms,
     }
 
     return render(request, template_name, context)
@@ -44,9 +47,16 @@ def create_one_report_card(request, *args, **kwargs):
     if request.method == "POST":
 
         selected_student_id = request.POST.get("selected_student_id")
+        selected_term_id = request.POST.get("selected_term_id")
         if not selected_student_id:
             messages.error(request, "Invalid or empty student id")
             return reverse("reporsts:reports")
+
+        # check it term is valid
+        if not selected_term_id:
+            messages.error(request, "Invalid or missing term ID")
+            return redirect(reverse("reports:reports"))
+
         # Get the student
         student = StudentProfile.objects.filter(pkid=selected_student_id)
 
@@ -61,17 +71,26 @@ def create_one_report_card(request, *args, **kwargs):
 
         #     # current year
         academic_year = AcademicYear.objects.filter(is_current=True).first()
-        term = Term.objects.filter(is_current=True).first()
+        term = Term.objects.get(pkid=selected_term_id)
         klass = student.current_class
 
         # Instantiate a performance object
         performance_obj = ClassPerformanceReport(klass.pkid, term.pkid)
+        # call the setup function before moving on.
 
+        setup = performance_obj.setup()
+        if setup:
+            print("########## error", setup)
+            messages.error(request, setup)
+            return redirect(reverse("reports:reports"))
         # performance_obj.generate_student_report_data()
 
         sessions = ExaminationSession.objects.filter(term=term)
 
         student_marks = performance_obj.generate_student_report_data(student)
+        if not student_marks:
+            messages.error(request, "Unset terms")
+            return redirect(reverse("reports:reports"))
         pdf_data = {
             "marks": student_marks["data"],
             "student_data": student_marks,
@@ -111,6 +130,10 @@ def create_report_cards(request):
         term = Term.objects.get(is_current=True)
 
         performance_obj = ClassPerformanceReport(selected_class_id, term.pkid)
+        setup = performance_obj.setup()
+        if setup:
+            messages.error(request, setup)
+            return redirect(reverse("reports:reports"))
 
         # check if class has any subject attatched to it, if not, return.
         if len(performance_obj.sub_dicts) < 1:
@@ -146,7 +169,6 @@ def create_report_cards(request):
             student_ranking = performance_obj.get_student_rank(
                 student, class_performance
             )
-            print(student_marks)
 
             pdf_data = {
                 "marks": student_marks["data"],
@@ -207,6 +229,11 @@ def create_class_master_report(request):
         # create a class report instance
 
         cmr = ClassMasterReport(klass.pkid, term.pkid)
+        setup = cmr.setup()
+        if setup:
+            messages.error(request, setup)
+            return redirect(reverse("reports:reports"))
+
         context = {
             "total_girls": klass.get_total_girls(),
             "total_boys": klass.get_total_boys(),

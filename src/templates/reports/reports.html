@@ -85,11 +85,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <div class="form-header">
-                    <h3>Generate Report Card</h3>
-                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Select the target class
-                    </p>
-                </div>
+                                                                                                                                                
                 <div class="card">
                     <div class="card-body">
                         <form action="{% url 'reports:generate_report_cards' %}" method="post">
@@ -103,6 +99,17 @@
                                             {% for class in classes %}
                                             <option value="{{class.pkid}}">{{class.grade_level}}-{{class.class_name}}
                                             </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group local-forms">
+                                        <label>Term <span class="login-danger">*</span></label>
+
+                                        <select class="form-control" name="selected_term_id">
+
+                                            {% for term in terms %}
+                                            <option value="{{term.pkid}}">{{term}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -177,9 +184,8 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div class="form-header">
-                    <h3>Generate Report Card</h3>
-                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Select the target class
-                    </p>
+                    <h3>Generate Class Master Report</h3>
+                    <p style="font-size: 17px;" class="badge bg-warning text-wrap text-white">Select the target class</p>
                 </div>
                 <div class="card">
                     <div class="card-body">
@@ -192,8 +198,18 @@
                                         <select class="form-control" name="selected_class_id">
 
                                             {% for class in classes %}
-                                            <option value="{{class.pkid}}">{{class.grade_level}}-{{class.class_name}}
-                                            </option>
+                                            <option value="{{class.pkid}}">{{class.grade_level}}-{{class.class_name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group local-forms">
+                                        <label>Term <span class="login-danger">*</span></label>
+
+                                        <select class="form-control" name="selected_term_id">
+
+                                            {% for term in terms %}
+                                            <option value="{{term.pkid}}">{{term}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>

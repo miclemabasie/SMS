@@ -1,6 +1,6 @@
 from apps.students.models import StudentProfile, Class, Mark
 from .models import AcademicRecord
-from apps.terms.models import Term
+from apps.terms.models import Term, ExaminationSession
 
 
 class ClassMasterReport:
@@ -10,6 +10,24 @@ class ClassMasterReport:
         self.__term_id = term_id
 
         print("Initializing class master report")
+
+    def setup(self):
+        # this function is called first to make sure generation of data is possible
+        try:
+            term = self.get_term()
+        except:
+            return "Can not get term data"
+
+        best_students = self.get_best_students_from_class()
+        if not best_students:
+            return "No report data available"
+
+        # get the sessions for the current term
+        try:
+            session1, session2 = ExaminationSession.objects.filter(term=term)
+        except:
+            return "Can not get session data"
+        return None
 
     def get_class(self):
         classes = Class.objects.filter(pkid=self.__class_id)

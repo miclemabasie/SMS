@@ -13,6 +13,20 @@ class ClassPerformanceReport:
         self.data = []
         self.sub_dicts = self.get_all_subjects_for_class()
 
+    def setup(self):
+        # this function is called first to make sure generation of data is possible
+        try:
+            term = self.get_term()
+        except:
+            return "Can not get term data"
+
+        # get the sessions for the current term
+        try:
+            session1, session2 = ExaminationSession.objects.filter(term=term)
+        except:
+            return "Can not get session data"
+        return None
+
     def get_class(self):
         klasses = Class.objects.filter(pkid=self.__class_id)
         if klasses.exists():
@@ -84,6 +98,7 @@ class ClassPerformanceReport:
         term = self.get_term()
 
         # get the sessions for the current term
+
         session1, session2 = ExaminationSession.objects.filter(term=term)
 
         sum_of_coef = self.get_total_coefs(student)

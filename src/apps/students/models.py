@@ -249,6 +249,13 @@ class Mark(TimeStampedUUIDModel):
     )
 
 
+class TEACHERSERVICE(models.TextChoices):
+    CENTRAL = "Central", _("Central")
+    DECONCENTRATED = "Deconcentrated", _("Deconcentrated")
+    ATTACHED = "Attached", _("Attached")
+    EXTERNAL = "External", _("External")
+
+
 class TeacherProfile(TimeStampedUUIDModel):
     user = models.OneToOneField(
         User, related_name="teacher_profile", on_delete=models.CASCADE
@@ -282,6 +289,60 @@ class TeacherProfile(TimeStampedUUIDModel):
     main_subject = models.CharField(
         verbose_name=_("Main Subject"), blank=True, null=True, max_length=200
     )
+
+    # extras
+    region_of_origin = models.CharField(
+        verbose_name=_("Region of Origin"), max_length=200
+    )
+    division_of_origin = models.CharField(
+        verbose_name=_("Division of Origin"), max_length=200
+    )
+    sub_division_of_origin = models.CharField(
+        verbose_name=_("Sub Division of Origin"), max_length=200
+    )
+    date_recruitement_public_service = models.CharField(
+        verbose_name=_("Date of Recruitement into Public Service"), max_length=200
+    )
+    corps = models.CharField(verbose_name=_("Corps"), max_length=200)
+    corps = models.CharField(verbose_name=_("Corps"), max_length=200)
+    career_grade = models.CharField(verbose_name=_("Career Grade"), max_length=200)
+    payroll_grade = models.CharField(verbose_name=_("Payroll Grade"), max_length=200)
+    career_category = models.CharField(
+        verbose_name=_("Career Category"), max_length=200
+    )
+    payroll_category_solde = models.CharField(
+        verbose_name=_("Payroll Category Solde"), max_length=200
+    )
+    career_index = models.CharField(verbose_name=_("Career Index"), max_length=200)
+    payroll_index = models.CharField(verbose_name=_("Payroll Index"), max_length=200)
+    career_echelon = models.CharField(verbose_name=_("Career Echelon"), max_length=200)
+    payroll_echelon = models.CharField(
+        verbose_name=_("Payroll Echelon"), max_length=200
+    )
+    career_echelon = models.CharField(verbose_name=_("Career Echelon"), max_length=200)
+    serivice = models.CharField(
+        verbose_name=_("Service"),
+        choices=TEACHERSERVICE.choices,
+        default=TEACHERSERVICE.OTHER,
+        max_length=20,
+    )
+    appointed_structure = models.CharField(
+        verbose_name=_("Appointed Structure"), max_length=200
+    )
+    town = models.CharField(verbose_name=_("Town"), max_length=200)
+    possition_rank = models.CharField(verbose_name=_("Position Rank"), max_length=200)
+    longivity_of_post = models.CharField(
+        verbose_name=_("Longivity of Post"),
+        help_text=_("Longivity of post in years"),
+        max_length=200,
+    )
+    longivity_in_administration = models.CharField(
+        verbose_name=_("Longivity in Administration"), max_length=200
+    )
+    appointment_decision_reference = models.CharField(verbose_name=_("Refence of the Appointment Decision"), max_length=200)
+    indemnity_situation = models.CharField(verbose_name=_("Indemnity Situation"), max_length=200)
+
+
 
     def save(self, *args, **kwargs):
         if not self.matricule:
