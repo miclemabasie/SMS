@@ -13,6 +13,9 @@ from apps.students.models import (
     Subject,
     TeacherTempCreateProfile,
 )
+import io
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 from apps.leave.models import TeacherLeave
 import json
 from faker import Faker
@@ -87,6 +90,32 @@ def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
         username = request.POST.get("username")
         email = request.POST.get("email")
         profile_photo = request.FILES.get("photo")
+        # extras
+        region_of_origin = request.POST.get("region_of_origin")
+        division_of_origin = request.POST.get("division_of_origin")
+        sub_division_of_origin = request.POST.get("sub_division_of_origin")
+        date_recruitement_public_service = request.POST.get(
+            "date_recruitement_public_service"
+        )
+        corps = request.POST.get("corps")
+        career_grade = request.POST.get("career_grade")
+        payroll_grade = request.POST.get("payroll_grade")
+        career_category = request.POST.get("career_category")
+        payroll_category_solde = request.POST.get("payroll_category_solde")
+        career_index = request.POST.get("career_index")
+        payroll_index = request.POST.get("payroll_index")
+        career_echelon = request.POST.get("career_echelon")
+        payroll_echelon = request.POST.get("payroll_echelon")
+        service = request.POST.get("service")
+        appointed_structure = request.POST.get("appointed_structure")
+        town = request.POST.get("town")
+        possition_rank = request.POST.get("possition_rank")
+        longivity_of_post = request.POST.get("longivity_of_post")
+        longivity_in_administration = request.POST.get("longivity_in_administration")
+        appointment_decision_reference = request.POST.get(
+            "appointment_decision_reference"
+        )
+        indemnity_situation = request.POST.get("indemnity_situation")
 
         # Update user instance for the teacher
 
@@ -113,6 +142,27 @@ def teacher_edit_view(request, matricule, pkid, *args, **kwargs):
             teacher.remark = remark
         if country:
             teacher.country = country
+        teacher.region_of_origin = region_of_origin
+        teacher.division_of_origin = division_of_origin
+        teacher.sub_division_of_origin = sub_division_of_origin
+        teacher.date_recruitement_public_service = date_recruitement_public_service
+        teacher.corps = corps
+        teacher.career_grade = career_grade
+        teacher.payroll_grade = payroll_grade
+        teacher.career_category = career_category
+        teacher.payroll_category_solde = payroll_category_solde
+        teacher.career_index = career_index
+        teacher.payroll_index = payroll_index
+        teacher.career_echelon = career_echelon
+        teacher.payroll_echelon = payroll_echelon
+        teacher.service = service
+        teacher.appointed_structure = appointed_structure
+        teacher.town = town
+        teacher.possition_rank = possition_rank
+        teacher.longivity_of_post = longivity_of_post
+        teacher.longivity_in_administration = longivity_in_administration
+        teacher.appointment_decision_reference = appointment_decision_reference
+        teacher.indemnity_situation = indemnity_situation
 
         # construct a valid date out of the html date
         if dob:
@@ -179,6 +229,33 @@ def teacher_add_view(request, *args, **kwargs):
         profile_photo = request.FILES.get("photo")
         pin = request.POST.get("pin")
 
+        # extras
+        region_of_origin = request.POST.get("region_of_origin")
+        division_of_origin = request.POST.get("division_of_origin")
+        sub_division_of_origin = request.POST.get("sub_division_of_origin")
+        date_recruitement_public_service = request.POST.get(
+            "date_recruitement_public_service"
+        )
+        corps = request.POST.get("corps")
+        career_grade = request.POST.get("career_grade")
+        payroll_grade = request.POST.get("payroll_grade")
+        career_category = request.POST.get("career_category")
+        payroll_category_solde = request.POST.get("payroll_category_solde")
+        career_index = request.POST.get("career_index")
+        payroll_index = request.POST.get("payroll_index")
+        career_echelon = request.POST.get("career_echelon")
+        payroll_echelon = request.POST.get("payroll_echelon")
+        service = request.POST.get("service")
+        appointed_structure = request.POST.get("appointed_structure")
+        town = request.POST.get("town")
+        possition_rank = request.POST.get("possition_rank")
+        longivity_of_post = request.POST.get("longivity_of_post")
+        longivity_in_administration = request.POST.get("longivity_in_administration")
+        appointment_decision_reference = request.POST.get(
+            "appointment_decision_reference"
+        )
+        indemnity_situation = request.POST.get("indemnity_situation")
+
         if len(pin) == 4:
             # create temp
             pass
@@ -220,7 +297,28 @@ def teacher_add_view(request, *args, **kwargs):
             address=address,
         )
         if created:
-            teacher.save()
+            teacher.region_of_origin = region_of_origin
+            teacher.division_of_origin = division_of_origin
+            teacher.sub_division_of_origin = sub_division_of_origin
+            teacher.date_recruitement_public_service = date_recruitement_public_service
+            teacher.corps = corps
+            teacher.career_grade = career_grade
+            teacher.payroll_grade = payroll_grade
+            teacher.career_category = career_category
+            teacher.payroll_category_solde = payroll_category_solde
+            teacher.career_index = career_index
+            teacher.payroll_index = payroll_index
+            teacher.career_echelon = career_echelon
+            teacher.payroll_echelon = payroll_echelon
+            teacher.service = service
+            teacher.appointed_structure = appointed_structure
+            teacher.town = town
+            teacher.possition_rank = possition_rank
+            teacher.longivity_of_post = longivity_of_post
+            teacher.longivity_in_administration = longivity_in_administration
+            teacher.appointment_decision_reference = appointment_decision_reference
+            teacher.indemnity_situation = indemnity_situation
+
             if location:
                 teacher.location = location
             if profile_photo:
@@ -241,7 +339,7 @@ def teacher_add_view(request, *args, **kwargs):
                 )
             )
         else:
-            messages.warning(request, "Teacher already exist.")
+            messages.warning(request, "Teacher already exists.")
             return redirect(reverse("teachers:teachers-list"))
 
     template_name = "teachers/teacher-add.html"
@@ -486,3 +584,85 @@ def assign_class_to_teacher(request, teacher_pkid, teacher_mat):
     }
     template_name = "teachers/assign-subjects.html"
     return render(request, template_name, context)
+
+
+
+@login_required
+def download_blank_teacher_form(request):
+    # Create a file-like buffer to receive PDF data
+    buffer = io.BytesIO()
+
+    # Create the PDF object, using the buffer as its "file."
+    p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    # Draw title
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(200, height - 50, "Teacher Information Form")
+
+    # Draw teacher fields
+    p.setFont("Helvetica", 12)
+    y = height - 100
+
+    fields = [
+        "First Name",
+        "Last Name",
+        "Gender",
+        "Phone Number",
+        "Date of Birth",
+        "Address",
+        "Location",
+        "Country",
+        "Subject",
+        "Region of Origin",
+        "Division of Origin",
+        "Sub Division of Origin",
+        "Date of Recruitment into Public Service",
+        "Corps",
+        "Career Grade",
+        "Payroll Grade",
+        "Career Category",
+        "Payroll Category Solde",
+        "Career Index",
+        "Payroll Index",
+        "Career Echelon",
+        "Payroll Echelon",
+        "Service",
+        "Appointed Structure",
+        "Town",
+        "Position Rank",
+        "Longevity of Post",
+        "Longevity in Administration",
+        "Appointment Decision Reference",
+        "Indemnity Situation",
+        "Remark",
+    ]
+
+    max_label_width = max(
+        [p.stringWidth(field + ":", "Helvetica", 12) for field in fields]
+    )
+    line_start_x = 50 + max_label_width + 10
+    line_length = 300
+
+    for field in fields:
+        p.drawString(50, y, f"{field}:")
+        p.line(line_start_x, y, line_start_x + line_length, y)
+        y -= 20
+        if y < 50:  # Check if y is less than the bottom margin
+            p.showPage()
+            p.setFont("Helvetica", 12)
+            y = height - 50
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="teacher_form.pdf"'
+    response.write(pdf)
+
+    return response

@@ -28,4 +28,9 @@ urlpatterns = [
         views.assign_class_to_teacher,
         name="assign-subjects",
     ),
+    path(
+        "download-form",
+        views.download_blank_teacher_form,
+        name="download-teacher-form",
+    ),
 ]

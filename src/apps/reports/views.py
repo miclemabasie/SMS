@@ -80,7 +80,6 @@ def create_one_report_card(request, *args, **kwargs):
 
         setup = performance_obj.setup()
         if setup:
-            print("########## error", setup)
             messages.error(request, setup)
             return redirect(reverse("reports:reports"))
         # performance_obj.generate_student_report_data()

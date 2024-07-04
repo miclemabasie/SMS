@@ -64,18 +64,15 @@
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                     <label>Date of Birth {% if teacher.user.dob %} | Current: <span>{{teacher.user.dob|date:'j M Y'}}</span>{%endif%}</label>
-                                    <input type="date" value="{{teacher.user.dob|date:'j M Y'}}" name="dob" class="form-control">
+                                    <input type="date" value="{{teacher.user.dob|date:'Y-m-d'}}" name="dob" class="form-control">
                                 </div>
                             </div>
-                            
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                     <label>Address<span style="color: red;">*</span></label>
                                     <input type="text" value="{{teacher.address}}" name="address" class="form-control" required>
                                 </div>
                             </div>
-                            
-                            
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                     <label>Location</label>
@@ -88,8 +85,6 @@
                                     <input type="text" value="{{teacher.country}}" name="country" class="form-control">
                                 </div>
                             </div>
-                            
-                            
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                     <label>Photo</label>
@@ -102,20 +97,140 @@
                                     <textarea type="text" name="remark" class="form-control">{{teacher.remark}}</textarea>
                                 </div>
                             </div>
-                            
-                            
-                            <!-- <div class="col-12 col-sm-6">
+                            <!-- Additional Fields -->
+                            <div class="col-12 col-sm-6">
                                 <div class="form-group">
-                                    <label>Qualification</label>
-                                    <input class="form-control" type="text">
+                                    <label>Region of Origin</label>
+                                    <input type="text" value="{{teacher.region_of_origin}}" name="region_of_origin" class="form-control">
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
-                                    <label>Experience</label>
-                                    <input class="form-control" type="text">
+                                    <label>Division of Origin</label>
+                                    <input type="text" value="{{teacher.division_of_origin}}" name="division_of_origin" class="form-control">
                                 </div>
-                            </div> -->
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Sub Division of Origin</label>
+                                    <input type="text" value="{{teacher.sub_division_of_origin}}" name="sub_division_of_origin" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Date of Recruitment into Public Service</label>
+                                    <input type="text" value="{{teacher.date_recruitement_public_service}}" name="date_recruitement_public_service" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Corps</label>
+                                    <input type="text" value="{{teacher.corps}}" name="corps" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Grade</label>
+                                    <input type="text" value="{{teacher.career_grade}}" name="career_grade" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Grade</label>
+                                    <input type="text" value="{{teacher.payroll_grade}}" name="payroll_grade" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Category</label>
+                                    <input type="text" value="{{teacher.career_category}}" name="career_category" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Category Solde</label>
+                                    <input type="text" value="{{teacher.payroll_category_solde}}" name="payroll_category_solde" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Index</label>
+                                    <input type="text" value="{{teacher.career_index}}" name="career_index" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Index</label>
+                                    <input type="text" value="{{teacher.payroll_index}}" name="payroll_index" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Echelon</label>
+                                    <input type="text" value="{{teacher.career_echelon}}" name="payroll_index" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Echelon</label>
+                                    <input type="text" name="payroll_echelon" value={{teacher.payroll_echelon}} class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Service</label>
+                                    <select name="service" class="form-control">
+                                        <option value="Central" {% if teacher.service == 'Central' %}selected{% endif %}>Central</option>
+                                        <option value="Deconcentrated" {% if teacher.service == 'Deconcentrated' %}selected{% endif %}>Deconcentrated</option>
+                                        <option value="Attached" {% if teacher.service == 'Attached' %}selected{% endif %}>Attached</option>
+                                        <option value="External" {% if teacher.service == 'External' %}selected{% endif %}>External</option>
+                                        <option value="Other" {% if teacher.service == 'Other' %}selected{% endif %}>Others</option>
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Appointed Structure</label>
+                                    <input type="text" name="appointed_structure" value="{{teacher.appointed_structure}}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Town</label>
+                                    <input type="text" name="town" value="{{teacher.town}}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Position Rank</label>
+                                    <input type="text" name="possition_rank" value="{{teacher.possition_rank}}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Longevity of Post</label>
+                                    <input type="text" name="longivity_of_post" value="{{teacher.longivity_of_post}}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Longevity in Administration</label>
+                                    <input type="text" name="longivity_in_administration" value="{{teacher.longivity_in_administration}}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Reference of the Appointment Decision</label>
+                                    <input type="text" name="appointment_decision_reference" value="{{teacher.appointment_decision_reference}}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Indemnity Situation</label>
+                                    <input type="text" name="indemnity_situation" value="{{teacher.indemnity_situation}}" class="form-control">
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <h5 class="form-title"><span>Login Details</span></h5>
                             </div>

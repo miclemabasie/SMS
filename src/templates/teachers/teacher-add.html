@@ -10,9 +10,11 @@
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title">Add Teachers</h3>
+                <a href="{% url 'teachers:download-teacher-form' %}" class="btn btn-primary">Download Form</a>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="teachers.html">Teachers</a></li>
                     <li class="breadcrumb-item active">Add Teachers</li>
+
                 </ul>
             </div>
         </div>
@@ -110,6 +112,142 @@
                                 <div class="form-group">
                                     <label>Remark</label>
                                     <input type="text" name="remark" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Additional Details</span></h5>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Region of Origin</label>
+                                    <input type="text" name="region_of_origin" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Division of Origin</label>
+                                    <input type="text" name="division_of_origin" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Sub Division of Origin</label>
+                                    <input type="text" name="sub_division_of_origin" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Date of Recruitment into Public Service</label>
+                                    <input type="text" name="date_recruitement_public_service" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Corps</label>
+                                    <input type="text" name="corps" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Grade</label>
+                                    <input type="text" name="career_grade" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Grade</label>
+                                    <input type="text" name="payroll_grade" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Category</label>
+                                    <input type="text" name="career_category" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Category Solde</label>
+                                    <input type="text" name="payroll_category_solde" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Index</label>
+                                    <input type="text" name="career_index" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Index</label>
+                                    <input type="text" name="payroll_index" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Career Echelon</label>
+                                    <input type="text" name="career_echelon" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Payroll Echelon</label>
+                                    <input type="text" name="payroll_echelon" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Service</label>
+                                    <select name="service" class="form-control">
+                                        <option value="Central">Central</option>
+                                        <option value="Deconcentrated">Deconcentrated</option>
+                                        <option value="Attached">Attached</option>
+                                        <option value="External">External</option>
+                                        <option value="Other">Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Appointed Structure</label>
+                                    <input type="text" name="appointed_structure" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Town</label>
+                                    <input type="text" name="town" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Position Rank</label>
+                                    <input type="text" name="possition_rank" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Longevity of Post</label>
+                                    <input type="text" name="longivity_of_post" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Longevity in Administration</label>
+                                    <input type="text" name="longivity_in_administration" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Reference of the Appointment Decision</label>
+                                    <input type="text" name="appointment_decision_reference" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Indemnity Situation</label>
+                                    <input type="text" name="indemnity_situation" class="form-control">
                                 </div>
                             </div>
                             
