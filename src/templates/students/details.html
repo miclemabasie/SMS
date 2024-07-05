@@ -76,7 +76,7 @@
                                     {% if student.is_owing %}
                                         
                                         {% if number_of_payments > 0 %}
-                                            <a href="{% url 'fees:edit-fee' pkid=student.pkid matricule=student.matricule %}">
+                                            <a href="{% url 'fees:add-fee' pkid=student.pkid matricule=student.matricule %}">
                                                 <button  class="btn btn-info btn-warning">Update Payment</button>
                                             </a>
                                         {% elif number_of_payments == 0 %}
@@ -85,6 +85,11 @@
                                             </a>
                                         {% endif %}
                               
+                                    {% else %}
+                                    <a href="{% url 'fees:add-fee' pkid=student.pkid matricule=student.matricule %}">
+                                        <button  class="btn btn-info btn-warning">Add Payment</button>
+                                    </a>
+                                            
                                     {% endif %}
                                     <!-- <button type="submit" class="btn btn-info message-btns">Message</button>  -->
                                 </div>

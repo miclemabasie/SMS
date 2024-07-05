@@ -11,6 +11,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.common.models import TimeStampedUUIDModel
 from django.db.models import Sum, Count
+from apps.settings.models import Setting
+from apps.terms.models import AcademicYear
 
 # from apps.teachers.models import TeacherProfile
 from apps.terms.models import ExaminationSession
@@ -175,6 +177,25 @@ class StudentProfile(TimeStampedUUIDModel):
         subjects = self.get_all_subjects()
         total_coef = sum([s.coef for s in subjects])
         return total_coef
+
+    def get_payment_history_for_current_year(self):
+        current_year = AcademicYear.objects.get(is_current=True)
+        return self.payment_history.filter(
+            fee__fee_type="school_fees", fee__academic_year=current_year
+        )
+
+    def get_amount_paid(self):
+        total_fees = 0
+        payment_records = self.get_payment_history_for_current_year()
+        for pay in payment_records:
+            total_fees += pay.amount_paid
+        return total_fees
+
+    @property
+    def has_paid_only_first(self):
+        setting = Setting.objects.all().first()
+        if self.get_amount_paid() == setting.first_installment:
+            return True
 
 
 # class Attendance(TimeStampedUUIDModel):

@@ -3,8 +3,9 @@ from apps.common.models import TimeStampedUUIDModel
 from apps.staff.models import AdminProfile
 from apps.terms.models import AcademicYear
 from django.utils.translation import gettext_lazy as _
-from apps.students.models import StudentProfile
+from apps.students.models import StudentProfile, Class
 from django.utils import timezone
+from apps.settings.models import Setting
 
 
 class FeeTypeChoice(models.TextChoices):
@@ -21,7 +22,7 @@ class Fee(TimeStampedUUIDModel):
         choices=FeeTypeChoice.choices,
         default=FeeTypeChoice.SCHOOL_FEES,
     )
-    target = models.DecimalField(max_digits=10, decimal_places=2)
+    target = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     is_complete = models.BooleanField(default=False)
     student = models.ForeignKey(
         StudentProfile, related_name="fees", on_delete=models.CASCADE
@@ -45,7 +46,8 @@ class Fee(TimeStampedUUIDModel):
 
     def save(self, *args, **kwargs):
         print("the save methos is called")
-        if self.amount >= self.target:
+        setting = Setting.objects.all().first()
+        if self.amount >= setting.get_complete_fee:
             self.is_complete = True
         else:
             self.is_complete = False

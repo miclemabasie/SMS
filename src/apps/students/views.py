@@ -54,7 +54,7 @@ def list_student_view(request):
     classes = Class.objects.all()
 
     template_name = "students/list.html"
-    context = {"section": "student-area", "students": queryset, "classes": classes}
+    context = {"section": "student-area", "students": queryset, "classes": classes,}
 
     return render(request, template_name, context)
 

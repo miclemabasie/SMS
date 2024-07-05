@@ -32,17 +32,16 @@
                             <div class="col-12">
                                 <h5 class="form-title"><span>Fees Information</span></h5>
                             </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="form-group local-forms">
-                                    <label>Fees Amount <span class="login-danger">*</span></label>
-                                    <input name="fees_amount" type="text" class="form-control">
-                                </div>
-                            </div>
 
+                        
                             <div class="col-12 col-sm-6">
                                 <div class="form-group local-forms">
-                                    <label>Target Amount <span class="login-danger">*</span></label>
-                                    <input name="target_amount" type="text" class="form-control">
+                                    <label>Select Installment <span class="login-danger">*</span></label>
+                                    <select class="form-control select" name="selected_fee_installment">
+                                        <option value="first_installment">First Installment - {{settings.first_installment}}</option>
+                                        <option value="second_installment">Second Installment - {{settings.second_installment}}</option>
+                                        <option value="complete">Complete - {{settings.get_complete_fee}}</option>
+                                    </select>
                                 </div>
                             </div>
                             
@@ -57,12 +56,7 @@
                                 </div>
                             </div>                            
                             
-                            <div class="col-12 col-sm-6">
-                                <div class="form-group local-forms">
-                                    <label>Paid Date</label>
-                                    <input name="pay_date" class="form-control" type="date">
-                                </div>
-                            </div>
+                            
                             <div class="col-12">
                                 <div class="student-submit">
                                     <button type="submit" class="btn btn-primary">Submit</button>

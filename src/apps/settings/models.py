@@ -43,3 +43,15 @@ class Setting(TimeStampedUUIDModel):
     motto = models.CharField(
         verbose_name=_("Motto"), max_length=255, blank=True, null=True
     )
+
+    # Fees
+    first_installment = models.DecimalField(
+        max_digits=10, decimal_places=2, default=10000, blank=True, null=True
+    )
+    second_installment = models.DecimalField(
+        max_digits=10, decimal_places=2, default=10000, blank=True, null=True
+    )
+
+    @property
+    def get_complete_fee(self):
+        return self.first_installment + self.second_installment

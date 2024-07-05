@@ -3,6 +3,9 @@
         <li class="nav-item {% if request.resolver_match.url_name == 'settings-home' %}active{% endif %}">
             <a class="nav-link" href="{% url 'settings:settings-home' %}">General Settings</a>
         </li>
+        <li class="nav-item {% if request.resolver_match.url_name == 'settings-fees' %}active{% endif %}">
+            <a class="nav-link" href="{% url 'settings:settings-fees' %}">Fee Installments</a>
+        </li>
         <li class="nav-item {% if request.resolver_match.url_name == 'setting-sessions' %}active{% endif %}">
             <a class="nav-link" href="{% url 'settings:setting-sessions' %}">Session Settings</a>
         </li>

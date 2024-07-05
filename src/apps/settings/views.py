@@ -167,6 +167,25 @@ def settings_view(request):
     return render(request, template_name, context)
 
 
+def fee_settings(request):
+    setting = Setting.objects.all().first()
+    if request.method == "POST":
+        # get the data from the form
+        first_installment = request.POST.get("first_installment")
+        second_installment = request.POST.get("second_installment")
+        print(first_installment, second_installment)
+        # update fee payment information
+        setting.first_installment = first_installment
+        setting.second_installment = second_installment
+        setting.save()
+        messages.success(request, "Fee payment updated successfully")
+        return redirect(reverse("settings:settings-fees"))
+    template_name = "settings/fee-settings.html"
+    context = {"section": "settings", "setting": setting}
+
+    return render(request, template_name, context)
+
+
 def update_settings(request):
     settings = Setting.objects.all()
     if len(settings) > 0:
