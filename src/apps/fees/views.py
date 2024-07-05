@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import Fee, FeePaymentHistory
+from .models import Fee, FeePaymentHistory, ExtraPayment
 from apps.students.models import StudentProfile
 from apps.staff.models import AdminProfile
 from apps.terms.models import AcademicYear
@@ -48,6 +48,7 @@ def add_fee_view(request, pkid, matricule, *args, **kwargs):
                         fee_record = Fee.objects.get(
                             student=student,
                             academic_year=current_year,
+                            fee_type=fee_type,
                         )
                         fee_record.amount += setting.second_installment
                         fee_record.save()
@@ -121,6 +122,7 @@ def add_fee_view(request, pkid, matricule, *args, **kwargs):
                     )
 
                 elif fee == "complete":
+                    print("fee", fee)
                     fee_record = Fee.objects.create(
                         amount=setting.get_complete_fee,
                         student=student,
@@ -152,8 +154,37 @@ def add_fee_view(request, pkid, matricule, *args, **kwargs):
                             },
                         )
                     )
-
-        print(fee)
+                else:
+                    messages.error(request, "Not allowed.")
+                    return redirect(
+                        reverse(
+                            "students:student-detail",
+                            kwargs={
+                                "pkid": student.pkid,
+                                "matricule": student.matricule,
+                            },
+                        )
+                    )
+        elif fee_type == "pta":
+            print("making pta payment")
+            # perform pta payment
+            fee_record = Fee.objects.create(
+                amount=setting.pta,
+                student=student,
+                fee_type=fee_type,
+                academic_year=current_year,
+            )
+            fee_record.save()
+            payment_history = FeePaymentHistory.objects.create(
+                fee=fee_record,
+                student=student,
+                amount_paid=setting.pta,
+                collected_by=administrator,
+                fee_type=fee_type,
+            )
+            payment_history.save()
+            student.has_paid_pta = True
+            student.save()
         return redirect(
             reverse(
                 "students:student-detail",
@@ -168,6 +199,46 @@ def add_fee_view(request, pkid, matricule, *args, **kwargs):
         "settings": setting,
     }
 
+    return render(request, template_name, context)
+
+
+@login_required
+def add_extra_payments(request, pkid, matricule, *args, **kwargs):
+    user = request.user
+    admin = user.admin_profile
+    student = StudentProfile.objects.get(pkid=pkid, matricule=matricule)
+    if request.method == "POST":
+        # get data from the form
+        name = request.POST.get("name")
+        amount = request.POST.get("amount")
+        remark = request.POST.get("remark")
+        print(name, amount, remark)
+
+        # create an extrapayment instance
+        payment = ExtraPayment.objects.create(
+            student=student,
+            name=name,
+            remark=remark,
+            amount_paid=amount,
+            collected_by=admin,
+        )
+        payment.save()
+        messages.error(request, "Payment added successfully.")
+        return redirect(
+            reverse(
+                "students:student-detail",
+                kwargs={
+                    "pkid": student.pkid,
+                    "matricule": student.matricule,
+                },
+            )
+        )
+
+    template_name = "payments/add-extras.html"
+    context = {
+        "section": "fees",
+        "student": student,
+    }
     return render(request, template_name, context)
 
 

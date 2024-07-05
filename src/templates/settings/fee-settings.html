@@ -49,6 +49,8 @@
                                     <th>#</th>
                                     <th>First Installment</th>
                                     <th>Second Installment</th>
+                                    <th>PTA</th>
+                                    <th>School Uniform</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -58,6 +60,8 @@
                                     <td>{{forloop.counter}}</td>
                                     <td>{{setting.first_installment}}</td>
                                     <td>{{setting.second_installment}}</td>
+                                    <td>{{setting.pta}}</td>
+                                    <td>{{setting.school_uniform}}</td>
                                      
                                 </tr>
                             </tbody>
@@ -94,6 +98,20 @@
                                     <div class="form-group local-forms">
                                         <label>Second Installment <span class="login-danger">*</span></label>
                                         <input name="second_installment" value="{{setting.second_installment}}" type="text" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>PTA <span class="login-danger">*</span></label>
+                                        <input name="pta" value="{{setting.pta}}" type="text" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>School Uniform <span class="login-danger">*</span></label>
+                                        <input name="school_uniform" value="{{setting.school_uniform}}" type="text" class="form-control" required>
                                     </div>
                                 </div>
                                

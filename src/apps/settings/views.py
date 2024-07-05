@@ -173,10 +173,14 @@ def fee_settings(request):
         # get the data from the form
         first_installment = request.POST.get("first_installment")
         second_installment = request.POST.get("second_installment")
+        pta = request.POST.get("pta")
+        school_uniform = request.POST.get("school_uniform")
         print(first_installment, second_installment)
         # update fee payment information
         setting.first_installment = first_installment
         setting.second_installment = second_installment
+        setting.pta = pta
+        setting.school_uniform = school_uniform
         setting.save()
         messages.success(request, "Fee payment updated successfully")
         return redirect(reverse("settings:settings-fees"))

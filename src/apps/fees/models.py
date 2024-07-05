@@ -67,3 +67,16 @@ class FeePaymentHistory(TimeStampedUUIDModel):
     fee_type = models.CharField(
         verbose_name=_("FeeType"), max_length=20, blank=True, null=True
     )
+
+
+class ExtraPayment(TimeStampedUUIDModel):
+    name = models.CharField(max_length=200)
+    remark = models.TextField()
+    student = models.ForeignKey(
+        StudentProfile, related_name="extra_payments", on_delete=models.CASCADE
+    )
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    collected_by = models.ForeignKey(
+        AdminProfile, on_delete=models.SET_NULL, blank=True, null=True
+    )
+    pay_date = models.DateTimeField(default=timezone.now)

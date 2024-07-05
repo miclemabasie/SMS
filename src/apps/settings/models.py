@@ -51,6 +51,12 @@ class Setting(TimeStampedUUIDModel):
     second_installment = models.DecimalField(
         max_digits=10, decimal_places=2, default=10000, blank=True, null=True
     )
+    pta = models.DecimalField(
+        max_digits=10, decimal_places=2, default=10000, blank=True, null=True
+    )
+    school_uniform = models.DecimalField(
+        max_digits=10, decimal_places=2, default=10000, blank=True, null=True
+    )
 
     @property
     def get_complete_fee(self):

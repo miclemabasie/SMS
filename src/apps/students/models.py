@@ -136,6 +136,7 @@ class StudentProfile(TimeStampedUUIDModel):
         default="/profile_default.png",
         upload_to="student_profile_photos/",
     )
+    has_paid_pta = models.BooleanField(default=False)
     country = CountryField(
         verbose_name=_("Country"), default="CM", blank=False, null=False
     )
@@ -192,10 +193,26 @@ class StudentProfile(TimeStampedUUIDModel):
         return total_fees
 
     @property
+    def get_student_is_owing(self):
+        setting = Setting.objects.all().first()
+        if self.get_amount_paid() == setting.get_complete_fee:
+            return True
+        return False
+
+    @property
     def has_paid_only_first(self):
         setting = Setting.objects.all().first()
         if self.get_amount_paid() == setting.first_installment:
             return True
+
+    @property
+    def get_total_extra_amount(self):
+        extras = self.extra_payments.all()
+        total = 0
+        for payment in extras:
+            total += payment.amount_paid
+        return total
+
 
 
 # class Attendance(TimeStampedUUIDModel):

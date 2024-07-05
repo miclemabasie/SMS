@@ -54,7 +54,11 @@ def list_student_view(request):
     classes = Class.objects.all()
 
     template_name = "students/list.html"
-    context = {"section": "student-area", "students": queryset, "classes": classes,}
+    context = {
+        "section": "student-area",
+        "students": queryset,
+        "classes": classes,
+    }
 
     return render(request, template_name, context)
 
@@ -64,16 +68,19 @@ def student_detail_view(request, matricule, pkid):
     fee = None
     payment_history = None
     student = get_object_or_404(StudentProfile, matricule=matricule, pkid=pkid)
+    extra_payment_history = student.extra_payments.all()
     # get the current academic year
     current_year = AcademicYear.objects.get(is_current=True)
 
     # Get the payment history for the current year
     fees = Fee.objects.filter(student=student, academic_year=current_year)
-
-    if fees.exists:
-        fee = fees.first()
-        payment_history = student.payment_history.filter(fee=fee)
-
+    payment_history = []
+    total_amount_paid = 0
+    for fee in fees:
+        payment_his = fee.fee_history.all()
+        for payment in payment_his:
+            payment_history.append(payment)
+            total_amount_paid += payment.amount_paid
     # Grab all the mark records associated to this student
     marks = student.student_marks.all()
 
@@ -99,9 +106,10 @@ def student_detail_view(request, matricule, pkid):
         "payment_history": payment_history,
         "number_of_payments": len(payment_history),
         "marks": marks,
+        "total_payment": total_amount_paid,
         "subjects": distinct_subjects,
-        "fee": fee,
         "pin": pin,
+        "extra_payments": extra_payment_history,
     }
 
     return render(request, template_name, context)
