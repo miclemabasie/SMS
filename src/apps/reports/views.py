@@ -32,7 +32,7 @@ def reports(request, *args, **kwargs):
     terms = Term.objects.filter(academic_year=current_year)
 
     context = {
-        "section": "reports",
+        "section": "reports-area",
         "classes": classes,
         "students": students,
         "terms": terms,

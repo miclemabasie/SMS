@@ -7,16 +7,11 @@
                     <span>Main Menu</span>
                     <span>Main Admin</span>
                 </li>
-                <li class="submenu {% if section == 'admin-area'  %}active{% endif %}">
-                    <a href="#"><i class="feather-grid"></i> <span> Dashboard</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'staff:admin-dashboard' %}" class="{% if request.path == '/'  %}active{% endif %}">Admin Dashboard</a></li>
-                        
-                        <li><a href="teacher-dashboard.html">Teachers Dashboard</a></li>
-                        
-                    </ul>
+
+                <li class="{% if request.path == '/'  %}active{% endif %}">
+                    <a href="{% url 'staff:admin-dashboard' %}"><i class="feather-grid"></i> <span>Home</span></a>
                 </li>
+
                 <li class="submenu {% if section == 'student-area'  %}active{% endif %}">
                     <a href="#"><i class="fas fa-graduation-cap"></i> <span> Students</span> <span
                             class="menu-arrow"></span></a>
@@ -24,7 +19,6 @@
                         <li><a href="{% url 'students:student-list' %}" class="{% if request.path == '/students/'  %}active{% endif %}">Student List</a></li>
                         <!-- <li><a href="student-details.html">Student View</a></li> -->
                         <li><a href="{% url 'students:student-add' %}" class="{% if request.resolver_match.url_name == 'student-add'  %}active{% endif %}">Student Add</a></li>
-                        <li><a href="{% url 'students:student-dashboard' %}" class="{% if request.resolver_match.url_name == 'student-dashboard'  %}active{% endif %}">Student Dashboard</a></li>
                         
                         {% if student_detial_section %}
                             <li><a href="" class="active">Student View</a></li>
@@ -39,7 +33,6 @@
                         <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
                         <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
                         <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Teacher Add</a></li>
-                        <li><a href="{% url 'teachers:teacher-dashboard' %}" class="{% if request.resolver_match.url_name == 'teacher-dashboard'  %}active{% endif %}">Teacher Dashboard</a></li>
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>
@@ -60,7 +53,6 @@
                     <ul>
                         <li><a href="{% url 'staff:subjects' %}">Subject List</a></li>
                         <li><a href="add-subject.html">Subject Add</a></li>
-                        <li><a href="edit-subject.html">Subject Edit</a></li>
                     </ul>
                 </li>
                 <li class="{% if request.resolver_match.url_name == 'settings-home'  %}active{% endif %}">
@@ -70,21 +62,15 @@
                     <a href="{% url 'students:marks' %} " ><i class="fas fa-certificate"></i> <span>Marks</span></a>
                 </li>
 
-                <li class="submenu {% if section == 'reports-area'  %}active{% endif %}">
-                    <a href="#"><i class="fas fa-book-reader"></i> <span> Reports</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="{% url 'reports:reports' %}">Generate Reports</a></li>
-                        <li><a href="add-subject.html">Subject Add</a></li>
-                        <li><a href="edit-subject.html">Subject Edit</a></li>
-                    </ul>
+                <li class="{% if section == 'reports-area'  %}active{% endif %}">
+                    <a href="{% url 'reports:reports' %}" ><i class="fas fa-book-reader"></i> <span>Reports</span></a>
                 </li>
+
 
                 <li class="submenu {% if section == 'attendance-area'  %}active{% endif %}">
                     <a href="#"><i class="fas fa-book-reader"></i> <span> Attendance</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="{% url 'attendance:take-attendance' %} ">Take Attendance</a></li>
                         <li><a href="{% url 'attendance:view-attendance' %}">View Attendance</a></li>
                     </ul>
                 </li>

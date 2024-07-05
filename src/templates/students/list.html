@@ -64,7 +64,7 @@
                                         class="feather-list"></i></a>
                                 <a href="students-grid.html" class="btn btn-outline-gray me-2"><i
                                         class="feather-grid"></i></a> -->
-                                <a href="#" class="btn btn-outline-primary me-2"><i
+                                    <a href="#" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#download_class_list"><i
                                         class="fas fa-download"></i> Download</a>
                                     <a href="{% url 'students:upload-students-from-file' %}" class="btn btn-outline-primary me-2"><i
                                         class="fas fa-upload"></i> Upload File</a>
@@ -136,6 +136,54 @@
                                     {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} download class list modal {% endcomment %}
+
+<div class="modal custom-modal fade" id="download_class_list" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Download Class List</h3>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'students:download-class-list' %}" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>Subject Information</span></h5>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="form-group local-forms">
+                                        <label>Class <span class="login-danger">*</span></label>
+                                        <select class="form-control" name="selected_class_id">
+                                            <option value="all">
+                                                All</option>
+                                            {% for class in classes %}
+                                            <option value="{{class.pkid}}">
+                                                {{class.grade_level}} - {{class.class_name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

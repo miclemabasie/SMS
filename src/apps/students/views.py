@@ -51,11 +51,10 @@ faker = Faker()
 def list_student_view(request):
 
     queryset = StudentProfile.objects.all()
+    classes = Class.objects.all()
+
     template_name = "students/list.html"
-    context = {
-        "section": "student-area",
-        "students": queryset,
-    }
+    context = {"section": "student-area", "students": queryset, "classes": classes}
 
     return render(request, template_name, context)
 
@@ -623,29 +622,37 @@ def add_optional_subjects_to_student(
 def download_class_list(request, *args, **kwargs):
     # Get the class
     if request.method == "POST":
-        class_pkid = int(request.POST.get("selected_class_id"))
-
-        # Check if there is a class given class_id
-        classes = Class.objects.filter(pkid=class_pkid)
-        if classes.exists():
-            klass = classes.first()
+        class_pkid = request.POST.get("selected_class_id")
+        if class_pkid == "all":
+            print("Yes, pkid is all")
+            students = StudentProfile.objects.all()
         else:
-            return redirect(reverse("students:student-list"))
+            # Check if there is a class given class_id
+            classes = Class.objects.filter(pkid=class_pkid)
+            if classes.exists():
+                klass = classes.first()
+            else:
+                return redirect(reverse("students:student-list"))
 
-        students = StudentProfile.objects.filter(current_class=klass)
+            students = StudentProfile.objects.filter(current_class=klass)
 
         wb = openpyxl.Workbook()
         ws = wb.active
-        ws.title = f"{klass.grade_level}-{klass.class_name}"
+        if class_pkid == "all":
+            ws.title = f"student-list"
+            filename = "student-list.xlsx"
+        else:
+            ws.title = f"{klass.grade_level}-{klass.class_name}"
+            filename = f"{klass.grade_level}-{klass.class_name}-class-list.xlsx"
 
         headers = [
             "Matricule",
             "Fullname",
             "DOB",
-            "Parent",
             "Gender",
             "IS Owing",
             "Is Repeater",
+            "Class",
         ]
 
         # Write headers to the first row
@@ -658,13 +665,14 @@ def download_class_list(request, *args, **kwargs):
             ws.cell(row=row_num, column=1).value = student.matricule
             ws.cell(row=row_num, column=2).value = student.user.get_fullname
             ws.cell(row=row_num, column=3).value = student.user.dob.year
-            ws.cell(row=row_num, column=4).value = student.parent.first_name
+            # ws.cell(row=row_num, column=4).value = student.parent.first_name
             # ws.cell(row=row_num, column=4).value = current_academic_session.name
-            ws.cell(row=row_num, column=5).value = student.gender
-            ws.cell(row=row_num, column=6).value = check_student_is_owing(student.pkid)
-            ws.cell(row=row_num, column=7).value = check_student_is_repeater(
+            ws.cell(row=row_num, column=4).value = student.gender
+            ws.cell(row=row_num, column=5).value = check_student_is_owing(student.pkid)
+            ws.cell(row=row_num, column=6).value = check_student_is_repeater(
                 student_pkid=student.pkid
             )
+            ws.cell(row=row_num, column=7).value = student.current_class.get_class_name
 
         # Set column widths
         for col_num in range(1, len(headers) + 1):
@@ -675,9 +683,7 @@ def download_class_list(request, *args, **kwargs):
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = (
-            f"attachment; filename={klass.grade_level}-{klass.class_name}-class-list.xlsx"
-        )
+        response["Content-Disposition"] = f"attachment; filename={filename}"
 
         # Save the workbook to the response
         wb.save(response)
