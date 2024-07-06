@@ -164,6 +164,7 @@ def create_report_cards(request):
         class_avg = performance_obj.get_class_avg()
 
         for student in students:
+            print("#######################33", student)
             student_marks = performance_obj.generate_student_report_data(student)
             student_ranking = performance_obj.get_student_rank(
                 student, class_performance
@@ -181,8 +182,8 @@ def create_report_cards(request):
                 "class_avg": class_avg,
             }
 
-            print("This is the pdf data", pdf_data)
             context = {"data": pdf_data}
+            print("This is the pdf data", context)
             template_path = "reports/report-card-generation-template.html"
             template = get_template(template_path)
             html = template.render(context)

@@ -78,7 +78,7 @@
                                     <label>Select Class:</label>
                                     <select name="student_class" class="form-control">
                                         {% for class_instance in classes %}
-                                        <option value="{{ class_instance.pkid }}" {% if class_instance == student_profile.student_class %}selected{% endif %}>{{class_instance.class_name }}</option>
+                                        <option value="{{ class_instance.pkid }}" {% if class_instance == student_profile.student_class %}selected{% endif %}>{{class_instance.grade_level}}-{{class_instance.class_name }}</option>
                                             
                                         {% endfor %}
                                     </select>
@@ -122,40 +122,40 @@
                              </div>
                              <div class="col-12 col-sm-6">
                                 <div class="form-group">
-                                   <label>Parent Frist Name</label>
-                                   <input type="text" name="parent-fname" class="form-control" value="student.parent.first_name">
+                                   <label>Parent Frist Name {{student_profile.parent.first_name}}</label>
+                                   <input type="text" name="parent-fname" class="form-control" value="{{student_profile.parent.first_name}}">
                                 </div>
                              </div>
                              <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                    <label>Parent Occupation</label>
-                                   <input type="text" name="parent-occupation" class="form-control" value="student.parent.occuptaion">
+                                   <input type="text" name="parent-occupation" class="form-control" value="{{student_profile.parent.occuptaion}}">
                                 </div>
                              </div>
                              <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                    <label>Parent Mobile</label>
-                                   <input type="text" name="parent-phone" class="form-control" value="student.parent.phone">
+                                   <input type="text" name="parent-phone" class="form-control" value="{{student_profile.parent.phone}}">
                                 </div>
                              </div>
                              <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                    <label>Parent Email</label>
-                                   <input type="email" name="parent-email" class="form-control" value="student.parent.phone">
+                                   <input type="email" name="parent-email" class="form-control" value="{{student_profile.parent.email}}">
                                 </div>
                              </div>
                              
                              <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                    <label>Address</label>
-                                   <input type="text" name="parent-address" class="form-control" value="student.parent.address">
+                                   <input type="text" name="parent-address" class="form-control" value="{{student_profile.parent.address}}">
                                 </div>
                              </div>
        
                              <div class="col-12 col-sm-6">
                                <div class="form-group">
                                   <label>Role</label>
-                                  <input type="text" name="parent-role" class="form-control" value="student.parent.role">
+                                  <input type="text" name="parent-role" class="form-control" value="{{student_profile.parent.role}}">
                                </div>
                             </div>
 

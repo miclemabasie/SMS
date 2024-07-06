@@ -29,7 +29,7 @@ class AdminProfile(TimeStampedUUIDModel):
         User, related_name="admin_profile", on_delete=models.CASCADE
     )
     number_of_absences = models.PositiveIntegerField(
-        default=0, validators=[MinValueValidator(9), MaxValueValidator(1)]
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
     subjects = models.ManyToManyField(Subject)
     remark = models.TextField(verbose_name=_("Remark"), blank=True, null=True)
@@ -37,7 +37,7 @@ class AdminProfile(TimeStampedUUIDModel):
         verbose_name=_("Gender"),
         choices=Gender.choices,
         default=Gender.OTHER,
-        max_length=20,
+        max_length=200,
     )
     phone_number = PhoneNumberField(
         verbose_name=_("Phone Number"), max_length=30, default="+237680672888"
@@ -45,8 +45,8 @@ class AdminProfile(TimeStampedUUIDModel):
     profile_photo = models.ImageField(
         verbose_name=_("Profile Photo"), default="/profile_default.png"
     )
-    country = CountryField(
-        verbose_name=_("Country"), default="CM", blank=False, null=False
+    country = models.CharField(
+        verbose_name=_("Country"), max_length=200, default="CM", blank=False, null=False
     )
     location = models.CharField(
         verbose_name=_("Location"), max_length=100, blank=True, null=True
@@ -64,9 +64,8 @@ class AdminProfile(TimeStampedUUIDModel):
         verbose_name=_("Role"),
         choices=Role.choices,
         default=Role.OTHER,
-        max_length=20,
+        max_length=200,
     )
-    # possible permissions
 
     generate_reports = models.BooleanField(
         verbose_name=_("Generate Reports"), default=False

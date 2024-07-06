@@ -206,16 +206,22 @@ class ClassPerformanceReport:
         """
         Create and save a student academic record after all the marks have been calculated.
         """
-        academic_record, created = AcademicRecord.objects.get_or_create(
-            student=student,
-            exam_term=self.get_term(),
-            total_marks_obtained=data["mxc_sum"],
-            student_rank=rank,
-            term_avg=data["term_avg"],
-            klass=self.get_class(),
-            session_1_avg=data["session1_avg"],
-            session_2_avg=data["session1_avg"],
+        academic_record = AcademicRecord.objects.filter(
+            student=student, exam_term=self.get_term()
         )
+        if academic_record.exists():
+            academic_record = academic_record.first()
+        else:
+            academic_record, created = AcademicRecord.objects.get_or_create(
+                student=student,
+                exam_term=self.get_term(),
+                total_marks_obtained=data["mxc_sum"],
+                student_rank=rank,
+                term_avg=data["term_avg"],
+                klass=self.get_class(),
+                session_1_avg=data["session1_avg"],
+                session_2_avg=data["session1_avg"],
+            )
         try:
             academic_record.save()
             return True

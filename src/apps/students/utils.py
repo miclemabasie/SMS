@@ -77,7 +77,6 @@ def get_teacher_temp_account(pin, email, teacher):
 
 def send_password_reset_email(request, user, student_temp):
     school_setting = Setting.objects.all().first()
-
     # Generate a password reset token
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
