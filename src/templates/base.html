@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{% static 'assets/plugins/dragula/css/dragula.min.css'  %}">
     <link rel="stylesheet" href="{% static 'assets/plugins/alertify/alertify.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     {% block stylelinks %}    
         
     {% endblock stylelinks %}
@@ -61,9 +61,12 @@
     <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
     <script src="{% static 'assets/plugins/apexchart/apexcharts.min.js' %}"></script>
     <script src="{% static 'assets/plugins/apexchart/chart-data.js' %}"></script>
+    
+    
     {% block scripttags %}
 
     {% endblock scripttags %}
+
     <script src="{% static 'assets/js/script.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

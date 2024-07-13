@@ -197,7 +197,6 @@ def create_report_cards(request):
             )
 
             pdf_file.seek(0)
-        print("Final score: ", performance_obj.sub_dicts)
         performance_obj.set_highest_subject_score_to_class()
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = (
