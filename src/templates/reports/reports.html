@@ -77,12 +77,13 @@
                 </div>
             </div>
         </div>
-{% comment %} 
-        <a href="{% url 'reports:test-report' %}">Test generation</a>
+        <a href="{% url 'reports:gen' %}">Test generation</a>
+        {% comment %} 
 
         <button id="generate-pdf">Generate pdf</button> {% endcomment %}
     </div>
 </div>
+
 
 <!-- modal for selecting class for report card generation -->
 <div class="modal custom-modal fade" id="generate_report_card" role="dialog">
@@ -159,6 +160,19 @@
 
                                             {% for student in students %}
                                             <option value="{{student.pkid}}">{{student.user.first_name}}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                        
+                                    </div>
+
+                                    <div class="form-group local-forms">
+                                        <label>Term <span class="login-danger">*</span></label>
+
+                                        <select class="form-control" name="selected_term_id">
+
+                                            {% for term in terms %}
+                                            <option value="{{term.pkid}}">{{term}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -247,156 +261,3 @@
 
 
 
-{% block scripttags %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
-
-<script>
-
-    // Example function to fetch student data from Django API endpoint
-
-    async function fetchStudentData() {
-        let url = "{% url 'reports:gen' %}"
-        console.log(url)
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Failed to fetch student data');
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching student data:', error);
-            return [];
-        }
-    }
-
-    // Example function to generate PDF report card for a student
-    function generateStudentReportCard(student) {
-        const doc = new jsPDF();
-
-        // Add content to the PDF document based on the provided HTML template
-        doc.setFontSize(12);
-
-        // Header section
-        doc.text(20, 20, 'Republic Of Cameroon\nPeace Work Fatherland');
-
-        // Logo section
-        // Example: Replace 'logo.png' with your actual logo path or use doc.addImage to add an image
-
-        // School Name and Address section
-        doc.text(160, 20, 'School Name\nSchool Address');
-
-        // Report Title section
-        doc.setFontSize(18);
-        doc.text(20, 40, 'First Term Progress Report');
-
-        // Student Information section
-        doc.setFontSize(12);
-        doc.text(20, 60, 'Section:');
-        doc.text(20, 70, 'Specialty:');
-        doc.text(20, 80, 'Student\'s Name:');
-        doc.text(20, 90, 'Date of Birth:');
-
-        doc.text(70, 60, student.section);
-        doc.text(70, 70, student.specialty);
-        doc.text(70, 80, student.name);
-        doc.text(70, 90, student.date_of_birth);
-
-        doc.text(120, 60, 'Academic Year:');
-        doc.text(120, 70, 'Class:');
-        doc.text(120, 80, 'Repeater:');
-        doc.text(120, 90, 'Adm. Nr:');
-
-        doc.text(180, 60, student.academic_year);
-        doc.text(180, 70, student.class);
-        doc.text(180, 80, "No");
-        doc.text(180, 90, student.adm_nr);
-
-        // Subjects table
-        let startY = 110;
-        doc.autoTable({
-            startY: startY,
-            head: [['SUBJECT NAME', '1st Seq', '2nd Seq', 'AV./20', 'COEF', 'M X C', 'Teacher\'s Name', 'Teacher\'s Remark', 'Teacher\'s Signature']],
-            body: student.subjects.map(subject => [
-                subject.name,
-                subject.seq1,
-                subject.seq2,
-                subject.average,
-                subject.coef,
-                subject.mx_c,
-                subject.teacher,
-                subject.remark,
-                subject.signature
-            ]),
-            theme: 'grid'
-        });
-
-        // Grand Total and other information section
-        let grandTotalY = startY + student.subjects.length * 20 + 20; // Adjust spacing as needed
-        doc.autoTable({
-            startY: grandTotalY,
-            body: [
-                ['GRAND TOTAL:', student.grand_total.total, student.grand_total.coef, student.grand_total.mx_c, student.grand_total.remark],
-                ['SEQ. Avg.', student.seq_avg.avg, student.seq_avg.term, student.seq_avg.class_avg, student.seq_avg.position]
-            ],
-            theme: 'grid',
-            showHead: 'firstPage'
-        });
-
-        // Class Level and Total Enrollment section
-        let classLevelY = grandTotalY + 40; // Adjust spacing as needed
-        doc.autoTable({
-            startY: classLevelY,
-            body: [
-                ['CLASS LEVEL', student.class_level],
-                ['TOTAL ENROLLMENT:', student.total_enrollment]
-            ],
-            theme: 'grid',
-            showHead: 'firstPage'
-        });
-
-        // Principal's Remarks section
-        doc.setFontSize(12);
-        doc.text(20, classLevelY + 40, 'Principal\'s Remarks');
-
-        // Signatures section
-        let signaturesY = classLevelY + 60; // Adjust spacing as needed
-        doc.text(20, signaturesY, 'Signature of the class master');
-        doc.text(100, signaturesY, 'Signature of the principal');
-
-        return doc;
-    }
-
-    // Example function to merge multiple PDFs into a single document
-    function mergePDFs(pdfs) {
-        const mergedPDF = new jsPDF();
-        pdfs.forEach((pdf, index) => {
-            if (index !== 0) {
-                mergedPDF.addPage();
-            }
-            mergedPDF.addPage(pdf);
-        });
-        return mergedPDF;
-    }
-
-    // Example usage to fetch data and proceed with PDF generation
-    async function generateAndDownloadReports() {
-        const students = await fetchStudentData();
-        const pdfDocs = [];
-
-        students.forEach(student => {
-            const pdfDoc = generateStudentReportCard(student);
-            pdfDocs.push(pdfDoc);
-        });
-
-        const mergedPDF = mergePDFs(pdfDocs);
-        mergedPDF.save('all_student_reports.pdf');
-    }
-
-    // Call the function to start the process
-    const genBtn = document.getElementById("generate-pdf")
-    genBtn.addEventListener("click", () => {
-        console.log("btn click")
-        generateAndDownloadReports()
-    })
-</script>
-{% endblock scripttags %}

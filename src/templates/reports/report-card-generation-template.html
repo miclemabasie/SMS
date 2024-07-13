@@ -134,6 +134,7 @@
                     <th>M X C</th>
                     <th>Teacher's Name</th>
                     <th>Teacher's Remark</th>
+                    <th>Signature</th>
                 </tr>
             </thead>
 
@@ -150,6 +151,7 @@
                     <td style="color: {% if mark.MXC < 50%} red {%else%} green {%endif%} ;">{{mark.MXC}}</td>
                     <td>{{mark.teacher}}</td>
                     <td>{{mark.remark}}</td>
+                    <td></td>
                 </tr>
                 {% endfor %}
                 <tr>

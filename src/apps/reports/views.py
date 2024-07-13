@@ -122,7 +122,6 @@ def create_one_report_card(request, *args, **kwargs):
 def create_report_cards(request):
     if request.method == "POST":
         selected_class_id = request.POST.get("selected_class_id")
-
         # get class
 
         classes = Class.objects.filter(pkid=selected_class_id)

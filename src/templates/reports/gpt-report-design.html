@@ -1,4 +1,6 @@
+
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,6 +43,10 @@
         .header-row .column:last-child,
         .info-row .info-column:last-child {
             text-align: right;
+        }
+
+        .info-row {
+            line-height: 10px;
         }
 
         .logo img {
@@ -88,6 +94,11 @@
             border: 1px solid black;
         }
 
+        h4 {
+            padding: 0;
+            margin: 0
+        }
+
         th,
         td {
             border: 1px solid black;
@@ -98,7 +109,7 @@
         }
 
         tr {
-            height: 40px;
+            height: 30px;
             /* Adjust the height of the rows here */
         }
 
@@ -134,6 +145,88 @@
         .signatures div:last-child {
             text-align: right;
         }
+        .appraisal-heading {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #555;
+        }
+    
+        .appraisal-text {
+            text-align: center;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .extra-info {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .item1 {
+            flex: 1;
+        }
+        .item2 {
+            flex: 1;
+        }
+        .item3 {
+            flex: 1;
+            border: black 2px solid;
+            padding: 5px 30px 5px 30px;
+            font-size: 20px;
+            text-align: center;
+            background-color: lightgray;
+        }
+    
+        
+        .appraisal-item {
+            text-align: center;
+        }
+        
+        .box {
+            border: black 2px solid;
+            padding: 5px 30px 5px 30px;
+        }
+
+        .box1 {
+            border: black 2px solid;
+            padding:10px 30px 10px 30px;
+            margin-top: 20px;
+        }
+        
+        .warning {
+            color: red;
+        }
+    
+        .keep-up {
+            color: green;
+        }
+    
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            color: #555;
+        }
+    
+        .signature {
+            text-align: center;
+        }
+    
+        .next-opening-date {
+            text-align: right;
+            margin-top: 30px;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .opening{
+            color: black;
+            font-style: italic;
+        }
+        
     </style>
 </head>
 
@@ -143,13 +236,13 @@
 
         <div class="header-row">
             <div class="column">
-                <p>Republic Of Cameroon<br>Peace Work Fatherland</p>
+                <p><b>REPUBLIC OF CAMEROON</b><br>Peace Work Fatherland</p>
             </div>
             <div class="column logo">
-                <img src="{% static 'assets/img/logo-small.png' %}" alt="School Logo">
+                <img src="{% static 'assets/img/logo-small.png' %}" alt="{{data.setting.school_logo.url}}">
             </div>
             <div class="column">
-                <p>School Name<br>School Address</p>
+                <p><b>SCHOOL NAME</b><br>{{data.setting.school_name}}</p>
             </div>
         </div>
 
@@ -159,28 +252,28 @@
 
         <div class="info-row">
             <div class="info-column">
-                <p>Section:</p>
-                <p>Specialty:</p>
-                <p>Student's Name:</p>
-                <p>Date of Birth:</p>
+                <p><b>Section:</b></p>
+                <p><b>Specialty:</b></p>
+                <p><b>Student's Name:</b></p>
+                <p><b>Date of Birth:</b></p>
             </div>
             <div class="info-column">
-                <p>Science</p>
-                <p>Mathematics</p>
-                <p>John Doe</p>
-                <p>01/01/2000</p>
+                <p>{{data.student.domain}}</p>
+                <p>{{data.student.specialty}}</p>
+                <p>{{data.student.user.get_fullname}}</p>
+                <p>{{data.student.user.dob.date}}</p>
             </div>
             <div class="info-column">
-                <p>Academic Year:</p>
-                <p>Class:</p>
-                <p>Repeater:</p>
-                <p>Adm. Nr:</p>
+                <p><b>Academic Year</b>:</p>
+                <p><b>Class:</b></p>
+                <p><b>Repeater:</b></p>
+                <p><b>Adm. Nr:</b></p>
             </div>
             <div class="info-column">
-                <p>2023/2024</p>
-                <p>Form 4</p>
-                <p>No</p>
-                <p>12345</p>
+                <p>{{data.year}}</p>
+                <p>{{data.student.current_class.get_class_name}}</p>
+                <p>{{data.student.is_repeater}}</p>
+                <p>{{data.student.matricule}}</p>
             </div>
         </div>
 
@@ -200,68 +293,57 @@
             </thead>
 
             <tbody>
+                {% for mark in data.marks %}
+
                 <tr>
-                    <td>Mathematics</td>
-                    <td style="color: green;">15</td>
-                    <td style="color: green;">14</td>
-                    <td style="color: green;">14.5</td>
-                    <td>4</td>
-                    <td style="color: green;">58</td>
-                    <td>Mr. Smith</td>
-                    <td>Good progress</td>
-                    <td>Signature</td>
+                    <td>{{mark.subject_name}}</td>
+                    <td style="color: {% if mark.first_sequence < 10%} red {%else%} green {%endif%} ;">
+                        {{mark.first_sequence}}</td>
+                    <td style="color: {% if mark.session2 < 10%} red {%else%} green {%endif%}  ;">{{mark.session2}}</td>
+                    <td style="color: {% if mark.average < 10%} red {%else%} green {%endif%} ;">{{mark.average}}</td>
+                    <td>{{mark.coef}}</td>
+                    <td style="color: {% if mark.MXC < 50%} red {%else%} green {%endif%} ;">{{mark.MXC}}</td>
+                    <td>{{mark.teacher}}</td>
+                    <td>{{mark.remark}}</td>
+                    <td></td>
                 </tr>
-                <tr>
-                    <td>English</td>
-                    <td style="color: green;">13</td>
-                    <td style="color: green;">12</td>
-                    <td style="color: green;">12.5</td>
-                    <td>3</td>
-                    <td style="color: green;">37.5</td>
-                    <td>Ms. Johnson</td>
-                    <td>Well done</td>
-                    <td>Signature</td>
-                </tr>
-                <tr>
-                    <td>History</td>
-                    <td style="color: red;">9</td>
-                    <td style="color: green;">11</td>
-                    <td style="color: green;">10</td>
-                    <td>2</td>
-                    <td style="color: green;">20</td>
-                    <td>Mr. Lee</td>
-                    <td>Needs improvement</td>
-                    <td>Signature</td>
-                </tr>
+                {% endfor %}
+                
                 <tr>
                     <th>GRAND TOTAL:</th>
-                    <th>37</th>
-                    <th>37</th>
-                    <th>37</th>
-                    <th>9</th>
-                    <th>115.5</th>
-                    <th colspan="3">Good progress overall</th>
+                    <th>{{data.student_data.sequence1_total}}</th>
+                    <th>{{data.student_data.sequence2_total}}</th>
+                    <th>{{data.student_data.avg_sum}}</th>
+                    <th>{{data.student_data.sum_of_coefs}}</th>
+                    <th>{{data.student_data.mxc_sum}}</th>
+                    <th colspan="3">{{data.student_data.term_remark}}</th>
                 </tr>
+                
                 <tr>
                     <th rowspan="2">SEQ. Avg.</th>
-                    <th rowspan="2" style="color: green;">12.33</th>
-                    <th rowspan="2" style="color: green;">12.33</th>
+                    <th rowspan="2"
+                        style="color: {% if data.student_data.session1_avg < 10 %} red {% else %} green {% endif %} ;">
+                        {{ data.student_data.session1_avg }}</th>
+                    <th rowspan="2"
+                        style="color: {% if data.student_data.session2_avg < 10 %} red {% else %} green {% endif %} ;">
+                        {{ data.student_data.session2_avg }}</th>
                     <th colspan="2">
-                        <h1>Term 1:</h1>
+                        <h4>{{ data.term_name }}:</h4>
                     </th>
-                    <th style="color: green;">
-                        <h1>12.33</h1>
+                    <th style="color: {% if data.student_data.term_avg < 10 %} red {% else %} green {% endif %} ;">
+                        <h4>{{ data.student_data.term_avg }}</h4>
                     </th>
                     <th>Class Avg.</th>
-                    <th>12.5</th>
+                    <th>{{data.class_avg}}</th>
                     <th></th>
                 </tr>
+
                 <tr>
                     <th colspan="2">
-                        <h1>CLASS POSITION:</h1>
+                        <h4>CLASS RANK:</h4>
                     </th>
-                    <th>
-                        <h1>No. 5 / 30</h1>
+                    <th colspan="2">
+                        <h4>N0. {{data.student_rank}} / {{data.class_total}}</h4>
                     </th>
                     <th colspan="2"></th>
                 </tr>
@@ -270,82 +352,97 @@
             <tfoot>
                 <tr>
                     <td colspan="6">CLASS LEVEL</td>
-                    <td style="color: green;" colspan="3"><i>Good</i></td>
+                    {% if data.class_avg < 10 %}
+                        <td style="color: red;" colspan="3"><i>Weak</i></td>
+                    {% elif data.class_avg < 13 %}
+                        <td style="color: #fcd303;" colspan="3"><i>Average</i></td>
+                    {% elif data.class_avg < 16 %}
+                        <td style="color: green;" colspan="3"><i>Good</i></td>
+                    {% else %}
+                        <td style="color: green;" colspan="3"><i>Excellent</i></td>
+                    {% endif %}
                 </tr>
                 <tr>
                     <td colspan="6">TOTAL ENROLLMENT:</td>
-                    <td>30</td>
+                    <td>{{data.class_total}}</td>
                     <td colspan="2"></td>
                 </tr>
 
             </tfoot>
         </table>
 
-        <div class="section-header">
-            <i><u>Principal's Remarks</u></i>
-        </div>
+        <div class="bottom-section">
 
-        <div class="signatures">
-            <div class="inline class-master-signature">
-                <b style="font-size: 16px;"><i><span>signature of the class master</span></i></b>
+            <!-- Final Appraisal -->
+            <h4 style="text-align: center; margin-top: 20px;"><u>Final Appraisal</u></h4>
+        
+            <!-- General Appraisal Text -->
+            <p style="text-align: center; font-style: italic; margin-bottom: 20px;">
+                {% if data.student_data.term_avg < 10 %}
+                    Need more effort and maybe you'll succeed.
+                {% elif data.student_data.term_avg < 14 %}
+                    Good progress, keep it up.
+                {% else %}
+                    Excellent performance, keep maintaining it.
+                {% endif %}
+            </p>
+        
+            <!-- Row for Absences and Warnings -->
+            <div class="extra-info">
+                <div class="appraisal-row item1">
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Absences: <span class="box">0</span></p></div>
+                    </div>
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                    </div>
+                </div>
+            
+                <!-- Row for Suspensions and Late Coming -->
+                <div class="appraisal-row item2">
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                    </div>
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                    </div>
+                </div>
+                <!-- Overall Appraisal -->
+                <div class="overall-appraisal item3">
+                    {% if data.student_data.term_avg < 10 %}
+                        <div class="appraisal-box warning">
+                            <p>Warning</p>
+                        </div>
+                    {% else %}
+                        <div class="appraisal-box keep-up">
+                            <p>Keep Up</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-
-            <div class="inline class-master-signature">
-                <b style="font-size: 16px;"><i>signature of the principal</i></b>
+        
+        
+            <!-- Signatures -->
+            <div class="signatures">
+                <div class="inline class-master-signature">
+                    <b style="font-size: 16px;"><i><span>Signature of the Class Master</span></i></b>
+                    <div class="box1"></div>
+                </div>
+        
+                <div class="inline class-master-signature">
+                    <b style="font-size: 16px;"><i>Signature of the Principal</i></b>
+                    <div class="box1"></div>
+                </div>
             </div>
+        
+            <!-- Next Opening Date -->
+            <div class="next-opening-date">
+                <p class="opening"><b>Next Opening Date:</b> <span class="box">{{ data.setting.next_opening_date }}</span></p>
+            </div>
+        
         </div>
-
     </div>
-
-    <button id="generate-pdf-btn">Generate pdf</button>
 
 </body>
 
 </html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-
-// Example of fetching data from Django backend
-let surl = "{% url 'reports:gen' %}"
-fetch(surl)
-  .then(response => response.json())
-  .then(data => {
-    // Proceed to fill the HTML template with the fetched data
-    fillReportCard(data);
-  })
-  .catch(error => console.error('Error fetching data:', error));
-
-  function fillReportCard(data) {
-    // Replace placeholders in the HTML template with data
-    document.querySelector('.report-title').textContent = data.term + ' Progress Report';
-    document.querySelector('.info-column:nth-child(1) p:nth-child(1)').textContent = 'Section: ' + data.section;
-    // Continue filling other parts of the report card template
-  }
-  
-  function generatePDF() {
-    const pdf = new jsPDF();
-    const reportCard = document.querySelector('.report-card');
-  
-    // Convert the report card element to a PDF
-    pdf.html(reportCard, {
-      callback: function (pdf) {
-        pdf.save('report_card.pdf');
-      },
-      x: 10,
-      y: 10
-    });
-  }
-  
-  // Assuming you have a button or trigger for generating PDF
-document.getElementById('generate-pdf-btn').addEventListener('click', function() {
-    let url = "{% url 'reports:gen' %}"
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        fillReportCard(data);
-        generatePDF();
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  });
-  
-</script>

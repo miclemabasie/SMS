@@ -2,7 +2,7 @@ from django.db import models
 from apps.common.models import TimeStampedUUIDModel
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-
+from django.utils import timezone
 
 class Setting(TimeStampedUUIDModel):
     school_logo = models.FileField(
@@ -57,6 +57,7 @@ class Setting(TimeStampedUUIDModel):
     school_uniform = models.DecimalField(
         max_digits=10, decimal_places=2, default=10000, blank=True, null=True
     )
+    next_opening_date = models.DateField(default=timezone.now)
 
     @property
     def get_complete_fee(self):

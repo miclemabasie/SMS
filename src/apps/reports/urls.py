@@ -8,12 +8,12 @@ urlpatterns = [
     path("", views.reports, name="reports"),
     path(
         "generate-report-card",
-        views.create_report_cards,
+        controller.create_report_cards,
         name="generate_report_cards",
     ),
     path(
         "generate-report",
-        views.create_one_report_card,
+        controller.create_one_report_card,
         name="generate_single_report_card",
     ),
     path(
@@ -26,6 +26,5 @@ urlpatterns = [
         views.download_class_master_report,
         name="download_class_master_report",
     ),
-    path("gen", controller.student_report_data, name="gen"),
-    path("test-report", controller.test_report, name="test-report"),
+    path("gen", controller.generate_pdf, name="gen"),
 ]

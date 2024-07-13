@@ -150,6 +150,7 @@ class StudentProfile(TimeStampedUUIDModel):
         default=DOMAINCHOICES.OTHER,
         max_length=20,
     )
+    specialty = models.CharField(max_length=200, default="Civil Engineering")
     is_activated = models.BooleanField(default=True)
 
     # Adding optional subjects for the student
@@ -212,7 +213,6 @@ class StudentProfile(TimeStampedUUIDModel):
         for payment in extras:
             total += payment.amount_paid
         return total
-
 
 
 # class Attendance(TimeStampedUUIDModel):
