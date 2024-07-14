@@ -414,6 +414,7 @@ def class_edit_view(request, pkid, *args, **kwargs):
         class_name = request.POST.get("class_name")
         class_master = request.POST.get("class_master")
         class_prefect = request.POST.get("class_prefect")
+        promotion_avg = request.POST.get("promotion_average")
 
         print(class_prefect, class_master)
 
@@ -421,6 +422,7 @@ def class_edit_view(request, pkid, *args, **kwargs):
         klass.class_name = class_name
         klass.class_master = class_master
         klass.class_prefect = class_prefect
+        klass.pass_avg = promotion_avg
 
         klass.save()
         save_and_add_flag = request.POST.get("save_and_add")

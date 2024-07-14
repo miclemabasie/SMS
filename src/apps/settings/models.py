@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from django.utils import timezone
 
+
 class Setting(TimeStampedUUIDModel):
     school_logo = models.FileField(
         verbose_name=_("Logo"), upload_to="settings", blank=True, null=True
@@ -58,6 +59,8 @@ class Setting(TimeStampedUUIDModel):
         max_digits=10, decimal_places=2, default=10000, blank=True, null=True
     )
     next_opening_date = models.DateField(default=timezone.now)
+
+    teacher_can_upload = models.BooleanField(default=False)
 
     @property
     def get_complete_fee(self):

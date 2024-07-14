@@ -1,0 +1,449 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secondary School Report Card</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 10pt;
+            border: 2px solid black;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header-row,
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .header-row .column,
+        .info-row .info-column {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-row .column:first-child,
+        .info-row .info-column:first-child {
+            text-align: left;
+        }
+
+        .header-row .column:last-child,
+        .info-row .info-column:last-child {
+            text-align: right;
+        }
+
+        .info-row {
+            line-height: 10px;
+        }
+
+        .logo img {
+            max-width: 100px;
+            height: auto;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .subject-table,
+        .discipline-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .subject-table th,
+        .subject-table td,
+        .discipline-table th,
+        .discipline-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .subject-table th,
+        .discipline-table th {
+            background-color: #f0f0f0;
+        }
+
+        .subject-table tfoot td:first-child,
+        .subject-table tfoot td:last-child {
+            width: 100px;
+            /* Adjust the width as needed */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid black;
+        }
+
+        h4 {
+            padding: 0;
+            margin: 0
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+            /* Adjust the font size as needed */
+        }
+
+        tr {
+            height: 30px;
+            /* Adjust the height of the rows here */
+        }
+
+        .extra-info {
+            /* Optionally, you can set width or adjust other properties for .extra-info */
+        }
+
+        .discipline,
+        .gradding {
+            display: inline-block;
+            /* Optionally, you can set width or adjust other properties for .discipline and .gradding */
+        }
+
+        .inline {
+            display: inline-block;
+        }
+
+        .signatures {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signatures div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .signatures div:first-child {
+            text-align: left;
+        }
+
+        .signatures div:last-child {
+            text-align: right;
+        }
+        .appraisal-heading {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #555;
+        }
+    
+        .appraisal-text {
+            text-align: center;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .extra-info {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .item1 {
+            flex: 1;
+        }
+        .item2 {
+            flex: 1;
+        }
+        .item3 {
+            flex: 1;
+            border: black 2px solid;
+            padding: 5px 30px 5px 30px;
+            font-size: 20px;
+            text-align: center;
+            background-color: lightgray;
+        }
+    
+        
+        .appraisal-item {
+            text-align: center;
+        }
+        
+        .box {
+            border: black 2px solid;
+            padding: 5px 30px 5px 30px;
+        }
+
+        .box1 {
+            border: black 2px solid;
+            padding:10px 30px 10px 30px;
+            margin-top: 20px;
+        }
+        
+        .warning {
+            color: red;
+        }
+    
+        .keep-up {
+            color: green;
+        }
+    
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            color: #555;
+        }
+    
+        .signature {
+            text-align: center;
+        }
+    
+        .next-opening-date {
+            text-align: right;
+            margin-top: 30px;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .opening{
+            color: black;
+            font-style: italic;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+    <div class="report-card">
+
+        <div class="header-row">
+            <div class="column">
+                <p><b>REPUBLIC OF CAMEROON</b><br>Peace Work Fatherland</p>
+            </div>
+            <div class="column logo">
+                <img src="{% static 'assets/img/logo-small.png' %}" alt="{{data.setting.school_logo.url}}">
+            </div>
+            <div class="column">
+                <p><b>SCHOOL NAME</b><br>{{data.setting.school_name}}</p>
+            </div>
+        </div>
+
+        <div class="report-title">
+            First Term Progress Report
+        </div>
+
+        <div class="info-row">
+            <div class="info-column">
+                <p><b>Section:</b></p>
+                <p><b>Specialty:</b></p>
+                <p><b>Student's Name:</b></p>
+                <p><b>Date of Birth:</b></p>
+            </div>
+            <div class="info-column">
+                <p>{{data.student.domain}}</p>
+                <p>{{data.student.specialty}}</p>
+                <p><b>{{data.student.user.get_fullname}}</b></p>
+                <p>{{data.student.user.dob.date}}</p>
+            </div>
+            <div class="info-column">
+                <p><b>Academic Year</b>:</p>
+                <p><b>Class:</b></p>
+                <p><b>Repeater:</b></p>
+                <p><b>Adm. Nr:</b></p>
+            </div>
+            <div class="info-column">
+                <p>{{data.year}}</p>
+                <p>{{data.student.current_class.get_class_name}}</p>
+                <p>{{data.student.is_repeater}}</p>
+                <p>{{data.student.matricule}}</p>
+            </div>
+        </div>
+
+        <table class="subject-table">
+            <thead>
+                <tr>
+                    <th>SUBJECT NAME</th>
+                    <th>1st Seq</th>
+                    <th>2nd Seq</th>
+                    <th>AV./20</th>
+                    <th>COEF</th>
+                    <th>M X C</th>
+                    <th>Teacher's Name</th>
+                    <th>Teacher's Remark</th>
+                    <th>Teacher's Signature</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for mark in data.marks %}
+
+                <tr>
+                    <td>{{mark.subject_name}}</td>
+                    <td style="color: {% if mark.first_sequence < 10%} red {%else%} green {%endif%} ;">
+                        {{mark.first_sequence}}</td>
+                    <td style="color: {% if mark.session2 < 10%} red {%else%} green {%endif%}  ;">{{mark.session2}}</td>
+                    <td style="color: {% if mark.average < 10%} red {%else%} green {%endif%} ;">{{mark.average}}</td>
+                    <td>{{mark.coef}}</td>
+                    <td style="color: {% if mark.MXC < 50%} red {%else%} green {%endif%} ;">{{mark.MXC}}</td>
+                    <td>{{mark.teacher}}</td>
+                    <td>{{mark.remark}}</td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+                
+                <tr>
+                    <th>GRAND TOTAL:</th>
+                    <th>{{data.student_data.sequence1_total}}</th>
+                    <th>{{data.student_data.sequence2_total}}</th>
+                    <th>{{data.student_data.avg_sum}}</th>
+                    <th>{{data.student_data.sum_of_coefs}}</th>
+                    <th>{{data.student_data.mxc_sum}}</th>
+                    <th colspan="3">{{data.student_data.term_remark}}</th>
+                </tr>
+                
+                <tr>
+                    <th rowspan="2">SEQ. Avg.</th>
+                    <th rowspan="2"
+                        style="color: {% if data.student_data.session1_avg < 10 %} red {% else %} green {% endif %} ;">
+                        {{ data.student_data.session1_avg }}</th>
+                    <th rowspan="2"
+                        style="color: {% if data.student_data.session2_avg < 10 %} red {% else %} green {% endif %} ;">
+                        {{ data.student_data.session2_avg }}</th>
+                    <th colspan="2">
+                        <h4>FIRST TERM:</h4>
+                    </th>
+                    <th colspan="2" style="color: {% if data.student_data.term_avg < 10 %} red {% else %} green {% endif %} ;">
+                        <h4>{{ data.first_term_avg }}</h4>
+                    </th>
+                    <th>Class Avg.</th>
+                    <th>{{data.class_avg}}</th>
+                    <th></th>
+                </tr>
+
+                <tr>
+                    <th colspan="2">
+                        <h4>SEC. TERM:</h4>
+                    </th>
+                    <th colspan="2" style="color: {% if data.student_data.term_avg < 10 %} red {% else %} green {% endif %} ;">
+                        <h4>{{ data.student_data.term_avg }}</h4>
+                    </th>
+                    <th><h4>CLASS RANK:</h4></th>
+                    <th><h4>N0. {{data.student_rank}} / {{data.class_total}}</h4></th>
+                </tr>
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6"><h4>CLASS LEVEL:</h4></td>
+                    {% if data.class_avg < 10 %}
+                        <td style="color: red;" colspan="3"><i>Weak</i></td>
+                    {% elif data.class_avg < 13 %}
+                        <td style="color: #fcd303;" colspan="3"><i>Average</i></td>
+                    {% elif data.class_avg < 16 %}
+                        <td style="color: green;" colspan="3"><i>Good</i></td>
+                    {% else %}
+                        <td style="color: green;" colspan="3"><i>Excellent</i></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td colspan="6"><h4>TOTAL ENROLLMENT:</h4></td>
+                    <td>{{data.class_total}}</td>
+                    <td colspan="2"></td>
+                </tr>
+
+            </tfoot>
+        </table>
+
+        <div class="bottom-section">
+
+            <!-- Final Appraisal -->
+            <h4 style="text-align: center; margin-top: 20px;"><u><i>Final Appraisal</i></u></h4>
+        
+            <!-- General Appraisal Text -->
+            <p style="text-align: center; font-style: italic; margin-bottom: 20px;">
+                {% if data.student_data.term_avg < 10 %}
+                    Need more effort and maybe you'll succeed.
+                {% elif data.student_data.term_avg < 14 %}
+                    Good progress, keep it up.
+                {% else %}
+                    Excellent performance, keep maintaining it.
+                {% endif %}
+            </p>
+        
+            <!-- Row for Absences and Warnings -->
+            <div class="extra-info">
+                <div class="appraisal-row item1">
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Absences: <span class="box">0</span></p></div>
+                    </div>
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                    </div>
+                </div>
+            
+                <!-- Row for Suspensions and Late Coming -->
+                <div class="appraisal-row item2">
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                    </div>
+                    <div class="appraisal-item">
+                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                    </div>
+                </div>
+                <!-- Overall Appraisal -->
+                <div class="overall-appraisal item3">
+                    {% if data.student_data.term_avg < 10 %}
+                        <div class="appraisal-box warning">
+                            <p style="color: red;"><i>Warning</i></p>
+                        </div>
+                    {% else %}
+                        <div class="appraisal-box keep-up">
+                            <p style="color: green;"></i>Keep Up</i></p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        
+        
+            <!-- Signatures -->
+            <div class="signatures">
+                <div class="inline class-master-signature">
+                    <b style="font-size: 16px;"><i><span>Signature of the Class Master</span></i></b>
+                    <div class="box1"></div>
+                </div>
+        
+                <div class="inline class-master-signature">
+                    <b style="font-size: 16px;"><i>Signature of the Principal</i></b>
+                    <div class="box1"></div>
+                </div>
+            </div>
+        
+            <!-- Next Opening Date -->
+            <div class="next-opening-date">
+                <p class="opening"><b>Next Opening Date:</b> <span class="box">{{ data.setting.next_opening_date }}</span></p>
+            </div>
+        
+        </div>
+    </div>
+
+</body>
+
+</html>

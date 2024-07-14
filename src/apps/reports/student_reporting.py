@@ -61,6 +61,68 @@ class ClassPerformanceReport:
         else:
             return HttpResponse("No term matched your query.")
 
+    def get_first_term_report_data(self, student):
+        # get the student report data for the first term
+        academic_record = AcademicRecord.objects.filter(
+            exam_term__term__icontains="First Term", student=student
+        )
+        if academic_record.exists():
+            academic_record = academic_record.first()
+            return academic_record.term_avg
+        else:
+            return -1
+
+    def get_second_term_report_date(self, student):
+        academic_record = AcademicRecord.objects.filter(
+            exam_term__term__icontains="Second Term", student=student
+        )
+        if academic_record.exists():
+            academic_record = academic_record.first()
+            return academic_record.term_avg
+        else:
+            return -1
+
+    def is_first_term(self):
+        term = self.get_term()
+        if term.term == "First Term":
+            return True
+        else:
+            return False
+
+    def is_second_term(self):
+        term = self.get_term()
+        if term.term == "Second Term":
+            return True
+        else:
+            return False
+
+    def is_third_term(self):
+        term = self.get_term()
+        if term.term == "Third Term":
+            return True
+        else:
+            return False
+
+    def get_promotion_decision(self, student, annual_avg):
+        klass = self.get_class()
+        if annual_avg < klass.pass_avg:
+            student.is_repeater = True
+            student.save()
+            return "Repeat"
+        elif annual_avg > klass.pass_avg:
+            student.is_repeater = False
+            student.save()
+            return "Promoted"
+
+    def get_annual_avg(self, third_term_avg):
+        if self.is_third_term():
+            first_term_avg = self.get_first_term_report_data()
+            second_term_avg = self.get_second_term_report_date()
+            annual_avg = sum([first_term_avg, second_term_avg, third_term_avg]) / 3
+            return annual_avg
+        else:
+            return -1
+
     def get_term_remark(self, term_avg) -> str:
         if term_avg < 5:
             term_remark = "V. Poor"

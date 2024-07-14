@@ -260,7 +260,7 @@
             <div class="info-column">
                 <p>{{data.student.domain}}</p>
                 <p>{{data.student.specialty}}</p>
-                <p>{{data.student.user.get_fullname}}</p>
+                <p><b>{{data.student.user.get_fullname}}</b></p>
                 <p>{{data.student.user.dob.date}}</p>
             </div>
             <div class="info-column">
@@ -328,7 +328,7 @@
                         style="color: {% if data.student_data.session2_avg < 10 %} red {% else %} green {% endif %} ;">
                         {{ data.student_data.session2_avg }}</th>
                     <th colspan="2">
-                        <h4>{{ data.term_name }}:</h4>
+                        <h4>FIRST TERM:</h4>
                     </th>
                     <th style="color: {% if data.student_data.term_avg < 10 %} red {% else %} green {% endif %} ;">
                         <h4>{{ data.student_data.term_avg }}</h4>

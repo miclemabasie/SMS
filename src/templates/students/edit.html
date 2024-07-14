@@ -78,7 +78,7 @@
                                     <label>Select Class:</label>
                                     <select name="student_class" class="form-control">
                                         {% for class_instance in classes %}
-                                        <option value="{{ class_instance.pkid }}" {% if class_instance == student_profile.student_class %}selected{% endif %}>{{class_instance.grade_level}}-{{class_instance.class_name }}</option>
+                                        <option value="{{ class_instance.pkid }}" {% if class_instance == student_profile.current_class %}selected{% endif %}>{{class_instance.grade_level}}-{{class_instance.class_name }}</option>
                                             
                                         {% endfor %}
                                     </select>

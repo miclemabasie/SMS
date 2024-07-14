@@ -38,12 +38,10 @@ def generate_pdf(request):
 def create_report_cards(request):
     if request.method == "POST":
         selected_class_id = request.POST.get("selected_class_id")
+        selected_term_id = request.POST.get("selected_term_id")
 
-        # get class
-        classes = Class.objects.filter(pkid=selected_class_id)
-        term = Term.objects.get(is_current=True)
+        performance_obj = ClassPerformanceReport(selected_class_id, selected_term_id)
 
-        performance_obj = ClassPerformanceReport(selected_class_id, term.pkid)
         setup = performance_obj.setup()
         if setup:
             messages.error(request, setup)
@@ -92,10 +90,32 @@ def create_report_cards(request):
                 "class_avg": class_avg,
                 "setting": setting,
                 "student": student,
+                "first_term_avg": "15",
+                "second_term_avg": "12",
+                "annual_avg": "8",
+                "promotion_decision": "Repeat",
             }
+            # check if the term is first term
+            if performance_obj.is_first_term():
+                template_path = "reports/third_term_report_card.html"
+            elif performance_obj.is_second_term():
+                # get the first term report avg and attatch the report card data
+                first_term_avg = performance_obj.get_first_term_report_data()
+                pdf_data["first_term_avg"] = first_term_avg
+                template_path = "reports/second_term_report_card.html"
+            elif performance_obj.is_third_term():
+                # get the data for first and second term and attach to the report
+                first_term_avg = performance_obj.get_first_term_report_data()
+                second_term_avg = performance_obj.get_second_term_report_date()
+                annual_avg = performance_obj.get_annual_avg(student_marks["term_avg"])
+                promotion_decision = performance_obj.get_promotion_decision(annual_avg)
+                pdf_data["first_term_avg"] = first_term_avg
+                pdf_data["second_term_avg"] = second_term_avg
+                pdf_data["annual_avg"] = annual_avg
+                pdf_data["promotion_decision"] = promotion_decision
+                template_path = "reports/third_term_report_card.html"
 
             context = {"data": pdf_data}
-            template_path = "reports/gpt-report-design.html"
             template = get_template(template_path)
             html = template.render(context)
 
