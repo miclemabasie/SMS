@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+
+from apps.settings.models import Setting
 from .forms import VerifyPinForm
 from .utils import (
     check_student_is_owing,
@@ -367,6 +369,16 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
             sequences.append(ex_session)
 
     if request.method == "POST" and request.FILES["marks_file"]:
+        setting = Setting.objects.all().first()
+        if not setting.teacher_can_upload:
+            messages.error(request, "Can not upload at the moment")
+            return redirect(
+                reverse(
+                    "students:marks-upload",
+                    kwargs={"subject_pkid": subject_pkid, "class_pkid": class_pkid},
+                )
+            )
+        
         marks_file = request.FILES["marks_file"]
 
         selected_ex_session_id = request.POST.get("selected_ex_session")
@@ -435,90 +447,6 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
     return render(request, template_name, context)
 
 
-# @login_required
-# def upload_marks(request, class_pkid, *args, **kwargs):
-#     # Get the subject and all the students associated to thesubject from the database
-
-#     klass = get_object_or_404(Class, pkid=class_pkid)
-#     if request.method == "POST" and request.FILES["marks_file"]:
-#         marks_file = request.FILES["marks_file"]
-#         teacher_matricule = request.POST.get("teacher_matricule")
-#         selected_subject_id = request.POST.get("selected_subject_id")
-
-#         print(
-#             "This is the information from the form: ",
-#             teacher_matricule,
-#             selected_subject_id,
-#         )
-
-#         # decoded_file = marks_file.read().decode('utf-8').splitlines()
-
-#         # Get the teacher from the DB
-#         teachers = TeacherProfile.objects.filter(matricule=teacher_matricule)
-#         if teachers.exists():
-#             teacher = teachers.first()
-#         else:
-#             messages.error(request, "No Teacher found with the given matricule")
-#             return redirect(
-#                 reverse("students:marks-upload", kwargs={"class_pkid": class_pkid})
-#             )
-
-#         # Get the subject from the database
-#         subjects = Subject.objects.filter(pkid=selected_subject_id)
-#         if subjects.exists():
-#             subject = subjects.first()
-#         else:
-#             messages.error(request, "Subject not found.")
-#             return redirect(
-#                 reverse("students:marks-uploads", kwargs={"class_pkid": class_pkid})
-#             )
-
-#         # Get the session
-#         exam_session = ExaminationSession.objects.get(is_current=True)
-
-#         wb = load_workbook(filename=marks_file)
-
-#         ws = wb["marks"]
-
-#         for row in ws.iter_rows(min_row=2, values_only=True):
-#             student_matricule, marks, subject_name, subject_id = (
-#                 row[0],
-#                 row[3],
-#                 row[6],
-#                 row[7],
-#             )
-#             print(
-#                 f"this is the student information student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject_id}"
-#             )
-#             student = StudentProfile.objects.get(matricule=student_matricule)
-#             # Check if a mark already exists for this student and subject
-#             mark, created = Mark.objects.get_or_create(
-#                 student=student, subject=subject, exam_session=exam_session
-#             )
-
-#             mark.teacher = teacher
-
-#             # Update the score
-#             if not marks:
-#                 marks = 0
-#             mark.score = marks
-#             mark.save()
-#             print(mark)
-
-#         messages.success(
-#             request,
-#             f"Marks have been updated for the subject: `{subject.name}` by: `{teacher.user.username}` with matricule No: {teacher.matricule}",
-#         )
-#         return redirect(reverse("students:marks"))
-
-#     template_name = "students/upload-marks.html"
-#     context = {
-#         "section": "marks-area",
-#         "class": klass,
-#         "subjects": Subject.objects.all(),
-#     }
-
-#     return render(request, template_name, context)
 
 
 @login_required

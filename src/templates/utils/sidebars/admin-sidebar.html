@@ -54,7 +54,7 @@
                         <li><a href="{% url 'staff:subjects' %}">Subject List</a></li>
                     </ul>
                 </li>
-                <li class="{% if request.resolver_match.url_name == 'settings-home'  %}active{% endif %}">
+                <li class="{% if section == 'settings'  %}active{% endif %}">
                     <a href="{% url 'settings:settings-home' %} " ><i class="fas fa-cog"></i> <span>Settings</span></a>
                 </li>
                 <li class="{% if request.resolver_match.url_name == 'marks'  %}active{% endif %}">

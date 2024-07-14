@@ -11,4 +11,9 @@ urlpatterns = [
     path("exam-sessions/", views.exam_session_view, name="setting-exam-sessions"),
     path("update-settings/", views.update_settings, name="settings-update"),
     path("fee-settings/", views.fee_settings, name="settings-fees"),
+    path(
+        "toggle-marks-uploads/",
+        views.toggle_teacher_can_upload_marks_permission,
+        name="toggle-marks-uploads",
+    ),
 ]

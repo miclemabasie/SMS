@@ -108,7 +108,9 @@ def create_report_cards(request):
                 first_term_avg = performance_obj.get_first_term_report_data()
                 second_term_avg = performance_obj.get_second_term_report_date()
                 annual_avg = performance_obj.get_annual_avg(student_marks["term_avg"])
-                promotion_decision = performance_obj.get_promotion_decision(annual_avg)
+                promotion_decision = performance_obj.get_promotion_decision(
+                    student, annual_avg
+                )
                 pdf_data["first_term_avg"] = first_term_avg
                 pdf_data["second_term_avg"] = second_term_avg
                 pdf_data["annual_avg"] = annual_avg

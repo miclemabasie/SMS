@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+
+
+{% block styletags %}
+<link rel="stylesheet"
+href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script
+src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+{% endblock styletags %}
+
+
+
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title">Settings</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="settings.html">Settings</a></li>
+                    <li class="breadcrumb-item active">General Settings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% include '../utils/settings-menu.html' %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+    
+                    
+    
+                    <div class="mt-5 ml-5">  
+                        <h2>Teacher Marks Upload Settings</h2>
+                        <p>Toggle the switch below to enable or disable the ability for teachers to upload marks:</p>
+                        <div class="switch">
+                          <label>
+                          <input type="checkbox" data-toggle="toggle" checked data-size="sm" id="toggleUploadSwitch">
+                          <span class="lever"></span>
+                          </label>
+                          </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+</div>
+
+
+{% endblock content %}
+
+
+
+{% block scripttags %}
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+<script>
+    let btn = document.getElementById("toggleUploadSwitch")
+    console.log(btn)
+    $(document).ready(function() {
+        $('#toggleUploadSwitch').change(function() {
+            console.log("the button is active")
+            let newStatus = $(this).is(':checked') ? 1 : 0;
+            let url = "{% url 'settings:toggle-marks-uploads' %}"
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    'status': newStatus,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status == 1) {
+                        alert('Marks upload has been enabled for teachers.');
+                    } else {
+                        alert('Marks upload has been disabled for teachers.');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while updating the settings.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock scripttags %}
