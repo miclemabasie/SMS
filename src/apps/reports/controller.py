@@ -90,24 +90,26 @@ def create_report_cards(request):
                 "class_avg": class_avg,
                 "setting": setting,
                 "student": student,
-                "first_term_avg": "15",
-                "second_term_avg": "12",
+                "first_term_avg": "",
+                "second_term_avg": "",
                 "annual_avg": "8",
                 "promotion_decision": "Repeat",
             }
             # check if the term is first term
             if performance_obj.is_first_term():
-                template_path = "reports/third_term_report_card.html"
+                template_path = "reports/first_term_report_card.html"
             elif performance_obj.is_second_term():
                 # get the first term report avg and attatch the report card data
-                first_term_avg = performance_obj.get_first_term_report_data()
+                first_term_avg = performance_obj.get_first_term_report_data(student)
                 pdf_data["first_term_avg"] = first_term_avg
                 template_path = "reports/second_term_report_card.html"
             elif performance_obj.is_third_term():
                 # get the data for first and second term and attach to the report
-                first_term_avg = performance_obj.get_first_term_report_data()
-                second_term_avg = performance_obj.get_second_term_report_date()
-                annual_avg = performance_obj.get_annual_avg(student_marks["term_avg"])
+                first_term_avg = performance_obj.get_first_term_report_data(student)
+                second_term_avg = performance_obj.get_second_term_report_date(student)
+                annual_avg = performance_obj.get_annual_avg(
+                    student_marks["term_avg"], student
+                )
                 promotion_decision = performance_obj.get_promotion_decision(
                     student, annual_avg
                 )
@@ -123,7 +125,7 @@ def create_report_cards(request):
 
             # Generate PDF for current student
             pdf_file = BytesIO()
-            HTML(string=html).write_pdf(pdf_file)
+            HTML(string=html, base_url="base_url").write_pdf(pdf_file)
             pdf_file.seek(0)
 
             # Append current student's PDF to the PdfMerger object
@@ -155,29 +157,29 @@ def create_report_cards(request):
 
 
 @login_required
-def create_one_report_card(request, *args, **kwargs):
+def create_one_report_card(request, student_pkid, *args, **kwargs):
 
     if request.method == "POST":
 
-        selected_student_id = request.POST.get("selected_student_id")
+        selected_student_id = student_pkid
         selected_term_id = request.POST.get("selected_term_id")
         if not selected_student_id:
             messages.error(request, "Invalid or empty student ID")
-            return redirect(reverse("reports:reports"))
+            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
 
         if not selected_term_id:
             messages.error(request, "Invalid or missing term ID")
-            return redirect(reverse("reports:reports"))
+            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
 
         # Get the student
         student = StudentProfile.objects.filter(pkid=selected_student_id).first()
         if not student:
             messages.error(request, "No student with the given ID found.")
-            return redirect(reverse("reports:reports"))
+            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
 
         if len(student.get_all_subjects()) < 1:
             messages.error(request, "No subjects associated with this student.")
-            return redirect(reverse("reports:reports"))
+            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
 
         # Get the current year and term
         academic_year = AcademicYear.objects.filter(is_current=True).first()
@@ -189,7 +191,7 @@ def create_one_report_card(request, *args, **kwargs):
         setup = performance_obj.setup()
         if setup:
             messages.error(request, setup)
-            return redirect(reverse("reports:reports"))
+            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
 
         sessions = ExaminationSession.objects.filter(term=term)
 
@@ -197,7 +199,7 @@ def create_one_report_card(request, *args, **kwargs):
         student_marks = performance_obj.generate_student_report_data(student)
         if not student_marks:
             messages.error(request, "Unset terms")
-            return redirect(reverse("reports:reports"))
+            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
 
         class_performance_data = performance_obj.generate_performacne_rank_list()
         class_performance = class_performance_data["class_performance"]
@@ -218,11 +220,37 @@ def create_one_report_card(request, *args, **kwargs):
             "class_avg": class_avg,
             "setting": setting,
             "student": student,
+            "first_term_avg": "",
+            "second_term_avg": "",
+            "annual_avg": "8",
+            "promotion_decision": "Repeat",
         }
-        context = {"data": pdf_data}
+        # check if the term is first term
+        if performance_obj.is_first_term():
+            template_path = "reports/first_term_report_card.html"
+        elif performance_obj.is_second_term():
+            # get the first term report avg and attatch the report card data
+            first_term_avg = performance_obj.get_first_term_report_data(student)
+            pdf_data["first_term_avg"] = first_term_avg
+            template_path = "reports/second_term_report_card.html"
+        elif performance_obj.is_third_term():
+            # get the data for first and second term and attach to the report
+            first_term_avg = performance_obj.get_first_term_report_data(student)
+            second_term_avg = performance_obj.get_second_term_report_date(student)
+            annual_avg = performance_obj.get_annual_avg(
+                student_marks["term_avg"], student
+            )
+            promotion_decision = performance_obj.get_promotion_decision(
+                student, annual_avg
+            )
+            pdf_data["first_term_avg"] = first_term_avg
+            pdf_data["second_term_avg"] = second_term_avg
+            pdf_data["annual_avg"] = annual_avg
+            pdf_data["promotion_decision"] = promotion_decision
+            template_path = "reports/third_term_report_card.html"
 
-        # Generate PDF
-        template_path = "reports/gpt-report-design.html"
+            context = {"data": pdf_data}
+        context = {"data": pdf_data}
         template = get_template(template_path)
         html = template.render(context)
 
@@ -232,7 +260,7 @@ def create_one_report_card(request, *args, **kwargs):
 
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = (
-            f'attachment; filename="{student.user.first_name}-report.pdf"'
+            f'attachment; filename="{performance_obj.get_single_report_name(student)}-report.pdf"'
         )
         response.write(pdf_file.getvalue())
         pdf_file.close()

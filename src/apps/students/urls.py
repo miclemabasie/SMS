@@ -55,4 +55,9 @@ urlpatterns = [
     path("marks", views.marks, name="marks"),
     path("verify-pin/", views.verify_student_pin, name="verify_pin"),
     path("student-dashboard", views.student_dashboard, name="student-dashboard"),
+    path(
+        "edit-mark/<int:mark_pkid>/<int:student_pkid>/",
+        views.edit_student_marks,
+        name="edit-mark",
+    ),
 ]

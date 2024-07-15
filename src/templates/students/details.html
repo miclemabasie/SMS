@@ -187,12 +187,22 @@
                                         <h5>{{student.address}}</h5>
                                     </div>
                                 </div>
+
+                                
                             </div>
                         </div>
                         
                         <a href="{% url 'students:student-academic-record' pkid=student.pkid matricule=student.matricule%}">
                             <button class="btn btn-success">View Academic Record </button>
                         </a>
+
+                        <div class="form-group mb-4 text-end float-right">
+                            <div class="settings-btns">
+                                <a href="" data-bs-toggle="modal" data-bs-target="#generate_single_report_card">
+                                    <button class="btn ribbon-secondary text-white">Generate Student Report</button>
+                                </a>
+                            </div>
+                        </div>
 
                     </div>
  
@@ -271,9 +281,6 @@
                                 <div class="hello-park">
                                     <h5>Remarks</h5>
                                     <p>{{student.remark}}</p>
-                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                                        doloremque laudantium, totam inventore veritatis et quasi architecto beatae
-                                        vitae dicta sunt explicabo. </p>
                                 </div>
                             </div>
                         </div>
@@ -294,11 +301,11 @@
                             <h3 class="page-title">Your Subjects</h3>
                         </div>
                         <div class="col-auto text-end float-end ms-auto download-grp">
-                            <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
-                                Download</a>
-                
+                            {% if request.user.is_admin %}
+                            
                             <a href="{% url 'students:assign-optional-subjects' student_pkid=student.pkid student_matricule=student.matricule %}" class="btn btn-outline-primary me-2">
                                 Add/Remove Subjects</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -498,6 +505,52 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal custom-modal fade" id="generate_single_report_card" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Generate Report Card</h3>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'reports:generate_single_report_card' student.pkid %}" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    
+                                    <div class="form-group local-forms">
+                                        <label>Term <span class="login-danger">*</span></label>
+
+                                        <select class="form-control" name="selected_term_id">
+
+                                            {% for term in terms %}
+                                            <option value="{{term.pkid}}">{{term}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 {% block scripttags %}

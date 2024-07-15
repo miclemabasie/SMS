@@ -73,6 +73,7 @@ def student_detail_view(request, matricule, pkid):
     extra_payment_history = student.extra_payments.all()
     # get the current academic year
     current_year = AcademicYear.objects.get(is_current=True)
+    terms = Term.objects.filter(academic_year=current_year)
 
     # Get the payment history for the current year
     fees = Fee.objects.filter(student=student, academic_year=current_year)
@@ -112,6 +113,7 @@ def student_detail_view(request, matricule, pkid):
         "subjects": distinct_subjects,
         "pin": pin,
         "extra_payments": extra_payment_history,
+        "terms": terms,
     }
 
     return render(request, template_name, context)
@@ -378,7 +380,7 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
                     kwargs={"subject_pkid": subject_pkid, "class_pkid": class_pkid},
                 )
             )
-        
+
         marks_file = request.FILES["marks_file"]
 
         selected_ex_session_id = request.POST.get("selected_ex_session")
@@ -447,8 +449,6 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
     return render(request, template_name, context)
 
 
-
-
 @login_required
 def marks(request):
     user = request.user
@@ -486,8 +486,8 @@ def list_student_record(request, pkid, matricule, *args, **kwargs):
 
     # Grab all the mark records associated to this student
     student = get_object_or_404(StudentProfile, pkid=pkid, matricule=matricule)
-
-    marks = student.student_marks.all()
+    current_year = AcademicYear.objects.filter(is_current=True).first()
+    marks = student.student_marks.filter(exam_session__term__academic_year=current_year)
 
     template_name = "students/academic-records.html"
 
@@ -924,3 +924,36 @@ def student_dashboard(request):
 
     print(context)
     return render(request, template_name, context)
+
+
+def edit_student_marks(request, mark_pkid, student_pkid):
+    if request.method == "POST":
+        score = request.POST.get("mark")
+        mark = Mark.objects.filter(pkid=mark_pkid)
+        students = StudentProfile.objects.filter(pkid=student_pkid)
+        if students.exists():
+            student = students.first()
+            if mark.exists():
+                mark = mark.first()
+                mark.score = score
+                mark.save()
+
+                messages.success(request, "Mark updated successfully")
+                return redirect(
+                    reverse(
+                        "students:student-academic-record",
+                        kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                    )
+                )
+
+            messages.error(request, "Invalid mark ID")
+            return redirect(
+                reverse(
+                    "students:student-academic-record",
+                    kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                )
+            )
+        messages.error(request, "something went wrong.")
+        return redirect(reverse("students:student-list"))
+    messages.error(request, "Invlid Request.")
+    return redirect(reverse("students:student-list"))

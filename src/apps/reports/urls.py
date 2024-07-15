@@ -12,7 +12,7 @@ urlpatterns = [
         name="generate_report_cards",
     ),
     path(
-        "generate-report",
+        "generate-report/<int:student_pkid>/",
         controller.create_one_report_card,
         name="generate_single_report_card",
     ),

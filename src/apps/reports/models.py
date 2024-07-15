@@ -41,12 +41,12 @@ class AcademicRecord(TimeStampedUUIDModel):
         unique_together = ("student", "exam_term")
 
     @staticmethod
-    def get_best_three_students(class_):
+    def get_best_three_students(class_, term):
         """
         Returns to get the first 3 students from a particular class based on the highest score in academic record
         """
         top_students = (
-            AcademicRecord.objects.filter(klass=class_)
+            AcademicRecord.objects.filter(klass=class_, exam_term=term)
             .annotate(max_score=Max("total_marks_obtained"))
             .order_by("-max_score")[:3]
         )
@@ -54,13 +54,13 @@ class AcademicRecord(TimeStampedUUIDModel):
         return top_students
 
     @staticmethod
-    def get_last_three_students(class_):
+    def get_last_three_students(class_, term):
         """
         Returns to get the last 3 students from a particular class based on the lowest score in academic record
         """
 
         worst_students = (
-            AcademicRecord.objects.filter(klass=class_)
+            AcademicRecord.objects.filter(klass=class_, exam_term=term)
             .annotate(max_score=Max("total_marks_obtained"))
             .order_by("max_score")[:3]
         )

@@ -51,11 +51,14 @@ class ClassMasterReport:
 
     def get_best_students_from_class(self):
         class_ = self.get_class()
-        students = AcademicRecord.get_best_three_students(class_)
+        term = self.get_term()
+        students = AcademicRecord.get_best_three_students(class_, term)
         return students
 
     def get_worst_students_from_class(self):
-        students = AcademicRecord.get_last_three_students()
+        class_ = self.get_class()
+        term = self.get_term()
+        students = AcademicRecord.get_last_three_students(class_, term)
         return students
 
     def get_total_males_from_class(self):
@@ -132,12 +135,14 @@ class ClassMasterReport:
 
     def get_best_three_students(self):
         class_ = self.get_class()
-        best_students = AcademicRecord.get_best_three_students(class_)
+        term = self.get_term()
+        best_students = AcademicRecord.get_best_three_students(class_, term)
         return best_students
 
     def get_last_three_studenst(self):
         class_ = self.get_class()
-        last_students = AcademicRecord.get_last_three_students(class_)
+        term = self.get_term()
+        last_students = AcademicRecord.get_last_three_students(class_, term)
         return last_students
 
     def calculate_grading(self, lower, upper):
@@ -147,3 +152,9 @@ class ClassMasterReport:
         grading = AcademicRecord.perform_grading(term, class_, lower, upper)
 
         return len(grading)
+
+    def get_report_title(self):
+        class_ = self.get_class()
+        term = self.get_term()
+        title = f"{term.term} {class_.get_class_name} Class Master Report"
+        return title

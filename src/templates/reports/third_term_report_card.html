@@ -247,7 +247,7 @@
         </div>
 
         <div class="report-title">
-            First Term Progress Report
+            Third Term Progress Report
         </div>
 
         <div class="info-row">
@@ -335,7 +335,6 @@
                     </th>
                     <th>Class Avg.</th>
                     <th>{{data.class_avg}}</th>
-                    <th></th>
                 </tr>
 
                 <tr>
@@ -417,13 +416,13 @@
                 </div>
                 <!-- Overall Appraisal -->
                 <div class="overall-appraisal item3">
-                    {% if data.student_data.annula_avg < 10 %}
+                    {% if data.student_data.annula_avg < data.student.current_class.pass_avg %}
                         <div class="appraisal-box warning">
-                            <p style="color: green"><i>{{data.promotion_decision}}</i></p>
+                            <p style="color: red"><i>{{data.promotion_decision}}</i></p>
                         </div>
                     {% else %}
                         <div class="appraisal-box keep-up">
-                            <p style="color: red;"><i>{{data.promotion_decision}}</i></p>
+                            <p style="color: green;"><i>{{data.promotion_decision}}</i></p>
                         </div>
                     {% endif %}
                 </div>

@@ -27,7 +27,7 @@ INTERNAL_IPS = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db-new.sqlite3",
+        "NAME": BASE_DIR / "db-final.sqlite3",
     }
 }
 

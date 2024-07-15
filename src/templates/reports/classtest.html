@@ -1,8 +1,23 @@
 {% extends "base.html" %}
 
+{% block stylelinks %}
+<style>
+.report-title {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+</style>
+{% endblock stylelinks %}
+
+
 
 {% block content %}
 <div class="content container-fluid" id="printableSection">
+    <div class="report-title">
+        {{report_title}}
+    </div>
     <table class="table table-bordered">
         <thead>
             <tr>

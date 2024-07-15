@@ -3,6 +3,7 @@ from apps.students.models import Mark, Subject, Class
 from apps.terms.models import Term, AcademicYear, ExaminationSession
 from django.contrib import messages
 from django.http import HttpResponse
+from decimal import Decimal
 
 
 class ClassPerformanceReport:
@@ -114,12 +115,16 @@ class ClassPerformanceReport:
             student.save()
             return "Promoted"
 
-    def get_annual_avg(self, third_term_avg):
+    def get_annual_avg(self, third_term_avg, student):
         if self.is_third_term():
-            first_term_avg = self.get_first_term_report_data()
-            second_term_avg = self.get_second_term_report_date()
-            annual_avg = sum([first_term_avg, second_term_avg, third_term_avg]) / 3
-            return annual_avg
+            first_term_avg = self.get_first_term_report_data(student)
+            second_term_avg = self.get_second_term_report_date(student)
+            annual_avg = (
+                Decimal(first_term_avg)
+                + Decimal(second_term_avg)
+                + Decimal(third_term_avg)
+            ) / Decimal(3)
+            return round(annual_avg, 2)
         else:
             return -1
 
@@ -285,6 +290,13 @@ class ClassPerformanceReport:
                 session_2_avg=data["session1_avg"],
             )
         try:
+            # update the academic record before saving
+            academic_record.total_marks_obtained = (data["mxc_sum"],)
+            academic_record.student_rank = (rank,)
+            academic_record.term_avg = (data["term_avg"],)
+            academic_record.klass = (self.get_class(),)
+            academic_record.session_1_avg = (data["session1_avg"],)
+            academic_record.session_2_avg = (data["session1_avg"],)
             academic_record.save()
             return True
         except Exception as e:
@@ -334,8 +346,9 @@ class ClassPerformanceReport:
         return student_ranking
 
     def generate_file_name(self):
+        term = self.get_term()
         klass = self.get_class()
-        return klass.get_full_name()
+        return f"{klass.get_full_name()}-{term.term}"
 
     def find_largest_subject_score(self):
         highest_score = 0
@@ -372,3 +385,9 @@ class ClassPerformanceReport:
             class_.best_subject = list(subject.keys())[0]
             class_.worst_subject = list(subject_lowest.keys())[0]
             class_.save()
+
+    def get_single_report_name(self, student):
+        term = self.get_term()
+        class_ = self.get_class()
+        name = f"{student.user.get_fullname} {term.term}-{class_.get_class_name}-progress-report"
+        return name

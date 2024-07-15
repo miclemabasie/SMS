@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
+{% endblock stylelinks %}
 
 
-{% block styletags %}{% endblock styletags %}
 
 
 {% block content %}
@@ -16,13 +20,13 @@
                         <div class="col">
                             <h3 class="page-title">Student Academic Recods</h3>
                         </div>
-                        <div class="col-auto text-end float-end ms-auto download-grp">
+                        {% comment %} <div class="col-auto text-end float-end ms-auto download-grp">
                             <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
                                 Download</a>
                             <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#add_subject">
                                 <i class="fas fa-plus"></i>
                             </a>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
                 </div>
 
@@ -43,6 +47,7 @@
                                 <th>Teacher</th>
                                 <th>Exam Session</th>
                                 <th>Year</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -58,13 +63,56 @@
                                 <td>{{mark.teacher.user.get_fullname}}</td>
                                 <td>{{mark.exam_session.exam_session}}</td>
                                 <td>{{mark.exam_session.term.academic_year}}</td>
-                                
+                                <td>
+                                    <div class="col-auto text-end float-end ms-auto download-grp">
+                                        <a href="" data-bs-toggle="modal" data-bs-target="#edit-mark-{{mark.pkid}}" style="color: white;" class="btn btn-outline-primary me-2">Edit Record</a>                                           
+                                    </div>
+                                </td>
                                 
                             </tr>
+                            <div class="modal custom-modal fade" id="edit-mark-{{mark.pkid}}" role="dialog">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <div class="form-header">
+                                                <p>{{mark.subject.name}} - {{mark.exam_session.exam_session}} - {{mark.student.user.get_fullname}}</p>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <form action="{% url 'students:edit-mark' mark_pkid=mark.pkid student_pkid=mark.student.pkid %}" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <div class="form-group local-forms">
+                                                                    <label>New Mark <span class="login-danger">*</span></label>
+                                                                    <input name="mark" type="text" value="{{mark.score}}" class="form-control" required>
+                                                                </div>
+                                                            </div>
+                            
+                            
+                                                            <div class="col-12 row">
+                                                                <div class="student-submit col-6">
+                                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                                </div>
+                                                                <div class="student-submit col-6 ml-5">
+                                                                    <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+
+                
             </div>
         </div>
         </div>
@@ -72,7 +120,7 @@
 {% endblock content %}
 
 
-
-{% block scripttags %}{% endblock scripttags %}
-
-
+{% block scripttags %}
+<script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
+{% endblock scripttags %}
+    

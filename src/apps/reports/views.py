@@ -222,11 +222,10 @@ def create_class_master_report(request):
             messages.error(request, "Class with given ID could not be found")
             return reverse("reports:reports")
         # term = Term.objects.filter(pkid=term_id)
-        term = Term.objects.get(is_current=True)
 
         # create a class report instance
 
-        cmr = ClassMasterReport(klass.pkid, term.pkid)
+        cmr = ClassMasterReport(klass.pkid, term_id)
         setup = cmr.setup()
         if setup:
             messages.error(request, setup)
@@ -253,6 +252,7 @@ def create_class_master_report(request):
             "sixth": cmr.calculate_grading(14, 15.99),
             "seventh": cmr.calculate_grading(16, 17.99),
             "eigth": cmr.calculate_grading(18, 20),
+            "report_title": cmr.get_report_title()
         }
         template_name = "reports/classtest.html"
         # context = {"data": pdf_data}
@@ -301,6 +301,7 @@ def download_class_master_report(request, class_pkid):
         "sixth": cmr.calculate_grading(14, 15.99),
         "seventh": cmr.calculate_grading(16, 17.99),
         "eigth": cmr.calculate_grading(18, 20),
+        "report_title": cmr.get_report_title()
     }
     template_name = "reports/classtest.html"
     context = {"data": pdf_data}

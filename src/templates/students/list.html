@@ -96,15 +96,15 @@
                                 {% for student in students %}                                    
                                     <tr>
                                         <td>{{forloop.counter}}</td>
-                                        <td>{{student.matricule}}</td>
+                                        <td><a  style="color: blue" href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.matricule}}</a></td>
                                         <td>
                                             <h2 class="table-avatar">
-                                                <a href="student-details.html"
+                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}"
                                                     class="avatar avatar-sm me-2"><img
                                                         class="avatar-img rounded-circle"
                                                         src="{{ student.profile_photo.url}}"
                                                         alt="User Image"></a>
-                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.user.first_name}} {{student.user.last_name}}</a>
+                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.user.get_fullname}}</a>
                                             </h2>
                                         </td>
                                         <td>{{student.current_class.class_name}}</td>
