@@ -1,5 +1,5 @@
 from .models import StudentProfile, AcademicRecord
-from apps.students.models import Mark, Subject, Class
+from apps.students.models import ClassAcademicRecord, Mark, Subject, Class
 from apps.terms.models import Term, AcademicYear, ExaminationSession
 from django.contrib import messages
 from django.http import HttpResponse
@@ -395,3 +395,16 @@ class ClassPerformanceReport:
         class_ = self.get_class()
         name = f"{student.user.get_fullname} {term.term}-{class_.get_class_name}-progress-report"
         return name
+
+    def create_class_report_data(self, klass, term, class_avg):
+        report, created = ClassAcademicRecord.objects.get_or_create(
+            klass=klass, term=term, class_avg=class_avg
+        )
+        if created:
+            report.save()
+            return report
+        else:
+            # update the report
+            report.class_avg = class_avg
+            report.save()
+            return report

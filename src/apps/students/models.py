@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.common.models import TimeStampedUUIDModel
 from django.db.models import Sum, Count
 from apps.settings.models import Setting
-from apps.terms.models import AcademicYear
+from apps.terms.models import AcademicYear, Term
 
 # from apps.teachers.models import TeacherProfile
 from apps.terms.models import ExaminationSession
@@ -71,6 +71,27 @@ class Class(TimeStampedUUIDModel):
     @property
     def get_class_name(self):
         return f"{self.grade_level}-{self.class_name}"
+
+
+class ClassAcademicRecord(TimeStampedUUIDModel):
+    klass = models.ForeignKey(Class, related_name="records", on_delete=models.CASCADE)
+    term = models.ForeignKey(
+        Term, related_name="classes_academic_records", on_delete=models.CASCADE
+    )
+    class_avg = models.DecimalField(max_digits=5, decimal_places=2)
+
+    class Meta:
+        unique_together = ("klass", "term")
+
+    @staticmethod
+    def get_class_avg(term, klass):
+        records = ClassAcademicRecord.objects.filter(term=term, klass=klass)
+        print("this are the records", records)
+        if records:
+            print("this are the records")
+            return records.first().class_avg
+        else:
+            return None
 
 
 # used to hold students's information until they change their password after they are being created,

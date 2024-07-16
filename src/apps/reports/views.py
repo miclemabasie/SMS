@@ -4,7 +4,13 @@ import pdfkit
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from apps.students.models import StudentProfile, Class, Subject, Mark
+from apps.students.models import (
+    ClassAcademicRecord,
+    StudentProfile,
+    Class,
+    Subject,
+    Mark,
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from apps.terms.models import AcademicYear, Term, ExaminationSession
@@ -230,12 +236,14 @@ def create_class_master_report(request):
         if setup:
             messages.error(request, setup)
             return redirect(reverse("reports:reports"))
-
+        term = cmr.get_term()
+        klass = cmr.get_class()
         context = {
             "total_girls": klass.get_total_girls(),
             "total_boys": klass.get_total_boys(),
             "sum_boys_girls": klass.get_total_enrol(),
             "class": klass,
+            "class_avg": ClassAcademicRecord.get_class_avg(term, klass),
             "best_subject": klass.best_subject,
             "worst_subject": klass.worst_subject,
             "boys_passed": cmr.get_total_boys_passed(),
@@ -285,6 +293,7 @@ def download_class_master_report(request, class_pkid):
         "total_boys": klass.get_total_boys(),
         "sum_boys_girls": klass.get_total_enrol(),
         "class": klass,
+        "class_avg": ClassAcademicRecord.get_class_avg(term, klass=klass),
         "best_subject": klass.best_subject,
         "worst_subject": klass.worst_subject,
         "boys_passed": cmr.get_total_boys_passed(),

@@ -140,6 +140,7 @@ def create_report_cards(request):
 
         # Finalize the merged PDF and serve as the response
         performance_obj.set_highest_subject_score_to_class()
+        performance_obj.create_class_report_data(performance_obj.get_class(), term, class_avg)
         merged_pdf_file = BytesIO()
         pdf_merger.write(merged_pdf_file)
         merged_pdf_file.seek(0)
