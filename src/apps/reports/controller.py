@@ -139,6 +139,7 @@ def create_report_cards(request):
             )
 
         # Finalize the merged PDF and serve as the response
+        performance_obj.set_highest_subject_score_to_class()
         merged_pdf_file = BytesIO()
         pdf_merger.write(merged_pdf_file)
         merged_pdf_file.seek(0)
@@ -165,21 +166,41 @@ def create_one_report_card(request, student_pkid, *args, **kwargs):
         selected_term_id = request.POST.get("selected_term_id")
         if not selected_student_id:
             messages.error(request, "Invalid or empty student ID")
-            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
+            return redirect(
+                reverse(
+                    "students:student-detail",
+                    kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                )
+            )
 
         if not selected_term_id:
             messages.error(request, "Invalid or missing term ID")
-            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
+            return redirect(
+                reverse(
+                    "students:student-detail",
+                    kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                )
+            )
 
         # Get the student
         student = StudentProfile.objects.filter(pkid=selected_student_id).first()
         if not student:
             messages.error(request, "No student with the given ID found.")
-            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
+            return redirect(
+                reverse(
+                    "students:student-detail",
+                    kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                )
+            )
 
         if len(student.get_all_subjects()) < 1:
             messages.error(request, "No subjects associated with this student.")
-            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
+            return redirect(
+                reverse(
+                    "students:student-detail",
+                    kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                )
+            )
 
         # Get the current year and term
         academic_year = AcademicYear.objects.filter(is_current=True).first()
@@ -191,7 +212,12 @@ def create_one_report_card(request, student_pkid, *args, **kwargs):
         setup = performance_obj.setup()
         if setup:
             messages.error(request, setup)
-            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
+            return redirect(
+                reverse(
+                    "students:student-detail",
+                    kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                )
+            )
 
         sessions = ExaminationSession.objects.filter(term=term)
 
@@ -199,7 +225,12 @@ def create_one_report_card(request, student_pkid, *args, **kwargs):
         student_marks = performance_obj.generate_student_report_data(student)
         if not student_marks:
             messages.error(request, "Unset terms")
-            return redirect(reverse("students:student-detail", kwargs={"pkid": student.pkid, "matricule":student.matricule}))
+            return redirect(
+                reverse(
+                    "students:student-detail",
+                    kwargs={"pkid": student.pkid, "matricule": student.matricule},
+                )
+            )
 
         class_performance_data = performance_obj.generate_performacne_rank_list()
         class_performance = class_performance_data["class_performance"]

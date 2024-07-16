@@ -163,7 +163,6 @@ def create_report_cards(request):
         class_avg = performance_obj.get_class_avg()
 
         for student in students:
-            print("#######################33", student)
             student_marks = performance_obj.generate_student_report_data(student)
             student_ranking = performance_obj.get_student_rank(
                 student, class_performance
@@ -196,6 +195,7 @@ def create_report_cards(request):
             )
 
             pdf_file.seek(0)
+        print("############ creating some report cards")
         performance_obj.set_highest_subject_score_to_class()
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = (
@@ -252,7 +252,7 @@ def create_class_master_report(request):
             "sixth": cmr.calculate_grading(14, 15.99),
             "seventh": cmr.calculate_grading(16, 17.99),
             "eigth": cmr.calculate_grading(18, 20),
-            "report_title": cmr.get_report_title()
+            "report_title": cmr.get_report_title(),
         }
         template_name = "reports/classtest.html"
         # context = {"data": pdf_data}
@@ -301,7 +301,7 @@ def download_class_master_report(request, class_pkid):
         "sixth": cmr.calculate_grading(14, 15.99),
         "seventh": cmr.calculate_grading(16, 17.99),
         "eigth": cmr.calculate_grading(18, 20),
-        "report_title": cmr.get_report_title()
+        "report_title": cmr.get_report_title(),
     }
     template_name = "reports/classtest.html"
     context = {"data": pdf_data}

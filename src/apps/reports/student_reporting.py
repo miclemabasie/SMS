@@ -353,14 +353,17 @@ class ClassPerformanceReport:
     def find_largest_subject_score(self):
         highest_score = 0
         highest_subject = None
+        print("we are print none because there is no subject ", self.sub_dicts.items())
 
         for subject, score in self.sub_dicts.items():
             if score > highest_score:
                 highest_score = score
                 highest_subject = subject
         if highest_subject is not None:
-            data = {highest_subject: score}
+            data = {highest_subject: highest_score}
+            print("data", data)
             return data
+
         return None
 
     def find_lowest_subject_score(self):
@@ -375,6 +378,7 @@ class ClassPerformanceReport:
             if lowest_subject is not None:
                 data = {lowest_subject: score}
                 return data
+
         return None
 
     def set_highest_subject_score_to_class(self):
