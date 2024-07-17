@@ -22,7 +22,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     dob = models.DateTimeField(default=timezone.now)
 
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 
@@ -41,3 +40,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def get_fullname(self):
         return f"{self.first_name.title()} {self.last_name.title()}"
+
+    @property
+    def get_profile(self):
+        # get the profile of user [admin, student or teacher]
+        if self.is_admin:
+            return self.admin_profile
+        elif self.is_teacher:
+            return self.teacher_profile
+        elif self.is_student:
+            return self.student_profile
+        else:
+            return ""

@@ -280,7 +280,6 @@ def create_staff(request):
             user=user,
             gender=gender,
             phone_number=phone,
-            profile_photo=photo,
             country=country,
             location=location,
             address=address,
@@ -294,6 +293,9 @@ def create_staff(request):
             manage_subjects=manage_subjects,
         )
         admin_profile.save()
+        if photo:
+            admin_profile.photo = photo
+            admin_profile.save()
 
     template_name = "staff/create-admin.html"
     context = {
