@@ -90,6 +90,7 @@ def create_report_cards(request):
                 "class_avg": class_avg,
                 "setting": setting,
                 "student": student,
+                "class": performance_obj.get_class(),
                 "first_term_avg": "",
                 "second_term_avg": "",
                 "annual_avg": "8",
@@ -140,7 +141,9 @@ def create_report_cards(request):
 
         # Finalize the merged PDF and serve as the response
         performance_obj.set_highest_subject_score_to_class()
-        performance_obj.create_class_report_data(performance_obj.get_class(), term, class_avg)
+        performance_obj.create_class_report_data(
+            performance_obj.get_class(), term, class_avg
+        )
         merged_pdf_file = BytesIO()
         pdf_merger.write(merged_pdf_file)
         merged_pdf_file.seek(0)
@@ -252,6 +255,7 @@ def create_one_report_card(request, student_pkid, *args, **kwargs):
             "class_avg": class_avg,
             "setting": setting,
             "student": student,
+            "class": performance_obj.get_class(),
             "first_term_avg": "",
             "second_term_avg": "",
             "annual_avg": "8",

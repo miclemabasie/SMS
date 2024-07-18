@@ -11,7 +11,7 @@
     <style>
         @page {
             size: A4;
-            margin: 10pt;
+            margin: 5pt;
             border: 2px solid black;
         }
 
@@ -351,7 +351,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="6">CLASS LEVEL</td>
+                    <td colspan="6"><h4>CLASS LEVEL</h4></td>
                     {% if data.class_avg < 10 %}
                         <td style="color: red;" colspan="3"><i>Weak</i></td>
                     {% elif data.class_avg < 13 %}
@@ -363,7 +363,7 @@
                     {% endif %}
                 </tr>
                 <tr>
-                    <td colspan="6">TOTAL ENROLLMENT:</td>
+                    <td colspan="6"><h4>TOTAL ENROLLMENT:</h4></td>
                     <td>{{data.class_total}}</td>
                     <td colspan="2"></td>
                 </tr>
@@ -401,10 +401,10 @@
                 <!-- Row for Suspensions and Late Coming -->
                 <div class="appraisal-row item2">
                     <div class="appraisal-item">
-                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                        <div class="square-box"><p>Suspensions: <span class="box">0</span></p></div>
                     </div>
                     <div class="appraisal-item">
-                        <div class="square-box"><p>Warning: <span class="box">0</span></p></div>
+                        <div class="square-box"><p>Late coming: <span class="box">0</span></p></div>
                     </div>
                 </div>
                 <!-- Overall Appraisal -->
@@ -427,6 +427,7 @@
                 <div class="inline class-master-signature">
                     <b style="font-size: 16px;"><i><span>Signature of the Class Master</span></i></b>
                     <div class="box1"></div>
+                    <h4 style="margin-top: 10px;">Class Master: <i>{{data.class.class_master}}</i></h4>
                 </div>
         
                 <div class="inline class-master-signature">

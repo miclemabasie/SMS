@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from apps.settings.models import Setting
 from .forms import VerifyPinForm
@@ -364,11 +365,11 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
 
     terms = Term.objects.filter(academic_year=academic_year)
 
-    sequences = []
+    sequences = terms.filter(is_current=True).first().examination_sessions.all()
 
-    for term in terms:
-        for ex_session in term.examination_sessions.all():
-            sequences.append(ex_session)
+    # for term in terms:
+    #     for ex_session in term.examination_sessions.all():
+    #         sequences.append(ex_session)
 
     if request.method == "POST" and request.FILES["marks_file"]:
         setting = Setting.objects.all().first()
@@ -448,6 +449,73 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
 
     return render(request, template_name, context)
 
+
+@login_required
+def fill_student_marks(request, subject_pkid, class_pkid):
+    if request.method == "POST":
+        selecte_session_id = request.POST.get("selected_ex_session")
+        sessions = ExaminationSession.objects.filter(pkid=selecte_session_id)
+        klasses = Class.objects.filter(pkid=class_pkid)
+        subjects = Subject.objects.filter(pkid=subject_pkid)
+
+        if subjects.exists():
+            subject = subjects.first()
+        else:
+            messages(request, "Invalid Class")
+            return redirect(reverse("students:marks"))
+
+        if klasses.exists():
+            klass = klasses.first()
+        else:
+            messages(request, "Invalid Class")
+            return redirect(reverse("students:marks"))
+        if sessions.exists():
+            session = sessions.first()
+        else:
+            messages(request, "Invalid session")
+            return redirect(reverse("students:marks"))
+
+        # Get all the students in the class
+        students = klass.students.all()
+        template_name = "students/fill-marks.html"
+        context = {
+            "section": "marks",
+            "session": session,
+            "students": students,
+            "subject": subject,
+        }
+        return render(request, template_name, context)
+
+
+@csrf_exempt
+def update_fill_marks(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        student_id = data.get('student_id')
+        subject = data.get('subject')
+        mark = data.get('mark')
+        exam_session_pkid = data.get("session")
+
+        print(data)
+
+        teacher = request.user.teacher_profile
+
+        try:
+            student = StudentProfile.objects.get(pkid=student_id)
+            subject = Subject.objects.get(pkid=subject)
+            session = ExaminationSession.objects.get(pkid=exam_session_pkid)
+            subject_mark, created = Mark.objects.update_or_create(
+                student=student, 
+                subject=subject,
+                exam_session=session,
+                teacher = teacher,
+                defaults={'score': mark}
+            )
+            return JsonResponse({'success': True})
+        except StudentProfile.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Student not found'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 @login_required
 def marks(request):

@@ -278,7 +278,7 @@ class Subject(TimeStampedUUIDModel):
     # teachers = models.ManyToManyField("TeacherProfile", related_name="subjects_taught", blank=True)
 
     def __str__(self):
-        return f"{self.name}-{self.code}"
+        return f"{self.code}-{self.name}"
 
 
 class Mark(TimeStampedUUIDModel):

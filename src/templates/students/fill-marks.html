@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h3>Session: {{ session }}</h3>
+    <h3>Subject: {{ subject }}</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Mark</th>
+                <th>Sesssion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.user.get_fullname }}</td>
+                    <td>
+                        <input type="number" class="mark-input" data-student-id="{{ student.pkid }}" data-subject="{{ subject.pkid }}" data-session="{{session.pkid}}" value="{{ student.mark }}">
+                    </td>
+                    <td>{{ session }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button id="save-marks-btn" class="btn btn-primary">Save All Marks</button>
+{% endblock content %}
+
+{% block scripttags %}
+<script src="{% static 'assets/plugins/dragula/js/dragula.min.js' %}"></script>
+<script src="{% static 'assets/plugins/dragula/js/drag-drop.min.js' %}"></script>
+
+<script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'assets/plugins/scrollbar/scrollbar.min.js' %}"></script>
+<script src="{% static 'assets/plugins/scrollbar/custom-scroll.js' %}"></script>
+
+
+<script src="{% static 'assets/plugins/alertify/alertify.min.js' %}"></script>
+<script src="{% static 'assets/plugins/alertify/custom-alertify.min.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const markInputs = document.querySelectorAll('.mark-input');
+
+        markInputs.forEach(input => {
+            input.addEventListener('change', function () {
+                const studentId = this.dataset.studentId;
+                const subject = this.dataset.subject;
+                const mark = this.value;
+                const session_pkid = this.dataset.session
+
+                fetch('{% url "students:update-fill-mark" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        student_id: studentId,
+                        subject: subject,
+                        mark: mark,
+                        session: session_pkid
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // alert('Mark updated successfully');
+                        alertify.success("Subjects updated successfully")
+                    } else {
+                        alert('Error updating mark');
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock scripttags %}

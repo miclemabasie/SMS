@@ -111,6 +111,7 @@ $(document).ready(function () {
     // Add event listener to the update button
     document.getElementById("updateButton").addEventListener("click", function () {
         // Get selected subjects from the second list
+        console.log("clicking the button")
         var selectedSubjects = [];
         $("#handle-list-2 li").each(function () {
             console.log($(this).data())

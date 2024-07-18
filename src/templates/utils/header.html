@@ -19,13 +19,13 @@
         </a>
     </div>
 
-    <div class="top-nav-search">
-        {% comment %} <form>
+    {% comment %} <div class="top-nav-search">
+        <form>
             <input type="text" class="form-control" placeholder="Search here">
             <button class="btn" type="submit"><i class="fas fa-search"></i></button>
-        </form> {% endcomment %}
+        </form> 
 
-    </div>
+    </div> {% endcomment %}
     <a class="mobile_btn" id="mobile_btn">
         <i class="fas fa-bars"></i>
     </a>
@@ -98,7 +98,7 @@
             <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                 <span class="user-img">
                     <img class="rounded-circle" src="{{request.user.get_profile.profile_photo.url}}" width="31"
-                        alt="Soeng Souy">
+                        alt="profile picture">
                     <div class="user-text">
                         {% if user.is_authenticated %}
                             <h6>{{user.username | capfirst}}</h6>

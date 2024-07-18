@@ -12,7 +12,7 @@
             <div class="col-xxl-12">
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0">Upload Student Marks For The Class: {{class.grade_level}} - {{class.class_name}}</h4>
+                        <h4 class="card-title mb-0">Upload Student Marks For The Class: {{klass.get_class_name}} <span style="background-color: yellow;">{{subject.name}}</span></h4>
                     </div>
 
                     <div class="card-body">
@@ -44,6 +44,7 @@
                                                 data-bs-target="#upload_class_{{class.pkid}}"><i
                                                     class="fas fa-upload"></i> Upload Marks Sheet</a>
                         
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fill_marks_class_{{class.pkid}}"><i class="fas fa-upload"></i> Fill Marks Manualy</a>
                     </div>
 
                 </div>
@@ -63,7 +64,7 @@
                 <div class="modal-body">
                     <div class="form-header">
                         <h3>Download Mark Sheet</h3>
-                        <p>{{class.grade_level}} - {{class.class_name}}</p>
+                        <p>{{klass.get_class_name}} - {{subject.name}}</p>
                     </div>
                     <form action="{% url 'students:mark-sheet-download' subject.pkid klass.pkid %}" method="post">
                         {% csrf_token %}
@@ -93,7 +94,8 @@
                 <div class="modal-body">
                     <div class="form-header">
                         <h3>Upload Mark Sheet</h3>
-                        {{year}}
+                        <p>{{year}}</p>
+                        <p>{{klass.get_class_name}} - {{subject.name}}</p>
                     </div>
                     <form action="{% url 'students:marks-upload' subject.pkid klass.pkid %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -120,6 +122,46 @@
                             <div class="col-12 row">
                                 <div class="student-submit col-6">
                                     <button type="submit" class="btn btn-primary">Upload</button>
+                                </div>
+                                <div class="student-submit col-6 ml-5">
+                                    <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal custom-modal fade" id="fill_marks_class_{{class.pkid}}" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-header">
+                        <h3>Upload Mark Sheet</h3>
+                        <p>{{year}}</p>
+                        <p>{{klass.get_class_name}} - {{subject.name}}</p>
+                    </div>
+                    <form action="{% url 'students:fill-marks' subject.pkid klass.pkid %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            
+                            <div class="col-12">
+                                <div class="form-group local-forms">
+                                    <label>Year Name <span class="login-danger">*</span></label>
+                                    <select class="form-control" name="selected_ex_session">
+                                        
+                                        {% for session in sessions %}                                                
+                                            <option value="{{session.pkid}}">{{session.exam_session}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 row">
+                                <div class="student-submit col-6">
+                                    <button type="submit" class="btn btn-primary">Proceed</button>
                                 </div>
                                 <div class="student-submit col-6 ml-5">
                                     <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>

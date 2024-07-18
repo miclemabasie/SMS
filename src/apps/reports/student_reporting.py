@@ -397,14 +397,18 @@ class ClassPerformanceReport:
         return name
 
     def create_class_report_data(self, klass, term, class_avg):
+        print("trying to make report data.")
         report, created = ClassAcademicRecord.objects.get_or_create(
-            klass=klass, term=term, class_avg=class_avg
+            klass=klass, term=term
         )
-        if created:
-            report.save()
-            return report
-        else:
-            # update the report
-            report.class_avg = class_avg
-            report.save()
-            return report
+        report.class_avg = class_avg
+        report.save()
+        return report
+        # if created:
+        #     report.save()
+        #     return report
+        # else:
+        #     # update the report
+        #     report.class_avg = class_avg
+        #     report.save()
+        #     return report
