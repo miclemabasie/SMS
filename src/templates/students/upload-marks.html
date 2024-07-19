@@ -1,56 +1,166 @@
 {% extends 'base.html' %}
+{% load static %}
 
-
-{% block styletags %}
-    
-{% endblock styletags %}
-    
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
+{% endblock stylelinks %}
 
 {% block content %}
-    <div class="content-container fluid">
-        <div class="row">
-            <div class="col-xxl-12">
-                <div class="card">
-                    <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0">Upload Student Marks For The Class: {{klass.get_class_name}} <span style="background-color: yellow;">{{subject.name}}</span></h4>
-                    </div>
 
-                    <div class="card-body">
-                        <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Download the marks sheet from the download button below</p>
-                        <p>1. Click the Download Mark Sheet button</p>
-                        <p>2. Select the subject for which you wish to download the marks sheet for.</p>
-                        <p>3. Click on the download button.</p>
-                        <p>4. Open the file and modify only the row column for the marks, do this for all the students on the file and save the file to a know loacation.</p>
-                        <a href="#" class="btn btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#download_class_{{class.pkid}}"><i
-                                                    class="fas fa-download"></i> Download Marks Sheet</a>
-                       
-                    </div>
+<div class="row">
 
-                    <div class="card-body">
-                        <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Uploading the marks</p>
-                        <p>1. After the file has been modified and saved.</p>
-                        <p>2. Click on the upload Marks button</p>
-                        <p>3. Select the file from your device wherever it was saved</p>
-                        <p>4. Enter the The Teacher Matricule responsible for the assessment of this subject.</p>
-
-
-                        <p>You can click the link  below to see all registered teachers with their corresponding Matricule Numbers and copy from there.</p>
-
-                        <p ><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">List of all teachers.</a></p>
-                        <p>4. Click on Upload.</p>
-
-                        <a href="#" class="btn btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#upload_class_{{class.pkid}}"><i
-                                                    class="fas fa-upload"></i> Upload Marks Sheet</a>
-                        
-                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fill_marks_class_{{class.pkid}}"><i class="fas fa-upload"></i> Fill Marks Manualy</a>
-                    </div>
-
-                </div>
-
+    <div class="col-md-6 col-sm-6">
+        <div class="ribbon-wrapper card">
+            <div class="card-body">
+                <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Download the marks sheet from the download button below</p>
+                <p>1. Click the Download Mark Sheet button</p>
+                <p>2. Select the subject for which you wish to download the marks sheet for.</p>
+                <p>3. Click on the download button.</p>
+                <p>4. Open the file and modify only the row column for the marks, do this for all the students on the file and save the file to a know loacation.</p>
+                
+               
             </div>
 
+            <div class="form-group mb-4 text-end float-right">
+                <div class="settings-btns">
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#download_class_{{class.pkid}}"><i
+                                            class="fas fa-download"></i> Download Marks Sheet</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-sm-6">
+        <div class="ribbon-wrapper card">
+            <div class="card-body">
+                <p class="text-muted"><span class="badge badge-danger">Read !!!.</span> Uploading the marks</p>
+                <p>1. After the file has been modified and saved.</p>
+                <p>2. Click on the upload Marks button</p>
+                <p>3. Select the file from your device wherever it was saved</p>
+                <p>4. Click on Upload.</p>
+
+                
+                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fill_marks_class_{{class.pkid}}"><i class="fas fa-upload"></i> Fill Marks Manualy</a>
+            </div>
+
+            <div class="form-group mb-4 text-end float-right">
+                <div class="settings-btns">
+                    {% comment %} <a href=""  >
+                        <button class="btn ribbon-secondary text-white">Generate</button>
+                    </a> {% endcomment %}
+                    <a href="#" class="btn btn-success" data-bs-toggle="modal"
+                                        data-bs-target="#upload_class_{{class.pkid}}"><i
+                                            class="fas fa-upload text-white"></i> Upload Marks Sheet</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="page-title">Students Academic Recods: {{klass.get_class_name}} <span style="background-color: yellow;">{{subject.name}}</span></h3>
+                            </div>
+                            {% comment %} <div class="col-auto text-end float-end ms-auto download-grp">
+                                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
+                                    Download</a>
+                                <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#add_subject">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div> {% endcomment %}
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            <thead class="student-thread">
+                                <!-- score
+                                student
+                                teacher
+                                exam_session
+                                subject
+                                remark -->
+                                <tr>
+                                    <th>#</th>
+                                    <th>Student Name</th>
+                                    <th>{{first_session_name.exam_session}}</th>
+                                    <th>{{second_session_name.exam_session}}</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for mark in data %}
+
+
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{mark.name}}</td>
+                                    <td>{{mark.score1}}</td>
+                                    <td>{{mark.score2}}</td>
+                                    <td>
+                                        <div class="col-auto text-end float-end ms-auto download-grp">
+                                            <a href="" data-bs-toggle="modal" data-bs-target="#edit-mark-{{mark.student.pkid}}" style="color: white;" class="btn btn-outline-primary me-2">Edit Record</a>                                           
+                                        </div>
+                                    </td>
+                                    
+                                </tr>
+                                <div class="modal custom-modal fade" id="edit-mark-{{mark.student.pkid}}" role="dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="form-header">
+                                                    <p>{{subject.code}}-{{subject.name}} - {{mark.student.user.get_fullname}}</p>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form action="{% url 'students:teacher-modify-student-record' subject_pkid=subject.pkid student_pkid=mark.student.pkid f_session=first_session_name.pkid l_session=second_session_name.pkid%}" method="post">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>{{first_session_name.exam_session}} <span class="login-danger">*</span></label>
+                                                                        <input name="fmark" type="text" value="{{mark.score1}}" class="form-control" required>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12">
+                                                                    <div class="form-group local-forms">
+                                                                        <label>{{second_session_name.exam_session}} <span class="login-danger">*</span></label>
+                                                                        <input name="lmark" type="text" value="{{mark.score2}}" class="form-control" required>
+                                                                    </div>
+                                                                </div>
+                                
+                                
+                                                                <div class="col-12 row">
+                                                                    <div class="student-submit col-6">
+                                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                                    </div>
+                                                                    <div class="student-submit col-6 ml-5">
+                                                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -86,6 +196,8 @@
             </div>
         </div>
     </div> 
+
+    
 
     <!-- upload -->
     <div class="modal custom-modal fade" id="upload_class_{{class.pkid}}" role="dialog">
@@ -176,9 +288,7 @@
 {% endblock content %}
     
 
-
 {% block scripttags %}
-    
+<script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
 {% endblock scripttags %}
-        
     

@@ -17,7 +17,14 @@ import io
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph,
+    Spacer,
+    Image,
+)
 from reportlab.lib.styles import getSampleStyleSheet
 from apps.leave.models import TeacherLeave
 import json
@@ -676,163 +683,6 @@ def download_blank_teacher_form(request):
 def download_teacher_list(request):
     pass
 
+
 def generate_report_card(request):
-    # Create the HttpResponse object with the appropriate PDF headers.
-    response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="report_card.pdf"'
-
-    # Create the PDF object, using the response object as its "file."
-    doc = SimpleDocTemplate(response, pagesize=A4)
-    elements = []
-
-    # Sample data
-    data = {
-        "student_name": "John Doe",
-        "term_name": "First Term",
-        "sessions": [
-            {"exam_session": "First Sequence"},
-            {"exam_session": "Second Sequence"},
-        ],
-        "marks": [
-            {
-                "subject_name": "Mathematics",
-                "first_sequence": 15,
-                "session2": 12,
-                "average": 13.5,
-                "coef": 4,
-                "MXC": 54,
-                "teacher": "Mr. Smith",
-                "remark": "Good",
-            },
-            # Add more subjects here...
-        ],
-        "student_data": {
-            "sequence1_total": 300,
-            "sequence2_total": 280,
-            "avg_sum": 290,
-            "sum_of_coefs": 50,
-            "mxc_sum": 1350,
-            "term_remark": "Satisfactory",
-            "session1_avg": 12.5,
-            "session2_avg": 13,
-            "term_avg": 13,
-            "class_avg": 12,
-            "student_rank": 5,
-            "class_total": 30,
-        },
-    }
-
-    # Set up the styles
-    styles = getSampleStyleSheet()
-
-    # Title
-    elements.append(
-        Paragraph(
-            f"{data['student_name']} - {data['term_name']} PROGRESS REPORT",
-            styles["Title"],
-        )
-    )
-    elements.append(Spacer(1, 12))
-
-    # Table Header
-    table_data = [
-        [
-            "SUBJECT NAME",
-            "1st Seq",
-            "2nd Seq",
-            "AV./20",
-            "COEF",
-            "M X C",
-            "Teacher's Name",
-            "Teacher's Remark",
-        ]
-    ]
-
-    # Table Body
-    for mark in data["marks"]:
-        row = [
-            mark["subject_name"],
-            mark["first_sequence"],
-            mark["session2"],
-            mark["average"],
-            mark["coef"],
-            mark["MXC"],
-            mark["teacher"],
-            mark["remark"],
-        ]
-        table_data.append(row)
-
-    # Add Grand Total and other rows
-    table_data.append(
-        [
-            "GRAND TOTAL:",
-            data["student_data"]["sequence1_total"],
-            data["student_data"]["sequence2_total"],
-            data["student_data"]["avg_sum"],
-            data["student_data"]["sum_of_coefs"],
-            data["student_data"]["mxc_sum"],
-            "",
-            data["student_data"]["term_remark"],
-        ]
-    )
-
-    table_data.append(
-        [
-            "SEQ. Avg.",
-            data["student_data"]["session1_avg"],
-            data["student_data"]["session2_avg"],
-            "",
-            "",
-            data["student_data"]["term_avg"],
-            "Class Avg.",
-            data["student_data"]["class_avg"],
-        ]
-    )
-
-    table_data.append(
-        [
-            "CLASS POSITION:",
-            "",
-            "",
-            "",
-            "",
-            f"N0. {data['student_data']['student_rank']} / {data['student_data']['class_total']}",
-            "",
-            "",
-        ]
-    )
-
-    # Create the table
-    table = Table(table_data, repeatRows=1)
-
-    # Style the table
-    table.setStyle(
-        TableStyle(
-            [
-                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
-                ("GRID", (0, 0), (-1, -1), 1, colors.black),
-            ]
-        )
-    )
-
-    # Add the table to the elements
-    elements.append(table)
-
-    # Footer
-    elements.append(Spacer(1, 12))
-    elements.append(Paragraph("Principal's Remarks: ___________", styles["Normal"]))
-    elements.append(Spacer(1, 12))
-    elements.append(
-        Paragraph("Class Master's Signature: ___________", styles["Normal"])
-    )
-    elements.append(Paragraph("Principal's Signature: ___________", styles["Normal"]))
-
-    # Build the PDF
-    doc.build(elements)
-
-    return response
+    return

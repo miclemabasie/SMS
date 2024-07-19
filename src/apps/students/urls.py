@@ -66,4 +66,9 @@ urlpatterns = [
         name="fill-marks",
     ),
     path("update-fill-mark", views.update_fill_marks, name="update-fill-mark"),
+    path(
+        "teacher-modify-student-record/<int:subject_pkid>/<int:student_pkid>/<int:f_session>/<int:l_session>/",
+        views.teacher_modify_student_mark,
+        name="teacher-modify-student-record",
+    ),
 ]

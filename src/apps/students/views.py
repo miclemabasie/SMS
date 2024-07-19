@@ -366,6 +366,47 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
     terms = Term.objects.filter(academic_year=academic_year)
 
     sequences = terms.filter(is_current=True).first().examination_sessions.all()
+    teacher = request.user.teacher_profile
+    # Get data for student marks and updates
+    students = klass.students.all()
+    # Get all the marks for the given subject, class, and term
+    term = Term.objects.get(is_current=True)
+    # get the value for the sequences in the term, (Example: 1st, 2nd)
+    session_ids = sequences.values_list("pkid", flat=True)
+    first_seq_id = session_ids.first()
+    second_seq_id = session_ids.last()
+    first_session_name = ExaminationSession.objects.get(pkid=first_seq_id)
+    second_session_name = ExaminationSession.objects.get(pkid=second_seq_id)
+
+    data = []
+    for student in students:
+        name = student.user.get_fullname
+        fmark = Mark.objects.filter(
+            student=student, exam_session__pkid=first_seq_id, subject=subject
+        ).first()
+        lmark = Mark.objects.filter(
+            student=student, exam_session__pkid=second_seq_id, subject=subject
+        ).first()
+        score1 = 0
+        score2 = 0
+        if not fmark:
+            fmark = 0
+        else:
+            score1 = fmark.score
+        if not lmark:
+            lmark = 0
+        else:
+            score2 = lmark.score
+
+        obj = {
+            "student": student,
+            "name": name,
+            "fmark": fmark,
+            "lmark": lmark,
+            "score1": score1,
+            "score2": score2,
+        }
+        data.append(obj)
 
     # for term in terms:
     #     for ex_session in term.examination_sessions.all():
@@ -445,9 +486,57 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
         "klass": klass,
         "sessions": sequences,
         "year": academic_year,
+        "students": students,
+        "data": data,
+        "first_session_name": first_session_name,
+        "second_session_name": second_session_name,
     }
 
     return render(request, template_name, context)
+
+
+@login_required
+def teacher_modify_student_mark(
+    request, subject_pkid, student_pkid, f_session, l_session
+):
+    """
+    Allows to teachers to modify students marks for a given course
+    """
+    # get the values from the form
+
+    if request.method == "POST":
+        f_session_mark = request.POST.get("fmark")
+        l_session_mark = request.POST.get("lmark")
+        session1 = ExaminationSession.objects.get(pkid=f_session)
+        session2 = ExaminationSession.objects.get(pkid=l_session)
+        subject = Subject.objects.get(pkid=subject_pkid)
+
+        student = StudentProfile.objects.get(pkid=student_pkid)
+        # Create mark instances
+        student_mark1, created = Mark.objects.update_or_create(
+            student=student, exam_session=session1, subject=subject
+        )
+        student_mark1.score = f_session_mark
+        student_mark1.save()
+
+        student_mark2, created = Mark.objects.update_or_create(
+            student=student, exam_session=session2, subject=subject
+        )
+        student_mark2.score = l_session_mark
+        student_mark2.save()
+        messages.success(request, "Marks updated successfully")
+        return redirect(
+            reverse(
+                "students:marks-upload",
+                kwargs={
+                    "class_pkid": student.current_class.pkid,
+                    "subject_pkid": subject.pkid,
+                },
+            )
+        )
+
+    messages.error(request, "request")
+    return redirect(reverse("students:marks"))
 
 
 @login_required
@@ -489,11 +578,11 @@ def fill_student_marks(request, subject_pkid, class_pkid):
 
 @csrf_exempt
 def update_fill_marks(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         data = json.loads(request.body)
-        student_id = data.get('student_id')
-        subject = data.get('subject')
-        mark = data.get('mark')
+        student_id = data.get("student_id")
+        subject = data.get("subject")
+        mark = data.get("mark")
         exam_session_pkid = data.get("session")
 
         print(data)
@@ -505,17 +594,18 @@ def update_fill_marks(request):
             subject = Subject.objects.get(pkid=subject)
             session = ExaminationSession.objects.get(pkid=exam_session_pkid)
             subject_mark, created = Mark.objects.update_or_create(
-                student=student, 
+                student=student,
                 subject=subject,
                 exam_session=session,
-                teacher = teacher,
-                defaults={'score': mark}
+                teacher=teacher,
+                defaults={"score": mark},
             )
-            return JsonResponse({'success': True})
+            return JsonResponse({"success": True})
         except StudentProfile.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Student not found'})
+            return JsonResponse({"success": False, "error": "Student not found"})
 
-    return JsonResponse({'success': False, 'error': 'Invalid request'})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
 
 @login_required
 def marks(request):
