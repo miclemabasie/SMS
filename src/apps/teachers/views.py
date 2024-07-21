@@ -68,6 +68,8 @@ def teacher_detail_view(request, matricule, pkid, *args, **kwargs):
     teacher = get_object_or_404(TeacherProfile, matricule=matricule, pkid=pkid)
     template_name = "teachers/teacher-detail.html"
     pin = TeacherTempCreateProfile.objects.filter(teacher=teacher)
+    # get all the subject tought by given teacher.
+    assigned_subjects = teacher.assigned_subjects.all()
     if pin.exists():
         pin = pin.first()
     else:
@@ -76,6 +78,7 @@ def teacher_detail_view(request, matricule, pkid, *args, **kwargs):
         "section": "teachers-area",
         "teacher": teacher,
         "pin": pin,
+        "assigned_subjects": assigned_subjects,
     }
 
     return render(request, template_name, context)
