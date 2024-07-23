@@ -18,4 +18,15 @@ urlpatterns = [
     ),
     path("create-admin", views.create_staff, name="create-admin"),
     path("list", views.list_admin, name="list-admin"),
+    path("admin-marks", views.mark_list_admin_view, name="admin-marks"),
+    path(
+        "subject-marks-list/<int:class_pkid>/",
+        views.subject_marks_list,
+        name="subject-marks-list",
+    ),
+    path(
+        "staff-upload-marks-file/<int:subject_pkid>/<int:class_pkid>/",
+        views.staff_upload_marks,
+        name="staff-upload-marks-file",
+    ),
 ]

@@ -1,7 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from openpyxl import load_workbook
+
+from apps.settings.models import Setting
+from apps.terms.models import AcademicYear, ExaminationSession, Term
 from .models import AdminProfile
-from apps.students.models import StudentProfile, TeacherProfile, Subject, Class
+from apps.students.models import Mark, StudentProfile, TeacherProfile, Subject, Class
 from apps.profiles.models import ParentProfile
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -9,6 +13,7 @@ from django.contrib import messages
 import json
 from django.contrib.auth import get_user_model
 from apps.attendance.models import Attendance
+from django.contrib.auth import logout
 
 User = get_user_model()
 
@@ -174,7 +179,7 @@ def edit_subject_view(request, pkid, *args, **kwargs):
 
 
 @login_required
-def assign_subject_to_classes(request, pkid):
+def assign_subject_to_classes(request, pkid):  # takes in the class pKID
     subjects = Subject.objects.all()
     klass = get_object_or_404(Class, pkid=pkid)
 
@@ -192,8 +197,10 @@ def assign_subject_to_classes(request, pkid):
             selected_subjects_ids.append(subject.get("pkid"))
 
         # Flush out all the subjects that exist in the class and reset
+        print("selected subjects", selected_subjects)
+        print("unselected subjects", unselected_subjects)
 
-        if len(selected_subjects) > 0 and len(selected_subjects_ids) > 0:
+        if len(selected_subjects) > 0:
             for subject in selected_subjects:
                 print("This is the subject", subject)
                 subject.klass = None
@@ -272,6 +279,7 @@ def create_staff(request):
         )
 
         user.is_admin = True
+        user.is_teacher = True  # the functionality of this line has not been tested.
         user.save()
 
         # Create AdminProfile object
@@ -315,6 +323,219 @@ def list_admin(request):
 
     context = {
         "admins": admins,
+    }
+
+    return render(request, template_name, context)
+
+
+@login_required
+def mark_list_admin_view(request):
+    """
+    This view lists out all the classes so the admin can select a specific class to upload marks.
+    """
+    # Check if usertype is administrator
+    if not request.user.is_admin:
+        # logout and redirect to login page
+        logout(request)
+        return redirect("users:user-login")
+    # get all the classes in the database
+    classes = Class.objects.all()
+
+    template_name = "staff/marks-class-list.html"
+    context = {
+        "section": "marks",
+        "classes": classes,
+    }
+
+    return render(request, template_name, context)
+
+
+@login_required
+def subject_marks_list(request, class_pkid):
+    """
+    Lists out all the subjects in a given class so an administrator can upload marks for a given subject.
+    """
+    academic_year = AcademicYear.objects.filter(is_current=True).first()
+
+    terms = Term.objects.filter(academic_year=academic_year)
+    sequences = terms.filter(is_current=True).first().examination_sessions.all()
+    # get the class
+    classes = Class.objects.filter(pkid=class_pkid)
+    if classes.exists():
+        klass = classes.first()
+    else:
+        messages.error(request, "Class Not found.")
+        return redirect(reverse("staff:admin-marks"))
+
+    # get all the courses for this class.
+    subjects = klass.subjects.all()
+
+    template_name = "staff/subject-marks-list.html"
+    context = {
+        "section": "marks",
+        "klass": klass,
+        "subjects": subjects,
+        "sessions": sequences,
+    }
+
+    return render(request, template_name, context)
+
+
+@login_required
+def staff_upload_marks(request, subject_pkid, class_pkid, *args, **kwargs):
+    # Get the subject and all the students associated to thesubject from the database
+
+    subject = Subject.objects.get(pkid=subject_pkid)
+    klass = Class.objects.get(pkid=class_pkid)
+    academic_year = AcademicYear.objects.filter(is_current=True).first()
+
+    # terms = Term.objects.filter(academic_year=academic_year)
+
+    # sequences = terms.filter(is_current=True).first().examination_sessions.all()
+
+    # teacher = request.user.teacher_profile
+    # # Get data for student marks and updates
+    # students = klass.students.all()
+    # # Get all the marks for the given subject, class, and term
+    # term = Term.objects.get(is_current=True)
+    # # get the value for the sequences in the term, (Example: 1st, 2nd)
+    # session_ids = sequences.values_list("pkid", flat=True)
+    # first_seq_id = session_ids.first()
+    # second_seq_id = session_ids.last()
+    # first_session_name = ExaminationSession.objects.get(pkid=first_seq_id)
+    # second_session_name = ExaminationSession.objects.get(pkid=second_seq_id)
+
+    # data = []
+    # for student in students:
+    #     name = student.user.get_fullname
+    #     fmark = Mark.objects.filter(
+    #         student=student, exam_session__pkid=first_seq_id, subject=subject
+    #     ).first()
+    #     lmark = Mark.objects.filter(
+    #         student=student, exam_session__pkid=second_seq_id, subject=subject
+    #     ).first()
+    #     score1 = 0
+    #     score2 = 0
+    #     if not fmark:
+    #         fmark = 0
+    #     else:
+    #         score1 = fmark.score
+    #     if not lmark:
+    #         lmark = 0
+    #     else:
+    #         score2 = lmark.score
+
+    #     obj = {
+    #         "student": student,
+    #         "name": name,
+    #         "fmark": fmark,
+    #         "lmark": lmark,
+    #         "score1": score1,
+    #         "score2": score2,
+    #     }
+    #     data.append(obj)
+
+    # # for term in terms:
+    # #     for ex_session in term.examination_sessions.all():
+    # #         sequences.append(ex_session)
+
+    if request.method == "POST" and request.FILES["marks_file"]:
+        # setting = Setting.objects.all().first()
+        # if not setting.teacher_can_upload:
+        #     messages.error(request, "Can not upload at the moment")
+        #     return redirect(
+        #         reverse(
+        #             "students:marks-upload",
+        #             kwargs={"subject_pkid": subject_pkid, "class_pkid": class_pkid},
+        #         )
+        #     )
+
+        marks_file = request.FILES["marks_file"]
+        subject_name = str(subject.name).lower()
+        class_name = str(klass.class_name).lower()
+        file_name = marks_file.name.lower()
+
+        if subject_name not in file_name:
+            # Handle the error
+            error_message = f"The uploaded file name does not match the subject name '{subject.name}'."
+            messages.error(request, error_message)
+            return redirect(
+                reverse(
+                    "staff:subject-marks-list",
+                    kwargs={"class_pkid": klass.pkid},
+                )
+            )
+
+        if class_name not in file_name:
+            # Handle the error
+            error_message = f"The uploaded file name does not match the class name '{klass.class_name}'."
+            messages.error(request, error_message)
+            return redirect(
+                reverse(
+                    "staff:subject-marks-list",
+                    kwargs={"class_pkid": klass.pkid},
+                )
+            )
+
+        selected_ex_session_id = request.POST.get("selected_ex_session")
+        exam_session = ExaminationSession.objects.filter(pkid=selected_ex_session_id)
+        if exam_session.exists():
+            exam_session = exam_session.first()
+        else:
+            messages.error(request, "Invalid Exam Session")
+            return redirect(
+                reverse(
+                    "staff:subject-marks-list",
+                    kwargs={"class_pkid": klass.pkid},
+                )
+            )
+
+        # decoded_file = marks_file.read().decode('utf-8').splitlines()
+
+        # Get the teacher from the DB
+        # teacher = request.user.teacher_profile
+
+        # Get the subject from the database
+
+        wb = load_workbook(filename=marks_file)
+
+        ws = wb["marks"]
+
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            student_matricule, subject_name, marks = (
+                row[0],
+                row[1],
+                row[2],
+            )
+            print(
+                f"this is the student information student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject.name}"
+            )
+            student = StudentProfile.objects.get(matricule=student_matricule)
+            # Check if a mark already exists for this student and subject
+            mark, created = Mark.objects.get_or_create(
+                student=student, subject=subject, exam_session=exam_session
+            )
+
+            mark.teacher = subject.assigned_to
+
+            # Update the score
+            if not marks:
+                marks = 0
+            mark.score = marks
+            mark.save()
+            print(mark)
+
+        messages.success(
+            request,
+            f"Marks have been updated for the subject: `{subject.name}` by: `{request.user.username}`",
+        )
+        return redirect(reverse("staff:admin-marks"))
+
+    template_name = "students/upload-marks.html"
+    context = {
+        "section": "marks-area",
+        "subject": subject,
+        "klass": klass,
     }
 
     return render(request, template_name, context)

@@ -16,7 +16,7 @@
                     <h3 class="page-title">Classes</h3>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'class-list' %}">Classes</a></li>
-                        <li class="breadcrumb-item active">All Classes</li>
+                        <li class="breadcrumb-item active">Manage Marks</li>
                     </ul>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                     <div class="page-header">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3 class="page-title">List of Classes</h3>
+                                <h3 class="page-title">Select a Target Class</h3>
                             </div>
                             <div class="col-auto text-end float-end ms-auto download-grp">
                                 <!-- <a href="students.html" class="btn btn-outline-gray me-2 active"><i
@@ -64,8 +64,7 @@
                                     <th>Class Master</th>
                                     <th>Class Prefect</th>
                                     <th>Total Enrol</th>
-                                    <th>Manage Subjects</th>
-                                    <th>Actions</th>
+                                    <th class="text-end">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,26 +86,11 @@
                                         <td>{{ class.get_total_template_enrol }}</td>
                                         <td>
                                             <div class="col-auto text-end float-end ms-auto download-grp">
-                                                <a href="{% url 'staff:subjects-assign' pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2"><i
-                                                class="fas fa-plus"></i> Manage Subjects</a>                                           
+                                                <a href="{% url 'staff:subject-marks-list' class_pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2"><i
+                                                class="fas fa-plus"></i> Manage Marks</a>                                           
                                             </div>
                                         </td>
-                                            
-                                        <td class="text-right">
-                                            <div class="actions">
-                                                <a href="{% url 'class-edit' pkid=class.pkid %}" class="btn btn-sm bg-success-light mr-2">
-                                                    <i class="fas fa-pen"></i>
-                                                </a>
-
-                                                
-                                                <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#delete_class_{{class.pkid}}">
-                                                    <!-- <i class="fe fe-trash-2"></i> -->
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                                    
-                                            </div>
-                                        </td>
+                                        
                                     </tr>
 
                                     <div class="modal custom-modal fade" id="delete_class_{{class.pkid}}" role="dialog">

@@ -57,8 +57,8 @@
                 <li class="{% if section == 'settings'  %}active{% endif %}">
                     <a href="{% url 'settings:settings-home' %} " ><i class="fas fa-cog"></i> <span>Settings</span></a>
                 </li>
-                <li class="{% if request.resolver_match.url_name == 'marks'  %}active{% endif %}">
-                    <a href="{% url 'students:marks' %} " ><i class="fas fa-chart-line"></i> <span>Marks</span></a>
+                <li class="{% if request.resolver_match.url_name == 'admin-marks'  %}active{% endif %}">
+                    <a href="{% url 'staff:admin-marks' %} " ><i class="fas fa-chart-line"></i> <span>Marks</span></a>
                 </li>
 
                 <li class="{% if section == 'reports-area'  %}active{% endif %}">

@@ -18,7 +18,7 @@
                 <div class="page-header">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="page-title">Student Academic Recods</h3>
+                            <h3 class="page-title">Student Academic Recods : {{student.user.get_fullname}} - {{student.current_class.get_class_name}}</h3>
                         </div>
                         {% comment %} <div class="col-auto text-end float-end ms-auto download-grp">
                             <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i>
@@ -47,7 +47,10 @@
                                 <th>Teacher</th>
                                 <th>Exam Session</th>
                                 <th>Year</th>
+                                {% if request.user.is_admin %}
+                                
                                 <th>Action</th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
@@ -63,11 +66,13 @@
                                 <td>{{mark.teacher.user.get_fullname}}</td>
                                 <td>{{mark.exam_session.exam_session}}</td>
                                 <td>{{mark.exam_session.term.academic_year}}</td>
+                                {% if request.user.is_admin %}
                                 <td>
                                     <div class="col-auto text-end float-end ms-auto download-grp">
                                         <a href="" data-bs-toggle="modal" data-bs-target="#edit-mark-{{mark.pkid}}" style="color: white;" class="btn btn-outline-primary me-2">Edit Record</a>                                           
                                     </div>
                                 </td>
+                                {% endif %}
                                 
                             </tr>
                             <div class="modal custom-modal fade" id="edit-mark-{{mark.pkid}}" role="dialog">

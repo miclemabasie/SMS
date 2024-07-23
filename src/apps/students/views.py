@@ -133,7 +133,6 @@ def add_student_view(request):
         parent_email = request.POST.get("parent-email")
         parent_address = request.POST.get("parent-address")
         parent_role = request.POST.get("parent-role")
-
         st_class = request.POST.get("student_class")
 
         # Check if student pin is valid
@@ -366,6 +365,7 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
     terms = Term.objects.filter(academic_year=academic_year)
 
     sequences = terms.filter(is_current=True).first().examination_sessions.all()
+    
     teacher = request.user.teacher_profile
     # Get data for student marks and updates
     students = klass.students.all()
@@ -414,7 +414,7 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
 
     if request.method == "POST" and request.FILES["marks_file"]:
         setting = Setting.objects.all().first()
-        if not setting.teacher_can_upload:
+        if setting.teacher_can_upload == False:
             messages.error(request, "Can not upload at the moment")
             return redirect(
                 reverse(
@@ -441,7 +441,7 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
         # decoded_file = marks_file.read().decode('utf-8').splitlines()
 
         # Get the teacher from the DB
-        teacher = request.user.teacher_profile
+        # teacher = request.user.teacher_profile
 
         # Get the subject from the database
 
@@ -464,7 +464,7 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
                 student=student, subject=subject, exam_session=exam_session
             )
 
-            mark.teacher = teacher
+            mark.teacher = subject.assigned_to
 
             # Update the score
             if not marks:

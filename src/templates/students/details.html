@@ -66,6 +66,8 @@
                                     </div>
                                 </div>
                             </div>
+                            {% if request.user.is_admin %}
+                            
                             <div class="col-lg-4 col-md-4 d-flex align-items-center">
                                 <div class="follow-btn-group">
                                     <a href="{% url 'students:student-edit' pkid=student.pkid matricule=student.matricule%}">
@@ -93,6 +95,8 @@
                                     <!-- <button type="submit" class="btn btn-info message-btns">Message</button>  -->
                                 </div>
                             </div>
+
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -195,14 +199,16 @@
                         <a href="{% url 'students:student-academic-record' pkid=student.pkid matricule=student.matricule%}">
                             <button class="btn btn-success">View Academic Record </button>
                         </a>
-
-                        <div class="form-group mb-4 text-end float-right">
-                            <div class="settings-btns">
-                                <a href="" data-bs-toggle="modal" data-bs-target="#generate_single_report_card">
-                                    <button class="btn ribbon-secondary text-white">Generate Student Report</button>
-                                </a>
+                        {% if request.user.is_admin %}
+                        
+                            <div class="form-group mb-4 text-end float-right">
+                                <div class="settings-btns">
+                                    <a href="" data-bs-toggle="modal" data-bs-target="#generate_single_report_card">
+                                        <button class="btn ribbon-secondary text-white">Generate Student Report</button>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
 
                     </div>
  

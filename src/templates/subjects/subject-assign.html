@@ -35,23 +35,30 @@
                         <div class="col-sm-6">
                             <h4 class="my-1 mb-4">Unselected Subjects</h4>
                             <ul class="list-group vertical-scroll scroll-demo" id="handle-list-1">
+                                {% if unselected_subjects %}
                                 
-                                {% for subject in unselected_subjects %}
-                                    
-                                    <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-warning" >+</span>{{subject.code}} - {{subject.name}}</li>
-                                {% endfor %}
-                                    
+                                    {% for subject in unselected_subjects %}
+                                        
+                                        <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-warning" >+</span>{{subject.code}} - {{subject.name}}</li>
+                                    {% endfor %}
+                                {% else %}
+                                    <h5>No unassigned subjects available.</h5>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="col-sm-6">
                             <h4 class="my-1 mb-4">Selected Subjects</h4>
                             <ul class="list-group vertical-scroll scroll-demo" id="handle-list-2">
+                                {% if selected_subjects %}
                                 
-                                {% for subject in selected_subjects %}
-                                    
-                                    <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-success">+</span>{{subject.code}} - {{subject.name}}</li>
-                                {% endfor %}
-                                    
+                                    {% for subject in selected_subjects %}
+                                        
+                                        <li data-pkid="{{subject.pkid}}" class="list-group-item py-3"><span class="handle px-4 py-2 bg-success">+</span>{{subject.code}} - {{subject.name}}</li>
+                                    {% endfor %}
+                                        
+                                {% else %}
+                                    <h5>No assigned subjects to this class.</h5>
+                                {% endif %}
                             </ul>
 
                             <button id="updateButton" class="btn btn-primary align-self-end mt-4 form-control text-white">Update</button>

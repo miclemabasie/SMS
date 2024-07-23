@@ -310,12 +310,16 @@ def add_class_pass_avg(request):
 def toggle_teacher_can_upload_marks_permission(request):
     if request.method == "POST":
         permission_to_upload_status = request.POST.get("status")
+
         setting = Setting.objects.all().first()
         print(setting.teacher_can_upload)
         setting.teacher_can_upload = permission_to_upload_status
         setting.save()
-        print(setting.teacher_can_upload)
-        return JsonResponse({"status": 1}, safe=False)
+        if 1 == int(permission_to_upload_status):
+            status = 1
+        else:
+            status = 0
+        return JsonResponse({"status": status}, safe=False)
     template_name = "settings/permissions.html"
     context = {
         "section": "settings",
