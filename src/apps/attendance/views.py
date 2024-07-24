@@ -209,13 +209,14 @@ def take_daily_attendance(request, class_pkid):
     """
     GET: send a list of all the students in the class.
     """
-    classes = Class.objects.all()
+    classes = Class.objects.filter(pkid=class_pkid)
     if classes.exists():
         klass = classes.first()
     else:
         return redirect(reverse("attendance:attendance_class_list"))
 
     students = klass.students.all()
+    print("this are the students", students)
     users = []
     for student in students:
         users.append(student.user)
@@ -260,3 +261,71 @@ def save_daily_attendance(request):
             print(f"Updated attendance for {user} on {today}")
 
     return HttpResponse("OK")
+
+
+def view_daily_attendance(request, class_pkid):
+    date = request.GET.get("date")
+    klass = get_object_or_404(Class, pkid=class_pkid)
+    students = klass.students.all()
+
+    # If no date is provided, default to today
+    if date:
+        date = timezone.datetime.strptime(date, "%Y-%m-%d").date()
+    else:
+        date = timezone.now().date()
+
+    attendance_records = DailyAttendance.objects.filter(
+        user__in=[student.user for student in students], day__date=date
+    )
+
+    # Create a dictionary to map student IDs to their attendance status
+    attendance_dict = {att.user.pk: att.is_present for att in attendance_records}
+    attendance_dict_pkids = {att.user.pk: att.pkid for att in attendance_records}
+
+    context = {
+        "klass": klass,
+        "students": students,
+        "attendance_dict": attendance_dict,
+        "attendance_dict_pkids": attendance_dict_pkids,
+        "date": date,
+    }
+
+    print(context)
+
+    return render(request, "attendance/view-daily-attendance.html", context)
+
+
+def edit_daily_attendance(request, class_pkid, attendance_pkid):
+    if request.user.is_admin == False:
+        messages.error(request, "Invalid request.")
+        return redirect(
+            reverse(
+                "attendance:view_daily_attendance",
+                kwargs={"class_pkid": class_pkid},
+            )
+        )
+
+    if request.method == "POST":
+        status = request.POST.get("status")
+        try:
+            status = int(status)
+        except:
+            messages.error(request, "Invalid request")
+            return redirect(
+                reverse(
+                    "attendance:view_daily_attendance",
+                    kwargs={"class_pkid": class_pkid},
+                )
+            )
+
+        attendance = DailyAttendance.objects.get(pkid=attendance_pkid)
+        attendance.is_present = status
+        attendance.save()
+
+        messages.success(request, "Attendance udpated.")
+        return redirect(
+            reverse(
+                "attendance:view_daily_attendance",
+                kwargs={"class_pkid": class_pkid},
+            )
+        )

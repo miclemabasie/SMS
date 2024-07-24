@@ -62,7 +62,6 @@
                                     <th>Class Prefect</th>
                                     <th>Total Enrol</th>
                                     <th>Manage Subjects</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,26 +83,13 @@
                                         <td>{{ class.get_total_template_enrol }}</td>
                                         <td>
                                             <div class="col-auto text-end float-end ms-auto download-grp">
-                                                <a href="{% url 'attendance:daily_attendance' class_pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2"><i
-                                                class="fas fa-plus"></i> Take Attendance</a>                                           
+                                                <a href="{% url 'attendance:daily_attendance' class_pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2"> Take Attendance</a>                                           
                                             </div>
-                                        </td>
-                                            
-                                        <td class="text-right">
-                                            <div class="actions">
-                                                <a href="{% url 'class-edit' pkid=class.pkid %}" class="btn btn-sm bg-success-light mr-2">
-                                                    <i class="fas fa-pen"></i>
-                                                </a>
 
-                                                
-                                                <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#delete_class_{{class.pkid}}">
-                                                    <!-- <i class="fe fe-trash-2"></i> -->
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                                    
+                                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                                <a href="{% url 'attendance:view_daily_attendance' class_pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2"> View Attendance</a>                                           
                                             </div>
-                                        </td>
+                                        </td>                                        
                                     </tr>
 
                                 {% endfor %}

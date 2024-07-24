@@ -30,4 +30,14 @@ urlpatterns = [
         views.save_daily_attendance,
         name="save_daily_attendance",
     ),
+    path(
+        "view-daily-attendacne/<int:class_pkid>/",
+        views.view_daily_attendance,
+        name="view_daily_attendance",
+    ),
+    path(
+        "edit-daily-attendacne/<int:class_pkid>/<int:attendance_pkid>/",
+        views.edit_daily_attendance,
+        name="edit_daily_attendance",
+    ),
 ]

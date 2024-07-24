@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/icons/flags/flags.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock stylelinks %}
+
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">View Attendance</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="students.html">Attendance</a></li>
+                    <li class="breadcrumb-item active">View</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="form-title"><span>Class: {{ klass.grade_level }}-{{ klass.class_name }} | Date: {{ date }}</span></h5>
+                    <!-- Date Selector Form -->
+                    <div class="text-center mb-4">
+                        <p class="h5">Select a Date to View Attendance</p>
+                        <form method="GET" action="{% url 'attendance:view_daily_attendance' klass.pkid %}" class="d-flex justify-content-center">
+                            <div class="form-group mx-3" style="width: 50%;">
+                                <div class="d-flex">
+                                    <input type="date" class="form-control mr-2" id="date" name="date" value="{{ date }}">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+
+                    <!-- Attendance Table -->
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Name of Student</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if students %}
+                                    {% if attendance_dict %}
+                                        {% for student in students %}
+                                            <tr>
+                                                <td>{{ student.matricule }}</td>
+                                                <td>{{ student.user.get_fullname }}</td>
+                                                <td>{{ date }}</td>
+                                                <td>
+                                                    {% if attendance_dict|get_item:student.user.pk %}
+                                                        <span class="badge bg-success">Present</span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger">Absent</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="" data-bs-toggle="modal" data-bs-target="#edit_attendance_{{student.user.pkid}}" class="btn btn-warning btn-sm">Edit</a>
+                                                </td>
+                                            </tr>
+
+                                            {% comment %} Modal to upload student marks {% endcomment %}
+                                            <div class="modal custom-modal fade" id="edit_attendance_{{student.user.pkid}}" role="dialog">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body">
+                                                            <div class="form-header">
+                                                                <h3>Edit Attendance</h3>
+                                                            </div>
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <form action="{% url 'attendance:edit_daily_attendance' class_pkid=klass.pkid attendance_pkid=attendance_dict_pkids|get_attendance_id:student.user.pk %}" method="post" enctype="multipart/form-data">
+                                                                        {% csrf_token %}
+                                                                        <div class="row">
+                                                                            <div class="col-12">
+                                                                                <h5 class="form-title"><span>{{student.user.get_fullname}}
+                                                                                </h5>
+                                                                            </div>
+                                                                            <div class="col-12">
+                                                                                <div class="form-group local-forms">
+                                                                                    <label>Exam Session <span class="login-danger">*</span></label>
+                                                                                    <select class="form-control" name="status" required>
+                                                                                                          
+                                                                                            <option value="1">Present</option>
+                                                                                            <option value="0">Absent</option>
+                                                                                        
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            
+                                                                            <div class="col-12 row">
+                                                                                <div class="student-submit col-6">
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-primary">Submit</button>
+                                                                                </div>
+                                                                                <div class="student-submit col-6 ml-5">
+                                                                                    <a href="" data-bs-dismiss="modal"
+                                                                                        class="btn btn-danger">Cancel</a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">No attendance information for this date.</td>
+                                        </tr>
+                                    {% endif %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No students found in this class.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
