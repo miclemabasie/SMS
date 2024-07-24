@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/icons/flags/flags.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock stylelinks %}
+
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Take Attendance</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="students.html">Attendance</a></li>
+                    <li class="breadcrumb-item active">Add</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="form-title"><span>Class: {{ klass.grade_level }}-{{ klass.class_name }}</span></h5>
+                        </div>
+                        <div class="col-12">
+                            <h5 class="form-title"><span>Students</span></h5>
+                        </div>
+                        <div class="card-footer">
+                            <div class="form-group" id="student_data">
+                                <div class='row'>
+                                    {% for student in students %}
+                                        <div class='col-lg-3'>
+                                            <div class='form-check custom-control custom-checkbox'>
+                                                <input type='checkbox' class='custom-control-input' checked='checked' name='student_data[]' value="{{ student.pkid }}" id='checkbox{{ student.pkid }}' />
+                                                <label for='checkbox{{ student.pkid }}' class='custom-control-label'>{{ student.get_fullname }}</label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class='form-group'>
+                                    <button id='save_attendance' class='btn btn-success' type='button'>Save Attendance</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripttags %}
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '#save_attendance', function () {
+            $(this).attr("disabled","disabled");
+            $(this).text("Saving Attendance Data...");
+            var student_data = $("input[name='student_data[]']").map(function () {
+                if ($(this).is(":checked")){
+                    return {'id':$(this).val(), 'status': 1};
+                }
+                return {'id':$(this).val(), 'status': 0};
+            }).get();
+
+            student_data = JSON.stringify(student_data);
+            console.log(student_data)
+            $.ajax({
+                url: "{% url 'attendance:save_daily_attendance' %}",
+                type: 'POST',
+                data: {
+                    student_ids: student_data,
+                    class_id: "{{ klass.pkid }}",
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+            }).done(function (response) {
+                if (response == 'OK'){
+                    alert("Saved");
+                }else{
+                    alert("Error. Please try again");
+                }
+                location.reload();
+            }).fail(function () {
+                alert("Error in saving attendance");
+            });
+        });
+    });
+</script>
+{% endblock scripttags %}

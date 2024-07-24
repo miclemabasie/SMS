@@ -78,7 +78,9 @@ class ClassAcademicRecord(TimeStampedUUIDModel):
     term = models.ForeignKey(
         Term, related_name="classes_academic_records", on_delete=models.CASCADE
     )
-    class_avg = models.DecimalField(max_digits=5, decimal_places=2)
+    class_avg = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, null=True
+    )
 
     class Meta:
         unique_together = ("klass", "term")

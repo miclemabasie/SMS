@@ -15,4 +15,19 @@ urlpatterns = [
         name="get_student_attendance",
     ),
     path("update_attendance", views.update_attendance, name="update_attendance"),
+    path(
+        "attendance-class-list/",
+        views.attendance_class_list_view,
+        name="attendance_class_list",
+    ),
+    path(
+        "take-daily-attendance/<int:class_pkid>/",
+        views.take_daily_attendance,
+        name="daily_attendance",
+    ),
+    path(
+        "save-daily-attendance",
+        views.save_daily_attendance,
+        name="save_daily_attendance",
+    ),
 ]

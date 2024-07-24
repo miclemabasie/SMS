@@ -7,7 +7,12 @@ from apps.students.models import StudentProfile, Subject, TeacherProfile, Class
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
-from .models import Attendance
+from .models import Attendance, DailyAttendance
+from django.utils import timezone
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 @login_required
@@ -186,3 +191,72 @@ def get_student_attendance(request):
 
 def update_attendance(request):
     HttpResponse("Ok")
+
+
+def attendance_class_list_view(request):
+    classes = Class.objects.all()
+
+    template_name = "attendance/attendance-class-list.html"
+    context = {
+        "section": "attendance",
+        "classes": classes,
+    }
+
+    return render(request, template_name, context)
+
+
+def take_daily_attendance(request, class_pkid):
+    """
+    GET: send a list of all the students in the class.
+    """
+    classes = Class.objects.all()
+    if classes.exists():
+        klass = classes.first()
+    else:
+        return redirect(reverse("attendance:attendance_class_list"))
+
+    students = klass.students.all()
+    users = []
+    for student in students:
+        users.append(student.user)
+
+    template_name = "attendance/take-daily-attendance.html"
+    context = {
+        "students": users,
+        "klass": klass,
+    }
+
+    return render(request, template_name, context)
+
+
+@csrf_exempt
+def save_daily_attendance(request):
+    admin_user = request.user
+    if not admin_user.is_admin:
+        messages.error(request, "Invalid Operation for this user account.")
+        return redirect("users:user-login")
+    else:
+        admin_user = admin_user.admin_profile
+
+    student_data = request.POST.get("student_ids")
+    students = json.loads(student_data)
+
+    for student_dict in students:
+        user = get_object_or_404(User, pkid=student_dict.get("id"))
+        status = student_dict["status"]
+
+        # Get today's date without time component
+        today = timezone.now().date()
+
+        # Check if an attendance record for today already exists
+        attendance, created = DailyAttendance.objects.update_or_create(
+            user=user,
+            day__date=today,
+            defaults={"is_present": status, "taken_by": admin_user},
+        )
+        if created:
+            print(f"Created new attendance for {user} on {today}")
+        else:
+            print(f"Updated attendance for {user} on {today}")
+
+    return HttpResponse("OK")

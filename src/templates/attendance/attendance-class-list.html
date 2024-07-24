@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block stylelinks %}
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
+{% endblock stylelinks %}
+
+
+{% block content %}
+<div class="content container-fluid">
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">Classes</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'class-list' %}">Classes</a></li>
+                        <li class="breadcrumb-item active">Attendance Tracking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table comman-shadow">
+                <div class="card-body">
+
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="page-title">List of Classes</h3>
+                            </div>
+                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                <!-- <a href="students.html" class="btn btn-outline-gray me-2 active"><i
+                                        class="feather-list"></i></a>
+                                <a href="students-grid.html" class="btn btn-outline-gray me-2"><i
+                                        class="feather-grid"></i></a> -->
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table
+                            class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
+                            <thead class="student-thread">
+                                <tr>
+                                    <th>
+                                        <div class="form-check check-tables">
+                                            <input class="form-check-input" type="checkbox"
+                                                value="something">
+                                        </div>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Grade Level</th>
+                                    <th>Class Name</th>
+                                    <th>Class Master</th>
+                                    <th>Class Prefect</th>
+                                    <th>Total Enrol</th>
+                                    <th>Manage Subjects</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for class in classes %}                                    
+                                    <tr>
+                                        <td>
+                                            <div class="form-check check-tables">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="something">
+                                            </div>
+                                        </td>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{class.grade_level}}</td>
+                                        
+                                        <td>{{class.class_name}}</td>
+                                        <td>{{ class.class_master }}</td>
+                                        <td>{{ class.class_prefect }}</td>
+                                        <td>{{ class.get_total_template_enrol }}</td>
+                                        <td>
+                                            <div class="col-auto text-end float-end ms-auto download-grp">
+                                                <a href="{% url 'attendance:daily_attendance' class_pkid=class.pkid %}" style="color: white;" class="btn btn-outline-primary me-2"><i
+                                                class="fas fa-plus"></i> Take Attendance</a>                                           
+                                            </div>
+                                        </td>
+                                            
+                                        <td class="text-right">
+                                            <div class="actions">
+                                                <a href="{% url 'class-edit' pkid=class.pkid %}" class="btn btn-sm bg-success-light mr-2">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+
+                                                
+                                                <a class="btn btn-sm bg-danger-light" href="#" data-bs-toggle="modal"
+                                                    data-bs-target="#delete_class_{{class.pkid}}">
+                                                    <!-- <i class="fe fe-trash-2"></i> -->
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                    
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+{% endblock content %}
+    
+
+
+{% block scripttags %}
+<script src="{% static 'assets/plugins/datatables/datatables.min.js' %}"></script>
+{% endblock scripttags %}
+    
+    
