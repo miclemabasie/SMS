@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Using Celery with Django</h1>
+    {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning {% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+        <h1>{{ message }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<form method="post" action="{% url 'form' %}">
+    {% csrf_token %}
+    <p>
+
+        <input type="Email" placeholder="Enter Email" name="email">
+    </p>
+    <p>
+
+        <textarea name="message" id=""></textarea>
+    </p>
+
+    <input type="submit">
+
+</form>
+</body>
+</html>

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from apps.teachers import views
 from django.contrib.auth.views import PasswordResetCompleteView
-
+from apps.scelery.views import form_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,6 +31,8 @@ urlpatterns = [
     ),
     path("attendance/", include("apps.attendance.urls", namespace="attendance")),
     path("leave/", include("apps.leave.urls", namespace="leave")),
+    # testing
+    path("form/", form_view, name="form"),
 ]
 
 if settings.DEBUG:

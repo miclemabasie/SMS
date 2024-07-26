@@ -40,7 +40,7 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-LOGIN_URL = "accounts/login/"
+LOGIN_URL = "/accounts/login/"
 
 THRID_PARTY_APPS = [
     # 'allauth',
@@ -67,6 +67,7 @@ LOCAL_APPS = [
     "apps.announcements.apps.AnnouncementsConfig",
     "apps.attendance.apps.AttendanceConfig",
     "apps.leave.apps.LeaveConfig",
+    "apps.scelery.apps.SceleryConfig",
 ]
 
 
@@ -177,3 +178,6 @@ logging.config.dictConfig(
         },
     }
 )
+
+
+CELERY_BROKER_URL = "redis://localhost:6379/0"
