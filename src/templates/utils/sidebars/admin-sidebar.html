@@ -109,6 +109,10 @@
                         <li><a href="{% url 'staff:list-admin' %}" class="{% if request.resolver_match.url_name == 'list-admin'  %}active{% endif %}">List Admin</a></li>
                     </ul>
                 </li>
+
+                <li class="{% if request.resolver_match.url_name == 'admin-marks'  %}active{% endif %}">
+                    <a href="{% url 'reports:view-reports' %} " ><i class="fas fa-chart-line"></i> <span>See reports</span></a>
+                </li>
               
               
             </ul>

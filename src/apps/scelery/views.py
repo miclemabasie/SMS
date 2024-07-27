@@ -1,29 +1,33 @@
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.core.mail import send_mail
-from django.conf import settings
-import time
 from django.contrib import messages
 from apps.scelery.tasks import send_feedback_mail
 
-# Create your views here.
-
 
 def form_view(request):
-
     if request.method == "POST":
         # get the name and message from the form
         email = request.POST.get("email")
-        message = request.POST.get("message")
+        name = request.POST.get("name")
+
         # send a message to the user
-        subject = "Application for Internship"
+        subject = "Welcome to Grader!"
         from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = "test@mail.com"
-        send_feedback_mail.delay(subject, message, from_email, recipient_list)
+        recipient_list = [email]
+
+        # render the HTML email template with context
+        context = {"name": name}
+        html_content = render_to_string("emails/testing.html", context)
+
+        # call the Celery task
+        send_feedback_mail.delay(subject, "", from_email, recipient_list, html_content)
+
         messages.success(request, "Success!")
         return redirect(reverse("form"))
 
     template_name = "form.html"
     context = {"title": "Testing out celery."}
-
     return render(request, template_name, context)

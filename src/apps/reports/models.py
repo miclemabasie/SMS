@@ -129,3 +129,10 @@ class AcademicRecord(TimeStampedUUIDModel):
             exam_term=term,
         )
         return students
+
+
+class ReportGenerationStatus(models.Model):
+    task_id = models.CharField(max_length=255)
+    status = models.CharField(max_length=50)
+    file_path = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

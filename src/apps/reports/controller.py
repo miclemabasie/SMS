@@ -11,6 +11,7 @@ from apps.reports.student_reporting import ClassPerformanceReport
 from apps.students.models import Class, StudentProfile
 from apps.terms.models import AcademicYear, ExaminationSession, Term
 from apps.settings.models import Setting
+from .tasks import generate_and_store_class_report_cards
 
 
 def generate_pdf(request):
@@ -34,131 +35,157 @@ def generate_pdf(request):
     return context
 
 
+# @login_required
+# def create_report_cards(request):
+#     if request.method == "POST":
+#         selected_class_id = request.POST.get("selected_class_id")
+#         selected_term_id = request.POST.get("selected_term_id")
+
+#         performance_obj = ClassPerformanceReport(selected_class_id, selected_term_id)
+
+#         setup = performance_obj.setup()
+#         if setup:
+#             messages.error(request, setup)
+#             return redirect(reverse("reports:reports"))
+
+#         # check if class has any subject attached to it, if not, return.
+#         if len(performance_obj.sub_dicts) < 1:
+#             messages.warning(request, "No subjects associated with the given class.")
+#             return redirect(reverse("reports:reports"))
+
+#         if performance_obj.get_total_students_per_class() < 1:
+#             messages.warning(request, "No students for the given class.")
+#             return redirect(reverse("reports:reports"))
+
+#         # Get all students for the class
+#         students = performance_obj.get_all_students_for_current_class()
+
+#         academic_year = AcademicYear.objects.filter(is_current=True).first()
+#         term = performance_obj.get_term()
+#         sessions = ExaminationSession.objects.filter(term=term)
+
+#         # Initialize a PdfMerger object to merge all PDFs
+#         pdf_merger = PdfMerger()
+
+#         class_performance_data = performance_obj.generate_performacne_rank_list()
+#         class_performance = class_performance_data["class_performance"]
+
+#         class_avg = performance_obj.get_class_avg()
+#         setting = Setting.objects.all().first()
+
+#         for student in students:
+#             student_marks = performance_obj.generate_student_report_data(student)
+#             student_ranking = performance_obj.get_student_rank(
+#                 student, class_performance
+#             )
+
+#             pdf_data = {
+#                 "marks": student_marks["data"],
+#                 "student_data": student_marks,
+#                 "term": term,
+#                 "term_name": term.term.upper(),
+#                 "sessions": sessions,
+#                 "year": academic_year,
+#                 "student_rank": student_ranking,
+#                 "class_total": len(students),
+#                 "class_avg": class_avg,
+#                 "setting": setting,
+#                 "student": student,
+#                 "class": performance_obj.get_class(),
+#                 "first_term_avg": "",
+#                 "second_term_avg": "",
+#                 "annual_avg": "8",
+#                 "promotion_decision": "Repeat",
+#             }
+#             # check if the term is first term
+#             if performance_obj.is_first_term():
+#                 template_path = "reports/first_term_report_card.html"
+#             elif performance_obj.is_second_term():
+#                 # get the first term report avg and attatch the report card data
+#                 first_term_avg = performance_obj.get_first_term_report_data(student)
+#                 pdf_data["first_term_avg"] = first_term_avg
+#                 template_path = "reports/second_term_report_card.html"
+#             elif performance_obj.is_third_term():
+#                 # get the data for first and second term and attach to the report
+#                 first_term_avg = performance_obj.get_first_term_report_data(student)
+#                 second_term_avg = performance_obj.get_second_term_report_date(student)
+#                 annual_avg = performance_obj.get_annual_avg(
+#                     student_marks["term_avg"], student
+#                 )
+#                 promotion_decision = performance_obj.get_promotion_decision(
+#                     student, annual_avg
+#                 )
+#                 pdf_data["first_term_avg"] = first_term_avg
+#                 pdf_data["second_term_avg"] = second_term_avg
+#                 pdf_data["annual_avg"] = annual_avg
+#                 pdf_data["promotion_decision"] = promotion_decision
+#                 template_path = "reports/third_term_report_card.html"
+
+#             context = {"data": pdf_data}
+#             template = get_template(template_path)
+#             html = template.render(context)
+
+#             # Generate PDF for current student
+#             pdf_file = BytesIO()
+#             HTML(string=html, base_url="base_url").write_pdf(pdf_file)
+#             pdf_file.seek(0)
+
+#             # Append current student's PDF to the PdfMerger object
+#             pdf_merger.append(pdf_file)
+
+#             # Reset pdf_file to write a new PDF for the next student
+#             pdf_file.close()
+
+#             performance_obj.create_student_academic_records(
+#                 student, student_marks, student_ranking
+#             )
+
+#         # Finalize the merged PDF and serve as the response
+#         performance_obj.set_highest_subject_score_to_class()
+#         performance_obj.create_class_report_data(
+#             performance_obj.get_class(), term, class_avg
+#         )
+#         merged_pdf_file = BytesIO()
+#         pdf_merger.write(merged_pdf_file)
+#         merged_pdf_file.seek(0)
+
+#         response = HttpResponse(content_type="application/pdf")
+#         response["Content-Disposition"] = (
+#             f'attachment; filename="{performance_obj.generate_file_name()}-report-cards.pdf"'
+#         )
+#         response.write(merged_pdf_file.getvalue())
+#         merged_pdf_file.close()
+
+#         return response
+
+#     else:
+#         return redirect("reports:reports")
+
+
 @login_required
 def create_report_cards(request):
     if request.method == "POST":
         selected_class_id = request.POST.get("selected_class_id")
         selected_term_id = request.POST.get("selected_term_id")
 
-        performance_obj = ClassPerformanceReport(selected_class_id, selected_term_id)
-
-        setup = performance_obj.setup()
-        if setup:
-            messages.error(request, setup)
+        if not selected_class_id or not selected_term_id:
+            messages.error(request, "Invalid class or term ID.")
             return redirect(reverse("reports:reports"))
 
-        # check if class has any subject attached to it, if not, return.
-        if len(performance_obj.sub_dicts) < 1:
-            messages.warning(request, "No subjects associated with the given class.")
-            return redirect(reverse("reports:reports"))
-
-        if performance_obj.get_total_students_per_class() < 1:
-            messages.warning(request, "No students for the given class.")
-            return redirect(reverse("reports:reports"))
-
-        # Get all students for the class
-        students = performance_obj.get_all_students_for_current_class()
-
-        academic_year = AcademicYear.objects.filter(is_current=True).first()
-        term = performance_obj.get_term()
-        sessions = ExaminationSession.objects.filter(term=term)
-
-        # Initialize a PdfMerger object to merge all PDFs
-        pdf_merger = PdfMerger()
-
-        class_performance_data = performance_obj.generate_performacne_rank_list()
-        class_performance = class_performance_data["class_performance"]
-
-        class_avg = performance_obj.get_class_avg()
-        setting = Setting.objects.all().first()
-
-        for student in students:
-            student_marks = performance_obj.generate_student_report_data(student)
-            student_ranking = performance_obj.get_student_rank(
-                student, class_performance
-            )
-
-            pdf_data = {
-                "marks": student_marks["data"],
-                "student_data": student_marks,
-                "term": term,
-                "term_name": term.term.upper(),
-                "sessions": sessions,
-                "year": academic_year,
-                "student_rank": student_ranking,
-                "class_total": len(students),
-                "class_avg": class_avg,
-                "setting": setting,
-                "student": student,
-                "class": performance_obj.get_class(),
-                "first_term_avg": "",
-                "second_term_avg": "",
-                "annual_avg": "8",
-                "promotion_decision": "Repeat",
-            }
-            # check if the term is first term
-            if performance_obj.is_first_term():
-                template_path = "reports/first_term_report_card.html"
-            elif performance_obj.is_second_term():
-                # get the first term report avg and attatch the report card data
-                first_term_avg = performance_obj.get_first_term_report_data(student)
-                pdf_data["first_term_avg"] = first_term_avg
-                template_path = "reports/second_term_report_card.html"
-            elif performance_obj.is_third_term():
-                # get the data for first and second term and attach to the report
-                first_term_avg = performance_obj.get_first_term_report_data(student)
-                second_term_avg = performance_obj.get_second_term_report_date(student)
-                annual_avg = performance_obj.get_annual_avg(
-                    student_marks["term_avg"], student
-                )
-                promotion_decision = performance_obj.get_promotion_decision(
-                    student, annual_avg
-                )
-                pdf_data["first_term_avg"] = first_term_avg
-                pdf_data["second_term_avg"] = second_term_avg
-                pdf_data["annual_avg"] = annual_avg
-                pdf_data["promotion_decision"] = promotion_decision
-                template_path = "reports/third_term_report_card.html"
-
-            context = {"data": pdf_data}
-            template = get_template(template_path)
-            html = template.render(context)
-
-            # Generate PDF for current student
-            pdf_file = BytesIO()
-            HTML(string=html, base_url="base_url").write_pdf(pdf_file)
-            pdf_file.seek(0)
-
-            # Append current student's PDF to the PdfMerger object
-            pdf_merger.append(pdf_file)
-
-            # Reset pdf_file to write a new PDF for the next student
-            pdf_file.close()
-
-            performance_obj.create_student_academic_records(
-                student, student_marks, student_ranking
-            )
-
-        # Finalize the merged PDF and serve as the response
-        performance_obj.set_highest_subject_score_to_class()
-        performance_obj.create_class_report_data(
-            performance_obj.get_class(), term, class_avg
+        # Trigger Celery task
+        task = generate_and_store_class_report_cards.delay(
+            selected_class_id, selected_term_id
         )
-        merged_pdf_file = BytesIO()
-        pdf_merger.write(merged_pdf_file)
-        merged_pdf_file.seek(0)
+        # Optionally, store the task ID and status
+        ReportGenerationStatus.objects.create(task_id=task.id, status='Started')
 
-        response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = (
-            f'attachment; filename="{performance_obj.generate_file_name()}-report-cards.pdf"'
+        messages.success(
+            request,
+            "Report generation in progress. You will be notified when it's ready.",
         )
-        response.write(merged_pdf_file.getvalue())
-        merged_pdf_file.close()
+        return redirect(reverse("reports:reports"))
 
-        return response
-
-    else:
-        return redirect("reports:reports")
+    return redirect(reverse("reports:reports"))
 
 
 @login_required
@@ -305,3 +332,40 @@ def create_one_report_card(request, student_pkid, *args, **kwargs):
 
     else:
         return redirect(reverse("reports:reports"))
+
+
+from django.shortcuts import HttpResponse
+from django.core.files.storage import default_storage
+
+
+def download_report(request, file_name):
+    file_path = f"reports/{file_name}"
+    if default_storage.exists(file_path):
+        file = default_storage.open(file_path)
+        response = HttpResponse(file.read(), content_type="application/pdf")
+        response["Content-Disposition"] = f'attachment; filename="{file_name}"'
+        return response
+    else:
+        return HttpResponse("File not found", status=404)
+
+
+from django.shortcuts import render
+from django.core.files.storage import default_storage
+from .models import ReportGenerationStatus  # Example model to track report generation
+
+
+def view_reports(request):
+    # Fetch all reports from the storage
+    report_files = [
+        f for f in default_storage.listdir("reports")[1]
+    ]  # Adjust to list only files
+
+    # Optionally, fetch report generation statuses if using a status model
+    report_statuses = ReportGenerationStatus.objects.all()
+
+    context = {
+        "report_files": report_files,
+        "report_statuses": report_statuses,
+    }
+
+    return render(request, "reports/download-reports.html", context)
