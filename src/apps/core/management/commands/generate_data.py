@@ -1,18 +1,19 @@
-from typing import Any
-from django.core.management.base import BaseCommand, CommandParser
 import os
+import random
+from datetime import date
+from typing import Any
+
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand, CommandParser
 from django.utils import timezone
 from faker import Faker
-from django.contrib.auth import get_user_model
-from apps.students.models import StudentProfile, Class, Attendance, Subject, Mark, TeacherProfile
-from apps.staff.models import AdminProfile
-from apps.profiles.models import ParentProfile
-from apps.terms.models import AcademicYear, Term, ExaminationSession
-from datetime import date
 from termcolor import colored
 
-
-import random
+from apps.profiles.models import ParentProfile
+from apps.staff.models import AdminProfile
+from apps.students.models import (Attendance, Class, Mark, StudentProfile,
+                                  Subject, TeacherProfile)
+from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 User = get_user_model()
 

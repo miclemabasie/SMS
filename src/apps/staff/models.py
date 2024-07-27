@@ -1,15 +1,15 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from django.forms import BooleanField
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
+
 from apps.common.models import TimeStampedUUIDModel
-from django.core.validators import MinValueValidator, MaxValueValidator
+from apps.common.utils import auto_create_matricule
 from apps.profiles.models import Gender
 from apps.students.models import Subject
-
-from apps.common.utils import auto_create_matricule
 
 User = get_user_model()
 

@@ -1,16 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from apps.students.models import StudentProfile, Subject, TeacherProfile, Class
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 import json
-from .models import Attendance, DailyAttendance
-from django.utils import timezone
 
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+
+from apps.students.models import Class, StudentProfile, Subject, TeacherProfile
+
+from .models import Attendance, DailyAttendance
 
 User = get_user_model()
 

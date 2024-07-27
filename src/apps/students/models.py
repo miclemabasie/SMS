@@ -1,23 +1,19 @@
 import uuid
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-from apps.common.models import TimeStampedUUIDModel
-from apps.profiles.models import Gender, ParentProfile
+
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.db.models import Count, Sum
+from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
-from django.utils.translation import gettext_lazy as _
+
 from apps.common.models import TimeStampedUUIDModel
-from django.db.models import Sum, Count
-from apps.settings.models import Setting
-from apps.terms.models import AcademicYear, Term
-
-# from apps.teachers.models import TeacherProfile
-from apps.terms.models import ExaminationSession
-
 from apps.common.utils import auto_create_matricule
+from apps.profiles.models import Gender, ParentProfile
+from apps.settings.models import Setting
+# from apps.teachers.models import TeacherProfile
+from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 
 class DOMAINCHOICES(models.TextChoices):

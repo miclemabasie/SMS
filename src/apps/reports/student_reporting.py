@@ -1,9 +1,12 @@
-from .models import StudentProfile, AcademicRecord
-from apps.students.models import ClassAcademicRecord, Mark, Subject, Class
-from apps.terms.models import Term, AcademicYear, ExaminationSession
+from decimal import Decimal
+
 from django.contrib import messages
 from django.http import HttpResponse
-from decimal import Decimal
+
+from apps.students.models import Class, ClassAcademicRecord, Mark, Subject
+from apps.terms.models import AcademicYear, ExaminationSession, Term
+
+from .models import AcademicRecord, StudentProfile
 
 
 class ClassPerformanceReport:

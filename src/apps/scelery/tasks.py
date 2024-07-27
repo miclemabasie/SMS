@@ -1,7 +1,7 @@
-from django.core.mail import send_mail
 from time import sleep
-from celery import shared_task, Celery
-from django.core.mail import EmailMultiAlternatives
+
+from celery import Celery, shared_task
+from django.core.mail import EmailMultiAlternatives, send_mail
 
 app = Celery("sms")
 

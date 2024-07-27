@@ -1,2 +1,3 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Announcement, Category, Attachment
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .models import Announcement, Attachment, Category

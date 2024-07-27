@@ -1,11 +1,12 @@
 from django.db import models
-from apps.common.models import TimeStampedUUIDModel
-from apps.staff.models import AdminProfile
-from apps.terms.models import AcademicYear
-from django.utils.translation import gettext_lazy as _
-from apps.students.models import StudentProfile, Class
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+
+from apps.common.models import TimeStampedUUIDModel
 from apps.settings.models import Setting
+from apps.staff.models import AdminProfile
+from apps.students.models import Class, StudentProfile
+from apps.terms.models import AcademicYear
 
 
 class FeeTypeChoice(models.TextChoices):

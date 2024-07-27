@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import TeacherLeave, AdminLeave, StudentLeave
+
+from .models import AdminLeave, StudentLeave, TeacherLeave
 
 # Register your models here.
 

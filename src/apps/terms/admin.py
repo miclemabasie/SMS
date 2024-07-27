@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Term, AcademicYear, ExaminationSession
+
+from .models import AcademicYear, ExaminationSession, Term
 
 
 class AcademicYearAdmin(admin.ModelAdmin):

@@ -1,19 +1,21 @@
-from django.shortcuts import render, get_object_or_404, redirect
+import json
+
+from django.contrib import messages
+from django.contrib.auth import get_user_model, logout
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from openpyxl import load_workbook
 
-from apps.settings.models import Setting
-from apps.terms.models import AcademicYear, ExaminationSession, Term
-from .models import AdminProfile
-from apps.students.models import Mark, StudentProfile, TeacherProfile, Subject, Class
-from apps.profiles.models import ParentProfile
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-import json
-from django.contrib.auth import get_user_model
 from apps.attendance.models import Attendance
-from django.contrib.auth import logout
+from apps.profiles.models import ParentProfile
+from apps.settings.models import Setting
+from apps.students.models import (Class, Mark, StudentProfile, Subject,
+                                  TeacherProfile)
+from apps.terms.models import AcademicYear, ExaminationSession, Term
+
+from .models import AdminProfile
 
 User = get_user_model()
 

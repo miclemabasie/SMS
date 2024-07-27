@@ -1,47 +1,32 @@
-from django.shortcuts import render, get_object_or_404, redirect
+import csv
+import json
+import random
+from datetime import datetime, time, timezone
+
+import openpyxl
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-
-from apps.settings.models import Setting
-from .forms import VerifyPinForm
-from .utils import (
-    check_student_is_owing,
-    check_student_is_repeater,
-    create_student_pin,
-    get_student_temp_account,
-    get_teacher_temp_account,
-    send_account_creation_email,
-    send_password_reset_email,
-    format_date,
-    generate_random_pin,
-)
-from .models import (
-    StudentProfile,
-    Class,
-    Subject,
-    Mark,
-    TeacherProfile,
-    StudentTempCreateProfile,
-    TeacherTempCreateProfile,
-)
-
-from apps.terms.models import ExaminationSession, AcademicYear, Term
-from django.contrib.auth import get_user_model
-from apps.profiles.models import ParentProfile
-from apps.fees.models import Fee
-from datetime import datetime, timezone, time
-from django.contrib.auth.decorators import login_required
-import random
-import openpyxl
-from django.http import HttpResponse
+from openpyxl import load_workbook, workbook
 from openpyxl.utils import get_column_letter
-import csv
-from django.contrib import messages
-from openpyxl import workbook, load_workbook
-import json
-from django.http import JsonResponse
 
 from apps.attendance.models import Attendance
+from apps.fees.models import Fee
+from apps.profiles.models import ParentProfile
+from apps.settings.models import Setting
+from apps.terms.models import AcademicYear, ExaminationSession, Term
+
+from .forms import VerifyPinForm
+from .models import (Class, Mark, StudentProfile, StudentTempCreateProfile,
+                     Subject, TeacherProfile, TeacherTempCreateProfile)
+from .utils import (check_student_is_owing, check_student_is_repeater,
+                    create_student_pin, format_date, generate_random_pin,
+                    get_student_temp_account, get_teacher_temp_account,
+                    send_account_creation_email, send_password_reset_email)
 
 User = get_user_model()
 
@@ -976,7 +961,7 @@ def verify_student_pin(request):
         return render(request, template_name, context)
 
 
-from apps.announcements.models import Announcement, Event, Category
+from apps.announcements.models import Announcement, Category, Event
 
 
 def student_dashboard(request):

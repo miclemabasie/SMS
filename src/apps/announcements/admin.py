@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Announcement, Category, Attachment, Event
+
+from .models import Announcement, Attachment, Category, Event
 
 
 class AttachmentInline(admin.TabularInline):

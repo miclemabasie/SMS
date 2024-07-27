@@ -1,6 +1,7 @@
-from typing import Any
-from django.core.management.base import BaseCommand, CommandParser
 import os
+from typing import Any
+
+from django.core.management.base import BaseCommand, CommandParser
 
 
 class Command(BaseCommand):

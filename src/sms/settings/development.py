@@ -1,6 +1,5 @@
 from .base import *
 
-
 DEVELOPMENT_APPS = [
     "debug_toolbar",
     "django_extensions",

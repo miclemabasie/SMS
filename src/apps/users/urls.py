@@ -1,12 +1,10 @@
+from django.contrib.auth.views import (PasswordResetCompleteView,
+                                       PasswordResetConfirmView,
+                                       PasswordResetDoneView,
+                                       PasswordResetView)
 from django.urls import path
-from . import views
-from django.contrib.auth.views import (
-    PasswordResetView,
-    PasswordResetDoneView,
-    PasswordResetCompleteView,
-    PasswordResetConfirmView,
-)
 
+from . import views
 
 # Class-based password reset views
 # - PasswordResetView sends the mail

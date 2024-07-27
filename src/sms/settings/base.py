@@ -1,6 +1,7 @@
-from pathlib import Path
-import environ
 import os
+from pathlib import Path
+
+import environ
 
 # Config environment varaibles
 env = environ.Env(
@@ -143,6 +144,7 @@ AUTH_USER_MODEL = "users.User"
 # LOGGING
 import logging
 import logging.config
+
 from django.utils.log import DEFAULT_LOGGING
 
 logger = logging.getLogger(__name__)

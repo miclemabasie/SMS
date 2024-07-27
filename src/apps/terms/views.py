@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from .models import AcademicYear, ExaminationSession, Term
+from datetime import datetime, time, timezone
+
 from django.contrib import messages
-from django.utils import timezone as tz
-from datetime import datetime, timezone, time
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone as tz
+
+from .models import AcademicYear, ExaminationSession, Term
 
 
 @login_required

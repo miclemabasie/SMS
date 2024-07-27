@@ -1,10 +1,10 @@
-from django.db import models
-from apps.students.models import StudentProfile, TeacherProfile
-from apps.staff.models import AdminProfile
-from apps.common.models import TimeStampedUUIDModel
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
+from apps.common.models import TimeStampedUUIDModel
+from apps.staff.models import AdminProfile
+from apps.students.models import StudentProfile, TeacherProfile
 
 User = get_user_model()
 

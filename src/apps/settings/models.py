@@ -1,8 +1,9 @@
 from django.db import models
-from apps.common.models import TimeStampedUUIDModel
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-from django.utils import timezone
+
+from apps.common.models import TimeStampedUUIDModel
 
 
 class Setting(TimeStampedUUIDModel):

@@ -1,8 +1,10 @@
-from .models import StudentProfile, AcademicRecord
-from apps.students.models import Mark, Subject, Class
-from apps.terms.models import Term, AcademicYear, ExaminationSession
 from django.contrib import messages
 from django.http import HttpResponse
+
+from apps.students.models import Class, Mark, Subject
+from apps.terms.models import AcademicYear, ExaminationSession, Term
+
+from .models import AcademicRecord, StudentProfile
 
 
 def create_student_academic_records(term, student, data, rank, klass):

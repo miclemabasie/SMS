@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import StudentProfile, Subject, Mark, Class, TeacherProfile
+
+from .models import Class, Mark, StudentProfile, Subject, TeacherProfile
+
 
 class MarkAdmin(admin.TabularInline):
     model = Mark

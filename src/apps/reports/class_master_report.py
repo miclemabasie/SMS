@@ -1,6 +1,7 @@
-from apps.students.models import StudentProfile, Class, Mark
+from apps.students.models import Class, Mark, StudentProfile
+from apps.terms.models import ExaminationSession, Term
+
 from .models import AcademicRecord
-from apps.terms.models import Term, ExaminationSession
 
 
 class ClassMasterReport:

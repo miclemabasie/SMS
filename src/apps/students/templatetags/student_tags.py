@@ -1,6 +1,7 @@
 from django import template
+
 from apps.students.models import StudentProfile
-from apps.terms.models import AcademicYear, Term, ExaminationSession
+from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 register = template.Library()
 

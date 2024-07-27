@@ -1,10 +1,12 @@
-from tabnanny import verbose
 import uuid
-from django.db import models
-from .managers import CustomUserManager
+from tabnanny import verbose
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from .managers import CustomUserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):

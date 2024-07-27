@@ -1,16 +1,12 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from apps.terms.models import ExaminationSession, Term, AcademicYear
-from .models import Setting
 from django.contrib import messages
 from django.contrib.auth.models import Group, Permission
 from django.http import JsonResponse
-
-
-from django.contrib.auth.models import Group, Permission
-from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
+
+from apps.terms.models import AcademicYear, ExaminationSession, Term
+
+from .models import Setting
 
 
 def settings_view(request):

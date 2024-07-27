@@ -1,14 +1,17 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from .models import Fee, FeePaymentHistory, ExtraPayment
-from apps.students.models import StudentProfile
-from apps.staff.models import AdminProfile
-from apps.terms.models import AcademicYear
 from datetime import datetime, time, timezone
 from decimal import Decimal
-from django.contrib.auth.decorators import login_required, permission_required
+
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+
 from apps.settings.models import Setting
+from apps.staff.models import AdminProfile
+from apps.students.models import StudentProfile
+from apps.terms.models import AcademicYear
+
+from .models import ExtraPayment, Fee, FeePaymentHistory
 
 
 @login_required

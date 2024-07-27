@@ -4,6 +4,7 @@
 
 from django.shortcuts import redirect
 from django.urls import reverse
+
 from apps.settings.models import Setting
 
 

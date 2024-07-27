@@ -1,10 +1,11 @@
 from django.db import models
-from apps.common.models import TimeStampedUUIDModel
-from apps.students.models import StudentProfile, Class
-from apps.terms.models import Term, ExaminationSession
-from apps.staff.models import AdminProfile
+from django.db.models import Max, Q
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Q, Max
+
+from apps.common.models import TimeStampedUUIDModel
+from apps.staff.models import AdminProfile
+from apps.students.models import Class, StudentProfile
+from apps.terms.models import ExaminationSession, Term
 
 
 class ReportCard(TimeStampedUUIDModel):
@@ -132,7 +133,23 @@ class AcademicRecord(TimeStampedUUIDModel):
 
 
 class ReportGenerationStatus(models.Model):
-    task_id = models.CharField(max_length=255)
-    status = models.CharField(max_length=50)
+    task_id = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=50, blank=True, null=True)
     file_path = models.TextField(null=True, blank=True)
+    file_name = models.CharField(max_length=256, blank=True, null=True)
+    klass = models.ForeignKey(
+        Class,
+        related_name="renerated_reports",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Add file path during saving
+    def save(self, *args, **kwargs):
+        print(self.file_path)
+        if self.file_path:
+            # set file name
+            self.file_name = self.file_path[(self.file_path.index("/") + 1) :]
+        return super().save(*args, **kwargs)

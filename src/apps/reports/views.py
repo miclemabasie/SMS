@@ -1,32 +1,25 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-import pdfkit
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from apps.students.models import (
-    ClassAcademicRecord,
-    StudentProfile,
-    Class,
-    Subject,
-    Mark,
-)
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from apps.terms.models import AcademicYear, Term, ExaminationSession
-
-import tempfile
-from PyPDF2 import PdfMerger
 import os
-from .utils import calculate_marks, create_student_academic_records
-from .student_reporting import ClassPerformanceReport
-from .class_master_report import ClassMasterReport
-
+import tempfile
 from io import BytesIO
-
-from xhtml2pdf import pisa
-from django.template.loader import get_template
 from time import time
+
+import pdfkit
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import get_template, render_to_string
+from django.urls import reverse
+from PyPDF2 import PdfMerger
+from xhtml2pdf import pisa
+
+from apps.students.models import (Class, ClassAcademicRecord, Mark,
+                                  StudentProfile, Subject)
+from apps.terms.models import AcademicYear, ExaminationSession, Term
+
+from .class_master_report import ClassMasterReport
+from .student_reporting import ClassPerformanceReport
+from .utils import calculate_marks, create_student_academic_records
 
 
 @login_required

@@ -1,9 +1,10 @@
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.contrib import messages
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse
+
 from apps.scelery.tasks import send_feedback_mail
 
 

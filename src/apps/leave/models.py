@@ -1,8 +1,9 @@
 from django.db import models
-from apps.common.models import TimeStampedUUIDModel
-from apps.students.models import TeacherProfile, StudentProfile
-from apps.staff.models import AdminProfile
 from django.utils.translation import gettext_lazy as _
+
+from apps.common.models import TimeStampedUUIDModel
+from apps.staff.models import AdminProfile
+from apps.students.models import StudentProfile, TeacherProfile
 
 # Create your models here.
 

@@ -1,8 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db import models
+
 from apps.common.models import TimeStampedUUIDModel
 from apps.staff.models import AdminProfile
 from apps.students.models import StudentProfile, Subject, TeacherProfile
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 

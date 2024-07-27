@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 
 
-from apps.terms.models import AcademicYear, Term, ExaminationSession
+from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 
 @register.simple_tag

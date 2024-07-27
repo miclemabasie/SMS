@@ -1,23 +1,26 @@
-from celery import shared_task
+import logging
+import os
 from io import BytesIO
+
+from celery import shared_task
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.template.loader import get_template
+from pypdf import PdfMerger
 from weasyprint import HTML
+
+from apps.reports.models import ReportGenerationStatus
 from apps.reports.student_reporting import ClassPerformanceReport
+from apps.settings.models import Setting
 from apps.students.models import StudentProfile
 from apps.terms.models import AcademicYear, ExaminationSession, Term
-from apps.settings.models import Setting
-from django.core.files.storage import default_storage
-from pypdf import PdfMerger
-import os
-import logging
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
 
-@shared_task
-def generate_and_store_class_report_cards(class_id, term_id):
+@shared_task(bind=True)
+def generate_and_store_class_report_cards(self, class_id, term_id):
     performance_obj = ClassPerformanceReport(class_id, term_id)
     setup = performance_obj.setup()
     if setup:
@@ -151,4 +154,22 @@ def generate_and_store_class_report_cards(class_id, term_id):
         except Exception as e:
             logger.error(f"Failed to delete file {file_path}: {e}")
 
+        # Update the report generation status
+    try:
+        report = ReportGenerationStatus.objects.get(task_id=self.request.id)
+        report.status = "Completed"
+        report.klass = performance_obj.get_class()
+        report.file_path = merged_file_path
+        report.save()
+        logger.info(f"Report status updated with file path: {merged_file_path}")
+    except ReportGenerationStatus.DoesNotExist:
+        logger.error(
+            f"ReportGenerationStatus with task_id {self.request.id} not found."
+        )
+    except Exception as e:
+        logger.error(f"Failed to update report status: {e}")
     return merged_file_path
+
+
+# @shared_taks
+# def

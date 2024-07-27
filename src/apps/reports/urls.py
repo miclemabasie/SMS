@@ -1,5 +1,6 @@
 from django.urls import path
-from . import views, controller
+
+from . import controller, views
 
 app_name = "reports"
 
@@ -26,7 +27,6 @@ urlpatterns = [
         views.download_class_master_report,
         name="download_class_master_report",
     ),
-    path("gen", controller.generate_pdf, name="gen"),
     path("view-reports/", controller.view_reports, name="view-reports"),
     path(
         "download-report/<str:file_name>/",

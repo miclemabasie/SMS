@@ -1,49 +1,34 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
-from django.urls import reverse
+import io
+import json
+from datetime import datetime, time, timezone
+
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from faker import Faker
+from openpyxl import load_workbook, workbook
+from openpyxl.utils import get_column_letter
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.pdfgen import canvas
+from reportlab.platypus import (Image, Paragraph, SimpleDocTemplate, Spacer,
+                                Table, TableStyle)
+
 from apps.announcements.models import Announcement, Event
 from apps.fees.models import Fee
-from apps.students.forms import VerifyPinForm
-from apps.students.models import (
-    TeacherProfile,
-    StudentProfile,
-    Mark,
-    Class,
-    Subject,
-    TeacherTempCreateProfile,
-)
-import io
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-from reportlab.platypus import (
-    SimpleDocTemplate,
-    Table,
-    TableStyle,
-    Paragraph,
-    Spacer,
-    Image,
-)
-from reportlab.lib.styles import getSampleStyleSheet
 from apps.leave.models import TeacherLeave
-import json
-from faker import Faker
-from datetime import datetime, time, timezone
-from django.http import Http404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from openpyxl import workbook, load_workbook
-from openpyxl.utils import get_column_letter
-from django.http import HttpResponse
-from apps.students.utils import (
-    get_student_temp_account,
-    get_teacher_temp_account,
-    send_account_creation_email,
-    generate_random_pin,
-    create_teacher_pin,
-    send_password_reset_email,
-)
+from apps.students.forms import VerifyPinForm
+from apps.students.models import (Class, Mark, StudentProfile, Subject,
+                                  TeacherProfile, TeacherTempCreateProfile)
+from apps.students.utils import (create_teacher_pin, generate_random_pin,
+                                 get_student_temp_account,
+                                 get_teacher_temp_account,
+                                 send_account_creation_email,
+                                 send_password_reset_email)
 from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 faker_factory = Faker()
