@@ -205,16 +205,11 @@ def download_report(request, file_name):
 
 
 def view_reports(request):
-    # Fetch all reports from the storage
-    report_files = [
-        f for f in default_storage.listdir("reports")[1]
-    ]  # Adjust to list only files
-
+    #
     # Optionally, fetch report generation statuses if using a status model
     report_statuses = ReportGenerationStatus.objects.order_by('-created_at')[:3]
 
     context = {
-        "report_files": report_files,
         "report_statuses": report_statuses,
     }
 
