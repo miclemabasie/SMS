@@ -33,4 +33,15 @@ urlpatterns = [
         views.download_blank_teacher_form,
         name="download-teacher-form",
     ),
+    path(
+        "download-teacher-list",
+        views.download_teacher_list,
+        name="download-teacher-list",
+    ),
+    path("upload-teachers", views.upload_teachers_from_file, name="upload-teachers"),
+    path(
+        "download-teacher-sample-file",
+        views.download_teacher_sample_file,
+        name="download-teacher-sample-file",
+    ),
 ]

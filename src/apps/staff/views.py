@@ -7,12 +7,17 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from openpyxl import load_workbook
+from django.conf import settings
+
+from django.template.loader import render_to_string
+
+from apps.scelery.tasks import send_feedback_mail
+
 
 from apps.attendance.models import Attendance
 from apps.profiles.models import ParentProfile
 from apps.settings.models import Setting
-from apps.students.models import (Class, Mark, StudentProfile, Subject,
-                                  TeacherProfile)
+from apps.students.models import Class, Mark, StudentProfile, Subject, TeacherProfile
 from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 from .models import AdminProfile
@@ -306,6 +311,14 @@ def create_staff(request):
         if photo:
             admin_profile.photo = photo
             admin_profile.save()
+        # send email to admin
+        subject = "Account Creationg Successful."
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [email]
+        email_context = {"name": user.get_fullname}
+        html_content = render_to_string("emails/testing.html", email_context)
+        # call the Celery task
+        send_feedback_mail.delay(subject, "", from_email, recipient_list, html_content)
 
     template_name = "staff/create-admin.html"
     context = {

@@ -1,0 +1,13 @@
+[Unit]
+Description=gunicorn daemon for SMS application
+After=network.target
+
+[Service]
+User=miclem
+Group=miclem
+WorkingDirectory=/home/miclem/grader/SMS/src
+Environment="PATH=/home/miclem/grader/env/bin"
+ExecStart=/home/miclem/grader/env/bin/gunicorn -w 4 --bind 0.0.0.0:8000 sms.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

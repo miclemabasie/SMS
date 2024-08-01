@@ -5,7 +5,6 @@
             <ul>
                 <li class="menu-title">
                     <span>Main Menu</span>
-                    <span>Main Admin</span>
                 </li>
 
                 <li class="{% if request.path == '/'  %}active{% endif %}">
@@ -32,7 +31,9 @@
                     <ul>
                         <li><a href="{% url 'teachers:teachers-list' %}" class="{% if request.path == '/teachers/'  %}active{% endif %}">Teacher List</a></li>
                         <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
+                        
                         <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Teacher Add</a></li>
+                        <li><a href="{% url 'teachers:download-teacher-sample-file' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Download Sample</a></li>
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>

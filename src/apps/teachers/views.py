@@ -1,6 +1,7 @@
 import io
 import json
 from datetime import datetime, time, timezone
+from random import random
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -10,26 +11,44 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from faker import Faker
 from openpyxl import load_workbook, workbook
+import openpyxl
 from openpyxl.utils import get_column_letter
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfgen import canvas
-from reportlab.platypus import (Image, Paragraph, SimpleDocTemplate, Spacer,
-                                Table, TableStyle)
+from reportlab.platypus import (
+    Image,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 from apps.announcements.models import Announcement, Event
 from apps.fees.models import Fee
 from apps.leave.models import TeacherLeave
 from apps.students.forms import VerifyPinForm
-from apps.students.models import (Class, Mark, StudentProfile, Subject,
-                                  TeacherProfile, TeacherTempCreateProfile)
-from apps.students.utils import (create_teacher_pin, generate_random_pin,
-                                 get_student_temp_account,
-                                 get_teacher_temp_account,
-                                 send_account_creation_email,
-                                 send_password_reset_email)
+from apps.students.models import (
+    TEACHERSERVICE,
+    Class,
+    Mark,
+    StudentProfile,
+    Subject,
+    TeacherProfile,
+    TeacherTempCreateProfile,
+)
+from apps.students.utils import (
+    create_teacher_pin,
+    generate_random_pin,
+    get_student_temp_account,
+    get_teacher_temp_account,
+    send_account_creation_email,
+    send_password_reset_email,
+)
 from apps.terms.models import AcademicYear, ExaminationSession, Term
+from openpyxl.utils import get_column_letter
 
 faker_factory = Faker()
 
@@ -668,8 +687,332 @@ def download_blank_teacher_form(request):
 
 
 @login_required
-def download_teacher_list(request):
-    pass
+def download_teacher_list(request, *args, **kwargs):
+    if request.method == "GET":
+
+        teachers = TeacherProfile.objects.all()
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+
+        ws.title = "Teachers List"
+        filename = "teachers-list.xlsx"
+
+        headers = [
+            "Matricule",
+            "Fullname",
+            "Gender",
+            "Phone Number",
+            "Country",
+            "Location",
+            "Address",
+            "Main Subject",
+            "Number of Absences",
+            "Region of Origin",
+            "Division of Origin",
+            "Sub Division of Origin",
+            "Date of Recruitment into Public Service",
+            "Corps",
+            "Career Grade",
+            "Payroll Grade",
+            "Career Category",
+            "Payroll Category Solde",
+            "Career Index",
+            "Payroll Index",
+            "Career Echelon",
+            "Payroll Echelon",
+            "Service",
+            "Appointed Structure",
+            "Town",
+            "Position Rank",
+            "Longevity of Post",
+            "Longevity in Administration",
+            "Reference of the Appointment Decision",
+            "Indemnity Situation",
+            "Remark",
+        ]
+
+        # Write headers to the first row
+        for col_num, header in enumerate(headers, start=1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.value = header
+
+        # Write teacher data to the worksheet
+        for row_num, teacher in enumerate(teachers, start=2):
+            ws.cell(row=row_num, column=1).value = teacher.matricule
+            ws.cell(row=row_num, column=2).value = teacher.user.get_fullname
+            ws.cell(row=row_num, column=3).value = teacher.gender
+            ws.cell(row=row_num, column=4).value = str(teacher.phone_number)
+            ws.cell(row=row_num, column=5).value = teacher.country.name
+            ws.cell(row=row_num, column=6).value = teacher.location
+            ws.cell(row=row_num, column=7).value = teacher.address
+            ws.cell(row=row_num, column=8).value = teacher.main_subject
+            ws.cell(row=row_num, column=9).value = teacher.number_of_absences
+            ws.cell(row=row_num, column=10).value = teacher.region_of_origin
+            ws.cell(row=row_num, column=11).value = teacher.division_of_origin
+            ws.cell(row=row_num, column=12).value = teacher.sub_division_of_origin
+            ws.cell(row=row_num, column=13).value = (
+                teacher.date_recruitement_public_service
+            )
+            ws.cell(row=row_num, column=14).value = teacher.corps
+            ws.cell(row=row_num, column=15).value = teacher.career_grade
+            ws.cell(row=row_num, column=16).value = teacher.payroll_grade
+            ws.cell(row=row_num, column=17).value = teacher.career_category
+            ws.cell(row=row_num, column=18).value = teacher.payroll_category_solde
+            ws.cell(row=row_num, column=19).value = teacher.career_index
+            ws.cell(row=row_num, column=20).value = teacher.payroll_index
+            ws.cell(row=row_num, column=21).value = teacher.career_echelon
+            ws.cell(row=row_num, column=22).value = teacher.payroll_echelon
+            ws.cell(row=row_num, column=23).value = teacher.service
+            ws.cell(row=row_num, column=24).value = teacher.appointed_structure
+            ws.cell(row=row_num, column=25).value = teacher.town
+            ws.cell(row=row_num, column=26).value = teacher.possition_rank
+            ws.cell(row=row_num, column=27).value = teacher.longivity_of_post
+            ws.cell(row=row_num, column=28).value = teacher.longivity_in_administration
+            ws.cell(row=row_num, column=29).value = (
+                teacher.appointment_decision_reference
+            )
+            ws.cell(row=row_num, column=30).value = teacher.indemnity_situation
+            ws.cell(row=row_num, column=31).value = teacher.remark
+
+        # Set column widths
+        for col_num in range(1, len(headers) + 1):
+            column_letter = get_column_letter(col_num)
+            ws.column_dimensions[column_letter].width = 20
+
+        # Create a response object
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = f"attachment; filename={filename}"
+
+        # Save the workbook to the response
+        wb.save(response)
+
+        return response
+
+    return redirect(reverse("teachers:teacher-list"))
+
+
+@login_required
+def upload_teachers_from_file(request, *args, **kwargs):
+    # Get all the available subjects
+    subjects = Subject.objects.all()
+
+    if request.method == "POST" and request.FILES["teachers_file"]:
+        teachers_file = request.FILES["teachers_file"]
+
+        wb = load_workbook(filename=teachers_file)
+        ws = wb.get_sheet_by_name("teachers")
+
+        # Check if all the required attributes are available in the file
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            first_name, last_name, email, gender, phone, address = (
+                row[0],
+                row[1],
+                row[2],
+                row[3],
+                row[4],
+                row[5],
+            )
+            attributes = [first_name, last_name, gender, phone]
+            for value in attributes:
+                if not value:
+                    messages.error(request, "Invalid file, missing information")
+                    return redirect(reverse("teachers:upload-teachers-from-file"))
+
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            (
+                first_name,
+                last_name,
+                email,
+                gender,
+                phone,
+                address,
+                country,
+                location,
+                main_subject,
+                number_of_absences,
+                region_of_origin,
+                division_of_origin,
+                sub_division_of_origin,
+                date_recruitement_public_service,
+                corps,
+                career_grade,
+                payroll_grade,
+                career_category,
+                payroll_category_solde,
+                career_index,
+                payroll_index,
+                career_echelon,
+                payroll_echelon,
+                service,
+                appointed_structure,
+                town,
+                possition_rank,
+                longivity_of_post,
+                longivity_in_administration,
+                appointment_decision_reference,
+                indemnity_situation,
+                remark,
+            ) = row
+
+            print(
+                f"fistname {first_name}, lastname {last_name}, email {email} gender {gender} phone {phone} address {address}"
+            )
+
+            # Create user
+            if not email:
+                intial_string = first_name
+                email = f"{intial_string}{random.randint(1, 10)}@gmail.com"
+                print(email)
+            user, created = User.objects.get_or_create(
+                username=f"{first_name}",
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+            )
+
+            if created:
+                user.save()
+                print(user)
+                print("user was saved")
+
+            # Create teacher profile instance
+            if gender.lower() == "m" or gender.lower() == "male":
+                gender = "Male"
+            else:
+                gender = "Female"
+
+            teacher, created = TeacherProfile.objects.get_or_create(
+                user=user,
+                gender=gender,
+                phone_number=str(phone),
+                address=address if address else "",
+                country=country if country else "CM",
+                location=location if location else "",
+                main_subject=main_subject if main_subject else "",
+                number_of_absences=number_of_absences if number_of_absences else 0,
+                region_of_origin=region_of_origin if region_of_origin else "",
+                division_of_origin=division_of_origin if division_of_origin else "",
+                sub_division_of_origin=(
+                    sub_division_of_origin if sub_division_of_origin else ""
+                ),
+                date_recruitement_public_service=(
+                    date_recruitement_public_service
+                    if date_recruitement_public_service
+                    else ""
+                ),
+                corps=corps if corps else "",
+                career_grade=career_grade if career_grade else "",
+                payroll_grade=payroll_grade if payroll_grade else "",
+                career_category=career_category if career_category else "",
+                payroll_category_solde=(
+                    payroll_category_solde if payroll_category_solde else ""
+                ),
+                career_index=career_index if career_index else "",
+                payroll_index=payroll_index if payroll_index else "",
+                career_echelon=career_echelon if career_echelon else "",
+                payroll_echelon=payroll_echelon if payroll_echelon else "",
+                service=service if service else TEACHERSERVICE.OTHER,
+                appointed_structure=appointed_structure if appointed_structure else "",
+                town=town if town else "",
+                possition_rank=possition_rank if possition_rank else "",
+                longivity_of_post=longivity_of_post if longivity_of_post else "",
+                longivity_in_administration=(
+                    longivity_in_administration if longivity_in_administration else ""
+                ),
+                appointment_decision_reference=(
+                    appointment_decision_reference
+                    if appointment_decision_reference
+                    else ""
+                ),
+                indemnity_situation=indemnity_situation if indemnity_situation else "",
+                remark=remark if remark else "",
+            )
+
+            if created:
+                teacher.save()
+                teacher.user.is_teacher = True
+                send_account_creation_email(request, teacher.user)
+            else:
+                continue
+
+        messages.success(request, "Teachers have been uploaded successfully.")
+        return redirect(reverse("teachers:teachers-list"))
+
+    template_name = "teachers/upload-teachers.html"
+    context = {
+        "section": "teachers-area",
+        "subjects": subjects,
+    }
+
+    return render(request, template_name, context)
+
+
+
+@login_required
+def download_teacher_sample_file(request, *args, **kwargs):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Teacher Upload Sample File"
+    filename = "teacher-upload-sample-file.xlsx"
+
+    headers = [
+        "First Name",
+        "Last Name",
+        "Email",
+        "Gender",
+        "Phone",
+        "Address",
+        "Country",
+        "Location",
+        "Main Subject",
+        "Number of Absences",
+        "Region of Origin",
+        "Division of Origin",
+        "Sub Division of Origin",
+        "Date of Recruitment into Public Service",
+        "Corps",
+        "Career Grade",
+        "Payroll Grade",
+        "Career Category",
+        "Payroll Category Solde",
+        "Career Index",
+        "Payroll Index",
+        "Career Echelon",
+        "Payroll Echelon",
+        "Service",
+        "Appointed Structure",
+        "Town",
+        "Position Rank",
+        "Longevity of Post",
+        "Longevity in Administration",
+        "Reference of the Appointment Decision",
+        "Indemnity Situation",
+        "Remark",
+    ]
+
+    # Write headers to the first row
+    for col_num, header in enumerate(headers, start=1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.value = header
+
+    # Set column widths
+    for col_num in range(1, len(headers) + 1):
+        column_letter = get_column_letter(col_num)
+        ws.column_dimensions[column_letter].width = 25
+
+    # Create a response object
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f"attachment; filename={filename}"
+
+    # Save the workbook to the response
+    wb.save(response)
+
+    return response
 
 
 def generate_report_card(request):

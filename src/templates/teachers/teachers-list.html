@@ -21,7 +21,10 @@
                 </ul>
             </div>
             <div class="col-auto text-right float-right ml-auto">
-                <a href="#" class="btn btn-outline-primary mr-2"><i class="fas fa-download"></i> Download</a>
+                <a href="{% url 'teachers:download-teacher-list' %}" class="btn btn-outline-primary me-2" ><i
+                    class="fas fa-download"></i> Download</a>
+                <a href="#" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#upload_teachers_list"><i
+                    class="fas fa-download"></i> Upload</a>
                 <a href="{% url 'teachers:teachers-add' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
             </div>
         </div>
@@ -80,6 +83,42 @@
                                 {% endfor %}
                                 </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal custom-modal fade" id="upload_teachers_list" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Upload Teachers</h3>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'teachers:upload-teachers' %}" method="post" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            <div class="row">
+                                
+                                
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <input name="teachers_file" class="form-control" type="file" placeholder="Upload file">
+                                    </div>
+                                </div>
+                                <div class="col-12 row">
+                                    <div class="student-submit col-6">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div class="student-submit col-6 ml-5">
+                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
