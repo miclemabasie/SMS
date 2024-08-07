@@ -42,6 +42,7 @@ class Class(TimeStampedUUIDModel):
 
     best_subject = models.CharField(max_length=255, blank=True, null=True)
     worst_subject = models.CharField(max_length=255, blank=True, null=True)
+    class_code = models.CharField(max_length=10, blank=True, null=True)
 
     def get_full_name(self):
         return f"{self.grade_level}-{self.class_name}"

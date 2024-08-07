@@ -376,6 +376,7 @@ def class_add_view(request, *args, **kwargs):
         class_name = request.POST.get("class_name")
         class_master = request.POST.get("class_master")
         class_prefect = request.POST.get("class_prefect")
+        class_code = request.POST.get("class_code")
 
         print(class_prefect, class_master)
 
@@ -387,6 +388,7 @@ def class_add_view(request, *args, **kwargs):
                 class_name=class_name,
                 class_master=class_master,
                 class_prefect=class_prefect,
+                class_code = class_code,
             )
 
             klass.save()
