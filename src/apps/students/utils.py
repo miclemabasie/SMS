@@ -9,10 +9,10 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
+from apps.profiles.models import ParentProfile
 from apps.settings.models import Setting
 
-from .models import (StudentProfile, StudentTempCreateProfile,
-                     TeacherTempCreateProfile)
+from .models import StudentProfile, StudentTempCreateProfile, TeacherTempCreateProfile
 
 
 def check_student_is_owing(student_pkid):
@@ -170,3 +170,18 @@ def generate_random_pin():
 
     pin = "".join(random_strings)
     return pin
+
+
+def create_student_parent(name, phone, address, student):
+    # Create parent for a given student
+    if name:
+        parent, created = ParentProfile.objects.get_or_create(
+            first_name=name, phone=phone, address=address
+        )
+        if created:
+            parent.save()
+            student.parent = parent
+            student.save()
+        else:
+            student.parent = parent
+            student.save()

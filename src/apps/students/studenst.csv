@@ -1,0 +1,11 @@
+First Name,Last Name,Email,Date Of Birth,Gender,Phone Number,Address,Place of Birth,Class,Specialty,Parent Name,Phone Number,Parent Address
+John,Doe,john.doe@example.com,2005-04-23,Male,123-456-7890,123 Elm St,Springfield,10A,Science,Jane Doe,987-654-3210,456 Oak St
+Jane,Smith,jane.smith@example.com,2006-08-15,Female,234-567-8901,456 Maple Ave,Shelbyville,10B,Math,Michael Smith,654-321-0987,789 Pine Ave
+Emily,Jones,emily.jones@example.com,2005-12-05,Female,345-678-9012,789 Birch Rd,Springfield,11A,History,Emma Jones,321-654-9870,123 Cedar Ln
+Michael,Johnson,michael.johnson@example.com,2006-03-20,Male,456-789-0123,101 Oak St,Springfield,11B,Science,David Johnson,876-543-2109,456 Birch Ln
+Sarah,Lee,sarah.lee@example.com,2005-11-11,Female,567-890-1234,202 Elm St,Shelbyville,12A,Math,Linda Lee,543-210-9876,789 Maple Ln
+David,Williams,david.williams@example.com,2006-07-22,Male,678-901-2345,303 Maple Ave,Springfield,12B,History,James Williams,210-987-6543,101 Oak Ln
+Laura,Wilson,laura.wilson@example.com,2005-10-30,Female,789-012-3456,404 Pine Rd,Shelbyville,10A,Science,Patricia Wilson,432-109-8765,202 Elm Ln
+James,Martin,james.martin@example.com,2006-05-05,Male,890-123-4567,505 Cedar Ln,Springfield,10B,Math,Robert Martin,567-890-1234,303 Maple Ln
+Olivia,Garcia,olivia.garcia@example.com,2005-09-17,Female,901-234-5678,606 Birch Rd,Shelbyville,11A,History,Jennifer Garcia,678-901-2345,404 Pine Ln
+Daniel,Lopez,daniel.lopez@example.com,2006-02-28,Male,012-345-6789,707 Oak St,Springfield,11B,Science,William Lopez,789-012-3456,505 Cedar Ln

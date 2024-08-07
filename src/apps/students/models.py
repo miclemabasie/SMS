@@ -12,6 +12,7 @@ from apps.common.models import TimeStampedUUIDModel
 from apps.common.utils import auto_create_matricule
 from apps.profiles.models import Gender, ParentProfile
 from apps.settings.models import Setting
+
 # from apps.teachers.models import TeacherProfile
 from apps.terms.models import AcademicYear, ExaminationSession, Term
 
@@ -100,8 +101,7 @@ class StudentTempCreateProfile(models.Model):
     student = models.OneToOneField(
         "StudentProfile",
         verbose_name=_("Student"),
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
     )
 
 
@@ -113,8 +113,7 @@ class TeacherTempCreateProfile(models.Model):
     teacher = models.OneToOneField(
         "TeacherProfile",
         verbose_name=_("Student"),
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
     )
 
 
@@ -175,6 +174,10 @@ class StudentProfile(TimeStampedUUIDModel):
     # Adding optional subjects for the student
     optional_subjects = models.ManyToManyField(
         "Subject", related_name="students_taking"
+    )
+
+    pob = models.CharField(
+        max_length=255, verbose_name=_("Place of birth"), blank=True, null=True
     )
 
     def save(self, *args, **kwargs):

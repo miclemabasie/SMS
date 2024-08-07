@@ -347,6 +347,7 @@ def teacher_add_view(request, *args, **kwargs):
 
             teacher.save()
             teacher.user.is_teacher = True
+            teacher.user.save()
             create_teacher_pin(teacher, pin)
             send_account_creation_email(request, teacher.user, "teacher")
             return redirect(
@@ -948,7 +949,6 @@ def upload_teachers_from_file(request, *args, **kwargs):
     }
 
     return render(request, template_name, context)
-
 
 
 @login_required

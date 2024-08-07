@@ -19,20 +19,37 @@ from apps.fees.models import Fee
 from apps.profiles.models import ParentProfile
 from apps.settings.models import Setting
 from apps.terms.models import AcademicYear, ExaminationSession, Term
+import logging
 
 from .forms import VerifyPinForm
-from .models import (Class, Mark, StudentProfile, StudentTempCreateProfile,
-                     Subject, TeacherProfile, TeacherTempCreateProfile)
-from .utils import (check_student_is_owing, check_student_is_repeater,
-                    create_student_pin, format_date, generate_random_pin,
-                    get_student_temp_account, get_teacher_temp_account,
-                    send_account_creation_email, send_password_reset_email)
+from .models import (
+    Class,
+    Mark,
+    StudentProfile,
+    StudentTempCreateProfile,
+    Subject,
+    TeacherProfile,
+    TeacherTempCreateProfile,
+)
+from .utils import (
+    check_student_is_owing,
+    check_student_is_repeater,
+    create_student_parent,
+    create_student_pin,
+    format_date,
+    generate_random_pin,
+    get_student_temp_account,
+    get_teacher_temp_account,
+    send_account_creation_email,
+    send_password_reset_email,
+)
 
 User = get_user_model()
 
 from faker import Faker
 
 faker = Faker()
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -350,7 +367,7 @@ def upload_marks1(request, subject_pkid, class_pkid, *args, **kwargs):
     terms = Term.objects.filter(academic_year=academic_year)
 
     sequences = terms.filter(is_current=True).first().examination_sessions.all()
-    
+
     teacher = request.user.teacher_profile
     # Get data for student marks and updates
     students = klass.students.all()
@@ -773,130 +790,157 @@ def download_class_list(request, *args, **kwargs):
 
 @login_required
 def upload_students_from_file(request, *args, **kwargs):
-    # Get the subject and all the students associated to thesubject from the database
-
+    """
+    View to upload students from an Excel file and save them to the database.
+    """
+    # Fetch all classes from the database to display in the form
     classes = Class.objects.all()
-    if request.method == "POST" and request.FILES["students_file"]:
+
+    # Check if the request method is POST and a file is uploaded
+    if request.method == "POST" and request.FILES.get("students_file"):
+        # Get the uploaded file from the request
         students_file = request.FILES["students_file"]
+        # Get the selected class ID from the form data
         selected_class_id = request.POST.get("selected_class_id")
 
-        print("incoming data", students_file, selected_class_id)
-
-        # decoded_file = students_file.read().decode('utf-8').splitlines()
-
-        # Get the subject from the database
-        classes = Class.objects.filter(pkid=selected_class_id)
-        if classes.exists():
-            klass = classes.first()
-        else:
+        try:
+            # Fetch the selected class from the database using the provided ID
+            klass = Class.objects.get(pkid=selected_class_id)
+        except Class.DoesNotExist:
+            # If the class does not exist, show an error message and redirect to the form
             messages.error(request, "Class not found.")
             return redirect(reverse("students:upload-students-from-file"))
 
-        wb = load_workbook(filename=students_file)
+        try:
+            # Load the uploaded workbook
+            wb = load_workbook(filename=students_file)
+            # Get the first sheet in the workbook
+            ws = wb.active
+        except Exception as e:
+            # If there's an error reading the file, show an error message and redirect
+            messages.error(request, f"Error reading the file: {e}")
+            return redirect(reverse("students:upload-students-from-file"))
 
-        ws = wb.get_sheet_by_name("Student Upload Sample File")
+        # Iterate through each row in the worksheet starting from the second row
+        for row_number, row in enumerate(
+            ws.iter_rows(min_row=2, values_only=True), start=2
+        ):
+            # Extract values from the row
+            (
+                first_name,
+                last_name,
+                email,
+                dob,
+                gender,
+                phone,
+                address,
+                pob,
+                student_klass,
+                specialty,
+                parent_name,
+                parent_phone,
+                parent_address,
+            ) = row[:13]
 
-        # Check if all the attributes need to create the user and student profile are available inthe file
-        for row in ws.iter_rows(min_row=2, values_only=True):
-            first_name, last_name, email, dob, gender, phone, address = (
-                row[0],
-                row[1],
-                row[2],
-                row[3],
-                row[4],
-                row[5],
-                row[6],
-            )
-            attributes = [first_name, last_name, gender, phone]
-            for value in attributes:
-                if not value:
-                    messages.error(request, "Invalid file, missing information")
-                    return redirect(reverse("students:upload-students-from-file"))
+            # Check if essential fields are present
+            if not all([first_name, last_name, gender, phone, email]):
+                # If any essential field is missing, show an error message with the row number and redirect
+                messages.error(
+                    request, f"Invalid file, missing information at row {row_number}"
+                )
+                return redirect(reverse("students:upload-students-from-file"))
 
-        for row in ws.iter_rows(min_row=2, values_only=True):
-            first_name, last_name, email, dob, gender, phone, address = (
-                row[0],
-                row[1],
-                row[2],
-                row[3],
-                row[4],
-                row[5],
-                row[6],
-            )
-
-            print(
-                f"fistname {first_name}, lastname {last_name}, email {email}, dob {dob} gender {gender} phone {phone} address {address}"
-            )
-
-            # Create user
-
+            # Format the date of birth
             dob = format_date(dob)
-            print(dob)
+            # If email is not provided, generate a random email
             if not email:
-                intial_string = first_name
-                email = f"{intial_string}{random.randint(1, 10)}@gmail.com"
-                print(email)
-            user, created = User.objects.get_or_create(
-                username=f"{first_name}",
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-            )
-            if dob:
-                dob = datetime.combine(dob, dob.time(), tzinfo=timezone.utc)
-                user.dob = dob
+                email = f"{first_name}{random.randint(1, 1000)}@gmail.com"
 
-            if created:
-                user.save()
-                print(user)
-                print("user was saved")
+            try:
+                # Get or create a User object based on the username and other details
+                print(first_name)
+                user, created = User.objects.get_or_create(
+                    username=f"{first_name}_{last_name}",
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                )
+                if created:
+                    # If the user was created, save the user and log the event
+                    user.dob = dob
+                    user.save()
+                    logger.info(f"User {user.username} created")
 
-            # create student profile instance
-            if gender.lower() == "m" or gender.lower() == "male":
-                gender = "Male"
-            else:
-                gender = "Female"
-            student, created = StudentProfile.objects.get_or_create(
-                user=user,
-                current_class=klass,
-                gender=gender,
-                phone_number=str(phone),
-            )
+                # Normalize gender values
+                gender = "Male" if gender.lower() in ["m", "male"] else "Female"
+                # Get or create a StudentProfile object for the user
+                student, created = StudentProfile.objects.get_or_create(
+                    user=user,
+                    defaults={
+                        "current_class": klass,
+                        "gender": gender,
+                        "phone_number": str(phone),
+                        "address": address
+                        or faker.address(),  # Use faker address if not provided
+                        "pob": pob,
+                        "specialty": specialty,
+                    },
+                )
 
-            if created:
+                if created:
+                    # If the student profile was created, save it and update user role
+                    student.save()
+                    user.is_student = True
+                    user.save()
 
-                if not address:
-                    student.address = faker.address()
+                    # Create the parent profile and PIN for the student
+                    create_student_parent(
+                        parent_name, parent_phone, parent_address, student
+                    )
+                    # create_student_pin(student, 1111)
+                    # Send an account creation email to the user
+                    send_account_creation_email(request, user)
+                else:
+                    # Log a warning if the student profile already exists
+                    logger.warning(
+                        f"Student profile for user {user.username} already exists"
+                    )
+            except Exception as e:
+                # Log any errors that occur and show an error message with the row number
+                logger.error(f"Error processing row {row_number}: {e}")
+                messages.error(
+                    request, f"There was an error processing row {row_number}."
+                )
+                return redirect(reverse("students:upload-students-from-file"))
 
-                print("Saving student")
-                student.save()
-                student.user.is_student = True
-                create_student_pin(student, generate_random_pin())
-                send_account_creation_email(request, student.user)
-            else:
-                continue
+        # Show a success message after processing all rows and redirect
         messages.success(
             request,
             f"Students have been uploaded for the class {klass.grade_level}-{klass.class_name}",
         )
         return redirect(reverse("students:upload-students-from-file"))
 
-    template_name = "students/upload-students.html"
+    # Render the form template with the available classes
     context = {
         "section": "marks-area",
         "classes": classes,
     }
 
-    return render(request, template_name, context)
+    return render(request, "students/upload-students.html", context)
 
 
 @login_required
 def download_sample_student_file(request, *args, **kwargs):
+    """
+    View to download a sample Excel file for student uploads.
+    """
 
+    # Create a new workbook and select the active worksheet
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Student Upload Sample File"
 
+    # Define the headers for the columns
     headers = [
         "First Name",
         "Last Name",
@@ -905,6 +949,12 @@ def download_sample_student_file(request, *args, **kwargs):
         "Gender",
         "Phone Number",
         "Address",
+        "Place of Birth",  # Added field
+        "Class",  # Added field
+        "Specialty",  # Added field
+        "Parent Name",  # Added field
+        "Phone Number",  # Added field
+        "Parent Address",  # Added field
     ]
 
     # Write headers to the first row
@@ -912,20 +962,21 @@ def download_sample_student_file(request, *args, **kwargs):
         cell = ws.cell(row=1, column=col_num)
         cell.value = header
 
-    # Set column widths
+    # Set column widths to enhance readability
     for col_num in range(1, len(headers) + 1):
         column_letter = get_column_letter(col_num)
         ws.column_dimensions[column_letter].width = 20
 
-    # Create a response object
+    # Create an HTTP response object with the correct content type for Excel files
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+    # Set the content disposition to attachment to trigger file download
     response["Content-Disposition"] = (
-        f"attachment; filename=student_upload_sample_file.xlsx"
+        "attachment; filename=student_upload_sample_file.xlsx"
     )
 
-    # Save the workbook to the response
+    # Save the workbook to the response object
     wb.save(response)
 
     return response
