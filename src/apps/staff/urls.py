@@ -29,4 +29,14 @@ urlpatterns = [
         views.staff_upload_marks,
         name="staff-upload-marks-file",
     ),
+    path(
+        "download-sample-subjects-file",
+        views.download_sample_subject_file,
+        name="download-sample-subjects-file",
+    ),
+    path(
+        "upload-subjects-from-file",
+        views.upload_subjects_from_file,
+        name="upload-subjects-from-file",
+    ),
 ]

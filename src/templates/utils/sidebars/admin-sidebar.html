@@ -54,7 +54,9 @@
                     <a href="#"><i class="fas fa-book-reader"></i> <span> Subjects</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="{% url 'staff:subjects' %}">Subject List</a></li>
+                        
+                        <li><a href="{% url 'staff:subjects' %}" class="{% if section == 'subjects-area'  %}active{% endif %}">Subject List</a></li>
+                        <li><a href="{% url 'staff:download-sample-subjects-file' %}">Download Sample</a></li>
                     </ul>
                 </li>
                 <li class="{% if section == 'settings'  %}active{% endif %}">

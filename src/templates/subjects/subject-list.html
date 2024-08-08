@@ -38,6 +38,8 @@
                             <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#add_subject">
                                 <i class="fas fa-plus"></i>
                             </a>
+                            <a href="" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#upload_subjects_from_file"><i
+                                class="fas fa-upload"></i></a>
                         </div>
                     </div>
                 </div>
@@ -244,6 +246,39 @@
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  <div class="modal custom-modal fade" id="upload_subjects_from_file" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Upload Subjects</h3>
+                </div>
+                <form action="{% url 'staff:upload-subjects-from-file' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <input name="subjects_file" class="form-control" type="file" placeholder="Upload file" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 row">
+                            <div class="student-submit col-6">
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </div>
+                            <div class="student-submit col-6 ml-5">
+                                <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

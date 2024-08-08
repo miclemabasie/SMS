@@ -1,15 +1,16 @@
 import json
-
+import logging
 from django.contrib import messages
 from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from openpyxl import load_workbook
 from django.conf import settings
 
 from django.template.loader import render_to_string
+import openpyxl
 
 from apps.scelery.tasks import send_feedback_mail
 
@@ -19,10 +20,12 @@ from apps.profiles.models import ParentProfile
 from apps.settings.models import Setting
 from apps.students.models import Class, Mark, StudentProfile, Subject, TeacherProfile
 from apps.terms.models import AcademicYear, ExaminationSession, Term
-
+from openpyxl.utils import get_column_letter
 from .models import AdminProfile
 
 User = get_user_model()
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -130,6 +133,7 @@ def list_all_subjects(request):
     print(subjects)
     template_name = "subjects/subject-list.html"
     context = {
+        "section": "subjects-area",
         "subjects": subjects,
     }
 
@@ -161,6 +165,113 @@ def add_subject_view(request, *args, **kwargs):
         messages.success(request, "Subject added.")
 
         return redirect(reverse("staff:subjects"))
+    return redirect(reverse("staff:subjects"))
+
+
+@login_required
+def download_sample_subject_file(request, *args, **kwargs):
+    """
+    View to download a sample Excel file for subject uploads.
+    """
+    # Create a new workbook and select the active worksheet
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Subject Upload Sample File"
+
+    # Define the headers for the columns
+    headers = [
+        "Subject Name",
+        "Subject Code",
+        "Subject Coefficient",
+    ]
+
+    # Write headers to the first row
+    for col_num, header in enumerate(headers, start=1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.value = header
+
+    # Set column widths to enhance readability
+    for col_num in range(1, len(headers) + 1):
+        column_letter = get_column_letter(col_num)
+        ws.column_dimensions[column_letter].width = 20
+
+    # Create an HTTP response object with the correct content type for Excel files
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    # Set the content disposition to attachment to trigger file download
+    response["Content-Disposition"] = (
+        "attachment; filename=subject_upload_sample_file.xlsx"
+    )
+
+    # Save the workbook to the response object
+    wb.save(response)
+
+    return response
+
+
+@login_required
+def upload_subjects_from_file(request, *args, **kwargs):
+    """
+    View to handle the file upload for subject data.
+    """
+    if request.method == "POST" and request.FILES.get("subjects_file"):
+        # Get the uploaded file from the request
+        subjects_file = request.FILES["subjects_file"]
+
+        try:
+            # Load the uploaded workbook
+            wb = load_workbook(filename=subjects_file)
+            # Get the first sheet from the workbook
+            ws = wb.active
+        except Exception as e:
+            # If there's an error reading the file, show an error message and redirect
+            messages.error(request, f"Error reading the file: {e}")
+            return redirect(reverse("staff:subjects"))
+
+        # Iterate through each row in the worksheet starting from the second row
+        for row_num, row in enumerate(
+            ws.iter_rows(min_row=2, values_only=True), start=2
+        ):
+            # Extract values from the row
+            subject_name, subject_code, subject_coeff = row[:3]
+
+            # Check if essential fields are present
+            if not subject_name or not subject_code:
+                # If any essential field is missing, show an error message and redirect
+                messages.error(
+                    request,
+                    f"Invalid file, missing essential information on row {row_num}",
+                )
+                return redirect(reverse("staff:subjects"))
+
+            try:
+                # Create or update the Subject object
+                subject, created = Subject.objects.update_or_create(
+                    code=subject_code,  # Use subject_code to look up existing records
+                    defaults={
+                        "name": subject_name,
+                        "coef": subject_coeff,
+                    },
+                )
+
+                if created:
+                    logger.info(f"Subject {subject.name} created")
+                else:
+                    logger.info(f"Subject {subject.name} updated")
+
+            except Exception as e:
+                # Log any errors that occur and show an error message
+                logger.error(f"Error processing row {row_num}: {e}")
+                messages.error(request, f"Error processing row {row_num}.")
+                return redirect(reverse("staff:subjects"))
+
+        # Show a success message after processing all rows and redirect
+        messages.success(request, "Subjects have been uploaded successfully.")
+        return redirect(reverse("staff:subjects"))
+
+    # Render the form template for uploading subjects
+    context = {"section": "subject-area"}
     return redirect(reverse("staff:subjects"))
 
 
