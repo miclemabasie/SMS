@@ -23,6 +23,16 @@ urlpatterns = [
     path("add-class/", views.class_add_view, name="class-add"),
     path("edit/<int:pkid>/", views.class_edit_view, name="class-edit"),
     path("delete/<int:pkid>/", views.class_delete_view, name="class-delete"),
+    path(
+        "download-sample-class-upload/",
+        views.download_sample_class_file,
+        name="download-sample-class-upload",
+    ),
+    path(
+        "upload-class-from-file",
+        views.upload_classes_from_file,
+        name="upload-class-from-file",
+    ),
     # auth
     path("accounts/", include("apps.users.urls", namespace="users")),
     path(

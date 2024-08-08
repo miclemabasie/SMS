@@ -43,6 +43,10 @@
                                     
                                 <a href="{% url 'class-add' %}" class="btn btn-primary"><i
                                         class="fas fa-plus"></i></a>
+                                <a href="" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#upload_class_from_file"><i
+                                    class="fas fa-upload"></i></a>
+
+                                    
                             </div>
                         </div>
                     </div>
@@ -52,13 +56,9 @@
                             class="table border-0 star-student table-hover table-center mb-0 datatable table-striped">
                             <thead class="student-thread">
                                 <tr>
-                                    <th>
-                                        <div class="form-check check-tables">
-                                            <input class="form-check-input" type="checkbox"
-                                                value="something">
-                                        </div>
-                                    </th>
+                                    
                                     <th>ID</th>
+                                    <th>Code</th>
                                     <th>Grade Level</th>
                                     <th>Class Name</th>
                                     <th>Class Master</th>
@@ -72,13 +72,9 @@
                                 
                                 {% for class in classes %}                                    
                                     <tr>
-                                        <td>
-                                            <div class="form-check check-tables">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="something">
-                                            </div>
-                                        </td>
+                                       
                                         <td>{{forloop.counter}}</td>
+                                        <td>{{class.class_code}}</td>
                                         <td>{{class.grade_level}}</td>
                                         
                                         <td>{{class.class_name}}</td>
@@ -155,7 +151,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <form action="{% url 'students:download-class-list' %}" method="post">
+                        <form action="{% url 'upload-class-from-file' %}" method="post">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-12">
@@ -185,6 +181,39 @@
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- upload -->
+  <div class="modal custom-modal fade" id="upload_class_from_file" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Upload Classes</h3>
+                </div>
+                <form action="{% url 'upload-class-from-file' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <input name="classes_file" class="form-control" type="file" placeholder="Upload file" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 row">
+                            <div class="student-submit col-6">
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </div>
+                            <div class="student-submit col-6 ml-5">
+                                <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -2,7 +2,7 @@ import io
 import json
 from datetime import datetime, time, timezone
 from random import random
-
+import logging
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -53,6 +53,7 @@ from openpyxl.utils import get_column_letter
 faker_factory = Faker()
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -377,6 +378,7 @@ def class_add_view(request, *args, **kwargs):
         class_master = request.POST.get("class_master")
         class_prefect = request.POST.get("class_prefect")
         class_code = request.POST.get("class_code")
+        promotion_avg = request.POST.get("promotion_average")
 
         print(class_prefect, class_master)
 
@@ -388,21 +390,145 @@ def class_add_view(request, *args, **kwargs):
                 class_name=class_name,
                 class_master=class_master,
                 class_prefect=class_prefect,
-                class_code = class_code,
+                class_code=class_code,
             )
+            if promotion_avg:
+                promotion_avg = int(promotion_avg)
+                klass.pass_avg = promotion_avg
 
             klass.save()
         save_and_add_flag = request.POST.get("save_and_add")
 
         if save_and_add_flag:
             print(save_and_add_flag)
+            messages.success(request, "Class Added")
             return redirect(reverse("class-add"))
+        messages.success(request, "Class Added")
         return redirect(reverse("class-list"))
 
     template_name = "classes/class-add.html"
     context = {"section": "class-area"}
 
     return render(request, template_name, context)
+
+
+@login_required
+def download_sample_class_file(request, *args, **kwargs):
+    """
+    View to download a sample Excel file for class uploads.
+    """
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Class Upload Sample File"
+
+    # Define the headers for the columns
+    headers = [
+        "Class Name",
+        "Grade Level",
+        "Class Master",
+        "Class Prefect",
+        "Class Code",
+        "Promotion Average",
+    ]
+
+    # Write headers to the first row
+    for col_num, header in enumerate(headers, start=1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.value = header
+
+    # Set column widths for better readability
+    for col_num in range(1, len(headers) + 1):
+        column_letter = get_column_letter(col_num)
+        ws.column_dimensions[column_letter].width = 25
+
+    # Create an HTTP response object with the correct content type for Excel files
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    # Set the content disposition to attachment to trigger file download
+    response["Content-Disposition"] = (
+        "attachment; filename=class_upload_sample_file.xlsx"
+    )
+
+    # Save the workbook to the response object
+    wb.save(response)
+
+    return response
+
+
+@login_required
+def upload_classes_from_file(request, *args, **kwargs):
+    """
+    View to handle the file upload for class data.
+    """
+    if request.method == "POST" and request.FILES.get("classes_file"):
+        # Get the uploaded file from the request
+        classes_file = request.FILES["classes_file"]
+
+        try:
+            # Load the uploaded workbook
+            wb = load_workbook(filename=classes_file)
+            # Get the first sheet from the workbook
+            ws = wb.active
+        except Exception as e:
+            # If there's an error reading the file, show an error message and redirect
+            messages.error(request, f"Error reading the file: {e}")
+            return redirect(reverse("classes:upload-classes-from-file"))
+
+        # Iterate through each row in the worksheet starting from the second row
+        for row_num, row in enumerate(
+            ws.iter_rows(min_row=2, values_only=True), start=2
+        ):
+            # Extract values from the row
+            (
+                class_name,
+                grade_level,
+                class_master,
+                class_prefect,
+                class_code,
+                promotion_avg,
+            ) = row[:6]
+
+            # Check if essential fields are present
+            if not class_name or not grade_level:
+                # If any essential field is missing, show an error message and redirect
+                messages.error(
+                    request,
+                    f"Invalid file, missing essential information on row {row_num}",
+                )
+                return redirect(reverse("class-list"))
+
+            try:
+                # Create or update the Class object based on grade_level and class_name
+                klass, created = Class.objects.update_or_create(
+                    grade_level=grade_level,
+                    class_name=class_name,
+                    defaults={
+                        "class_master": class_master,
+                        "class_prefect": class_prefect,
+                        "class_code": class_code,
+                        "pass_avg": int(promotion_avg) if promotion_avg else None,
+                    },
+                )
+
+                if created:
+                    logger.info(f"Class {klass.class_name} created")
+                else:
+                    logger.info(f"Class {klass.class_name} updated")
+
+            except Exception as e:
+                # Log any errors that occur and show an error message
+                logger.error(f"Error processing row {row_num}: {e}")
+                messages.error(request, f"Error processing row {row_num}.")
+                return redirect(reverse("class-list"))
+
+        # Show a success message after processing all rows and redirect
+        messages.success(request, "Classes have been uploaded successfully.")
+        return redirect(reverse("class-list"))
+
+    # Render the form template for uploading classes
+    context = {"section": "class-area"}
+    return redirect(reverse("class-list"))
 
 
 @login_required
@@ -421,9 +547,7 @@ def class_list_view(request, *args, **kwargs):
 
 @login_required
 def class_edit_view(request, pkid, *args, **kwargs):
-
     klass = get_object_or_404(Class, pkid=pkid)
-
     if request.method == "POST":
 
         # extract information from the class form
@@ -432,6 +556,7 @@ def class_edit_view(request, pkid, *args, **kwargs):
         class_master = request.POST.get("class_master")
         class_prefect = request.POST.get("class_prefect")
         promotion_avg = request.POST.get("promotion_average")
+        class_code = request.POST.get("class_code")
 
         print(class_prefect, class_master)
 
@@ -440,12 +565,14 @@ def class_edit_view(request, pkid, *args, **kwargs):
         klass.class_master = class_master
         klass.class_prefect = class_prefect
         klass.pass_avg = promotion_avg
+        klass.class_code = class_code
 
         klass.save()
         save_and_add_flag = request.POST.get("save_and_add")
         if save_and_add_flag:
             print(save_and_add_flag)
             return redirect(reverse("class-add"))
+        messages.success(request, "Updated class.")
         return redirect(reverse("class-list"))
 
     template_name = "classes/class-edit.html"

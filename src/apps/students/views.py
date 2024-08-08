@@ -800,16 +800,6 @@ def upload_students_from_file(request, *args, **kwargs):
     if request.method == "POST" and request.FILES.get("students_file"):
         # Get the uploaded file from the request
         students_file = request.FILES["students_file"]
-        # Get the selected class ID from the form data
-        selected_class_id = request.POST.get("selected_class_id")
-
-        try:
-            # Fetch the selected class from the database using the provided ID
-            klass = Class.objects.get(pkid=selected_class_id)
-        except Class.DoesNotExist:
-            # If the class does not exist, show an error message and redirect to the form
-            messages.error(request, "Class not found.")
-            return redirect(reverse("students:upload-students-from-file"))
 
         try:
             # Load the uploaded workbook
@@ -835,7 +825,7 @@ def upload_students_from_file(request, *args, **kwargs):
                 phone,
                 address,
                 pob,
-                student_klass,
+                class_code,
                 specialty,
                 parent_name,
                 parent_phone,
@@ -873,11 +863,18 @@ def upload_students_from_file(request, *args, **kwargs):
 
                 # Normalize gender values
                 gender = "Male" if gender.lower() in ["m", "male"] else "Female"
+
+                try:
+                    # Fetch the selected class from the database using the provided ID
+                    klass = Class.objects.get(class_code=class_code)
+                except Class.DoesNotExist:
+                    # If the class does not exist, show an error message and redirect to the form
+                    messages.error(request, f"Class not found at row {row_number}")
+                    return redirect(reverse("students:upload-students-from-file"))
                 # Get or create a StudentProfile object for the user
                 student, created = StudentProfile.objects.get_or_create(
                     user=user,
                     defaults={
-                        "current_class": klass,
                         "gender": gender,
                         "phone_number": str(phone),
                         "address": address
@@ -889,6 +886,7 @@ def upload_students_from_file(request, *args, **kwargs):
 
                 if created:
                     # If the student profile was created, save it and update user role
+                    student.current_class = klass
                     student.save()
                     user.is_student = True
                     user.save()
@@ -902,6 +900,8 @@ def upload_students_from_file(request, *args, **kwargs):
                     send_account_creation_email(request, user)
                 else:
                     # Log a warning if the student profile already exists
+                    student.current_class = klass
+                    student.save()
                     logger.warning(
                         f"Student profile for user {user.username} already exists"
                     )

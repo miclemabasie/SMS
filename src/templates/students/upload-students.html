@@ -60,16 +60,12 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="form-header">
-                        <h3>Upload Mark Sheet</h3>
-                        <p>{{class.grade_level}} - {{class.class_name}}</p>
+                        <h3>Upload Students</h3>
                     </div>
                     <form action="{% url 'students:upload-students-from-file' %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="col-12">
-                                <h5 class="form-title"><span>Select Class</span></h5>
-                            </div>
-
+                            {% comment %} 
                             <div class="col-12">
                                 <div class="form-group local-forms">
                                     <label>Class <span class="login-danger">*</span></label>
@@ -80,7 +76,7 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
 
                             <div class="col-12">
                                 <div class="form-group">
@@ -90,7 +86,7 @@
                             
                             <div class="col-12 row">
                                 <div class="student-submit col-6">
-                                    <button type="submit" class="btn btn-primary">Download</button>
+                                    <button type="submit" class="btn btn-primary">Upload</button>
                                 </div>
                                 <div class="student-submit col-6 ml-5">
                                     <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>

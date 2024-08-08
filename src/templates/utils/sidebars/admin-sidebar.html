@@ -45,6 +45,8 @@
                         <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
                         <li><a href="{% url 'class-list' %}" class="{% if request.resolver_match.url_name == 'class-list'  %}active{% endif %}">Classes</a></li>
                         <li><a href="{% url 'class-add' %}" class="{% if request.resolver_match.url_name == 'class-add'  %}active{% endif %}">Class Add</a></li>
+                        <li><a href="{% url 'download-sample-class-upload' %}" class="">Download Sample</a></li>
+
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>
