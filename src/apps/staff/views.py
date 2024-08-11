@@ -165,7 +165,13 @@ def add_subject_view(request, *args, **kwargs):
         messages.success(request, "Subject added.")
 
         return redirect(reverse("staff:subjects"))
-    return redirect(reverse("staff:subjects"))
+
+    template_name = "subjects/add-subject.html"
+    context = {
+        "section": "add-subject",
+        
+    }
+    return render(request, template_name, context)
 
 
 @login_required

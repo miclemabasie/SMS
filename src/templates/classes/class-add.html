@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
 
-
-
 {% block styletags %}
-    
 {% endblock styletags %}
-    
 
 {% block content %}
 <div class="content container-fluid">
@@ -33,44 +29,44 @@
                       <div class="col-12 col-sm-6">
                          <div class="form-group">
                             <label>Grade Level <span style="color: red;">*</span></label>
-                            <input type="text" name="grade_level" class="form-control">
+                            <input type="text" name="grade_level" class="form-control" placeholder="Enter grade level (e.g., 1)">
                          </div>
                       </div>
                       <div class="col-12 col-sm-6">
                          <div class="form-group">
                             <label>Class Name <span style="color: red;">*</span></label>
-                            <input type="text" name="class_name" class="form-control" required>
+                            <input type="text" name="class_name" class="form-control" required placeholder="Enter class name (e.g., Form 1)">
                          </div>
                       </div>
 
                       <div class="col-12 col-sm-6">
                         <div class="form-group">
                            <label>Class Master <span style="color: red;">*</span></label>
-                           <input type="text" name="class_master" class="form-control" required>
+                           <input type="text" name="class_master" class="form-control" required placeholder="Enter class master's name">
                         </div>
                      </div>
                      <div class="col-12 col-sm-6">
                         <div class="form-group">
-                           <label>Class Prefect <span style="color: red;"></span></label>
-                           <input type="text" name="class_prefect" class="form-control">
+                           <label>Class Prefect</label>
+                           <input type="text" name="class_prefect" class="form-control" placeholder="Enter class prefect's name">
                         </div>
                      </div>
 
                      <div class="col-12 col-sm-6">
                         <div class="form-group">
                            <label>Class Code <span style="color: red;">*</span></label>
-                           <input type="text" name="class_code" class="form-control" required>
+                           <input type="text" name="class_code" class="form-control" required placeholder="Enter unique class code (e.g., F01A)">
                         </div>
                      </div>
 
                      <div class="col-12 col-sm-6">
                         <div class="form-group">
-                           <label>Promotion Avg <span style="color: red;"></span></label>
-                           <input type="text" name="promotion_average" class="form-control">
+                           <label>Promotion Avg</label>
+                           <input type="text" name="promotion_average" class="form-control" placeholder="Enter promotion average (e.g.,10)">
                         </div>
                      </div>
                       <div class="col-12">
-                         <button type="submit" class="btn btn-primary">Add Class </button>
+                         <button type="submit" class="btn btn-primary">Add Class</button>
                          {% comment %} <button type="submit" name="save_and_add" class="btn btn-primary">Save and Add Another</button> {% endcomment %}
                       </div>                     
                    </div>
@@ -82,12 +78,5 @@
  </div>
 {% endblock content %}
 
-
-
-
-
 {% block scripttags %}
-    
 {% endblock scripttags %}
-    
-    

@@ -33,7 +33,7 @@
                         <!-- <li><a href="teacher-details.html">Teacher View</a></li> -->
                         
                         <li><a href="{% url 'teachers:teachers-add' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Teacher Add</a></li>
-                        <li><a href="{% url 'teachers:download-teacher-sample-file' %}" class="{% if request.resolver_match.url_name == 'teachers-add'  %}active{% endif %}">Download Sample</a></li>
+                        <li><a href="{% url 'teachers:download-teacher-sample-file' %}" class="">Download Sample</a></li>
                         <!-- <li><a href="edit-teacher.html">Teacher Edit</a></li> -->
                     </ul>
                 </li>
@@ -56,6 +56,8 @@
                     <ul>
                         
                         <li><a href="{% url 'staff:subjects' %}" class="{% if section == 'subjects-area'  %}active{% endif %}">Subject List</a></li>
+                        <li><a href="{% url 'staff:subject-add' %}" class="{% if section == 'add-subject'  %}active{% endif %}">Add Subject</a></li>
+          
                         <li><a href="{% url 'staff:download-sample-subjects-file' %}">Download Sample</a></li>
                     </ul>
                 </li>

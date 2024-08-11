@@ -219,19 +219,19 @@
                                 <div class="col-12">
                                     <div class="form-group local-forms">
                                         <label>Subject Name <span class="login-danger">*</span></label>
-                                        <input name="subject_name" type="text" class="form-control" required>
+                                        <input name="subject_name" type="text" class="form-control" placeholder="" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group local-forms">
                                         <label>Subject Code <span class="login-danger">*</span></label>
-                                        <input name="subject_code" type="text" class="form-control" required>
+                                        <input name="subject_code" type="text" class="form-control" placeholder="" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group local-forms">
                                         <label>Subject Coeff <span class="login-danger">*</span></label>
-                                        <input name="subject_coeff" type="text" class="form-control" required>
+                                        <input name="subject_coeff" type="text" class="form-control" placeholder="" required>
                                     </div>
                                 </div>
                                 <div class="col-12 row">
@@ -244,6 +244,7 @@
                                 </div>
                             </div>
                         </form>
+                        
                     </div>
                 </div>
             </div>
@@ -262,10 +263,9 @@
                 <form action="{% url 'staff:upload-subjects-from-file' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
-
                         <div class="col-12">
                             <div class="form-group">
-                                <input name="subjects_file" class="form-control" type="file" placeholder="Upload file" required>
+                                <input name="subjects_file" class="form-control" type="file" placeholder="Upload subjects file" required>
                             </div>
                         </div>
                         
@@ -279,6 +279,7 @@
                         </div>
                     </div>
                 </form>
+                
             </div>
         </div>
     </div>
