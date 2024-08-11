@@ -204,12 +204,13 @@ def update_settings(request):
         city = data.get("city")
         address1 = data.get("address1")
         address2 = data.get("address2")
-        postal = data.get("postal")
+        postal = data.get("postal_code")
         motto = data.get("motto")
+        highest_upload_mark = data.get("highest_upload_mark")
         logo = request.FILES.get("logo")
         favicon = request.FILES.get("favicon")
 
-        print(logo)
+        print("this is the highest mark ", highest_upload_mark)
 
         setting.school_name = school_name
         if currency:
@@ -226,6 +227,8 @@ def update_settings(request):
             setting.postal_code = postal
         if motto:
             setting.motto = motto
+        if highest_upload_mark:
+            setting.highest_upload_mark = highest_upload_mark
 
         if logo:
             print("This is the logo", logo)

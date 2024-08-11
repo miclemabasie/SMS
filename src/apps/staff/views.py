@@ -13,8 +13,6 @@ from django.template.loader import render_to_string
 import openpyxl
 
 from apps.scelery.tasks import send_feedback_mail
-
-
 from apps.attendance.models import Attendance
 from apps.profiles.models import ParentProfile
 from apps.settings.models import Setting
@@ -169,7 +167,6 @@ def add_subject_view(request, *args, **kwargs):
     template_name = "subjects/add-subject.html"
     context = {
         "section": "add-subject",
-        
     }
     return render(request, template_name, context)
 
@@ -515,147 +512,91 @@ def subject_marks_list(request, class_pkid):
 
 @login_required
 def staff_upload_marks(request, subject_pkid, class_pkid, *args, **kwargs):
-    # Get the subject and all the students associated to thesubject from the database
-
+    # Get the subject and all the students associated with the subject from the database
     subject = Subject.objects.get(pkid=subject_pkid)
     klass = Class.objects.get(pkid=class_pkid)
     academic_year = AcademicYear.objects.filter(is_current=True).first()
 
-    # terms = Term.objects.filter(academic_year=academic_year)
+    # Retrieve the maximum mark allowed from settings
+    setting = Setting.objects.first()
+    max_mark = setting.highest_upload_mark
+    min_mark = 0  # Minimum mark is 0
 
-    # sequences = terms.filter(is_current=True).first().examination_sessions.all()
-
-    # teacher = request.user.teacher_profile
-    # # Get data for student marks and updates
-    # students = klass.students.all()
-    # # Get all the marks for the given subject, class, and term
-    # term = Term.objects.get(is_current=True)
-    # # get the value for the sequences in the term, (Example: 1st, 2nd)
-    # session_ids = sequences.values_list("pkid", flat=True)
-    # first_seq_id = session_ids.first()
-    # second_seq_id = session_ids.last()
-    # first_session_name = ExaminationSession.objects.get(pkid=first_seq_id)
-    # second_session_name = ExaminationSession.objects.get(pkid=second_seq_id)
-
-    # data = []
-    # for student in students:
-    #     name = student.user.get_fullname
-    #     fmark = Mark.objects.filter(
-    #         student=student, exam_session__pkid=first_seq_id, subject=subject
-    #     ).first()
-    #     lmark = Mark.objects.filter(
-    #         student=student, exam_session__pkid=second_seq_id, subject=subject
-    #     ).first()
-    #     score1 = 0
-    #     score2 = 0
-    #     if not fmark:
-    #         fmark = 0
-    #     else:
-    #         score1 = fmark.score
-    #     if not lmark:
-    #         lmark = 0
-    #     else:
-    #         score2 = lmark.score
-
-    #     obj = {
-    #         "student": student,
-    #         "name": name,
-    #         "fmark": fmark,
-    #         "lmark": lmark,
-    #         "score1": score1,
-    #         "score2": score2,
-    #     }
-    #     data.append(obj)
-
-    # # for term in terms:
-    # #     for ex_session in term.examination_sessions.all():
-    # #         sequences.append(ex_session)
-
-    if request.method == "POST" and request.FILES["marks_file"]:
-        # setting = Setting.objects.all().first()
-        # if not setting.teacher_can_upload:
-        #     messages.error(request, "Can not upload at the moment")
-        #     return redirect(
-        #         reverse(
-        #             "students:marks-upload",
-        #             kwargs={"subject_pkid": subject_pkid, "class_pkid": class_pkid},
-        #         )
-        #     )
-
+    if request.method == "POST" and request.FILES.get("marks_file"):
         marks_file = request.FILES["marks_file"]
         subject_name = str(subject.name).lower()
         class_name = str(klass.class_name).lower()
         file_name = marks_file.name.lower()
 
         if subject_name not in file_name:
-            # Handle the error
             error_message = f"The uploaded file name does not match the subject name '{subject.name}'."
             messages.error(request, error_message)
             return redirect(
-                reverse(
-                    "staff:subject-marks-list",
-                    kwargs={"class_pkid": klass.pkid},
-                )
+                reverse("staff:subject-marks-list", kwargs={"class_pkid": klass.pkid})
             )
 
         if class_name not in file_name:
-            # Handle the error
             error_message = f"The uploaded file name does not match the class name '{klass.class_name}'."
             messages.error(request, error_message)
             return redirect(
-                reverse(
-                    "staff:subject-marks-list",
-                    kwargs={"class_pkid": klass.pkid},
-                )
+                reverse("staff:subject-marks-list", kwargs={"class_pkid": klass.pkid})
             )
 
         selected_ex_session_id = request.POST.get("selected_ex_session")
-        exam_session = ExaminationSession.objects.filter(pkid=selected_ex_session_id)
-        if exam_session.exists():
-            exam_session = exam_session.first()
-        else:
+        exam_session = ExaminationSession.objects.filter(
+            pkid=selected_ex_session_id
+        ).first()
+        if not exam_session:
             messages.error(request, "Invalid Exam Session")
             return redirect(
-                reverse(
-                    "staff:subject-marks-list",
-                    kwargs={"class_pkid": klass.pkid},
-                )
+                reverse("staff:subject-marks-list", kwargs={"class_pkid": klass.pkid})
             )
-
-        # decoded_file = marks_file.read().decode('utf-8').splitlines()
-
-        # Get the teacher from the DB
-        # teacher = request.user.teacher_profile
-
-        # Get the subject from the database
 
         wb = load_workbook(filename=marks_file)
-
         ws = wb["marks"]
 
-        for row in ws.iter_rows(min_row=2, values_only=True):
-            student_matricule, subject_name, marks = (
-                row[0],
-                row[1],
-                row[2],
+        row_errors = []  # Collect errors for each row
+        for idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
+            student_matricule, subject_name, marks = row
+            logger.info(
+                f"Processing row {idx}: Student mat: {student_matricule}, Mark: {marks}"
             )
-            print(
-                f"this is the student information student mat: {student_matricule}, mark: {marks}, subjectname: {subject_name}, subject_id: {subject.name}"
-            )
-            student = StudentProfile.objects.get(matricule=student_matricule)
-            # Check if a mark already exists for this student and subject
+
+            student = StudentProfile.objects.filter(matricule=student_matricule).first()
+            if not student:
+                row_errors.append(
+                    f"Row {idx}: Student with matricule {student_matricule} does not exist."
+                )
+                continue
+
             mark, created = Mark.objects.get_or_create(
                 student=student, subject=subject, exam_session=exam_session
             )
-
             mark.teacher = subject.assigned_to
 
-            # Update the score
-            if not marks:
+            # Validate the score
+            if marks is None:
                 marks = 0
+            elif marks < min_mark or marks > max_mark:
+                row_errors.append(
+                    f"Row {idx}: Mark {marks} is out of bounds. Must be between {min_mark} and {max_mark}."
+                )
+                continue  # Skip updating this row if there's an error
+
             mark.score = marks
             mark.save()
-            print(mark)
+            logger.info(f"Updated mark for student {student_matricule} to {marks}.")
+
+        # Inform user about errors
+        if row_errors:
+            error_message = (
+                "There were problems with the following rows:\n" + "\n".join(row_errors)
+            )
+            messages.error(request, error_message)
+            logger.error(error_message)
+            return redirect(
+                reverse("staff:subject-marks-list", kwargs={"class_pkid": klass.pkid})
+            )
 
         messages.success(
             request,
@@ -663,6 +604,7 @@ def staff_upload_marks(request, subject_pkid, class_pkid, *args, **kwargs):
         )
         return redirect(reverse("staff:admin-marks"))
 
+    # Render the template with context
     template_name = "students/upload-marks.html"
     context = {
         "section": "marks-area",

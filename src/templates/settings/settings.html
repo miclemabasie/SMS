@@ -126,7 +126,13 @@
                             <div class="form-group">
                                 <label>Postal/Zip Code </label>
                                 <input value="{{setting.postal_code}}" type="text" class="form-control"
-                                    placeholder="Postal Code">
+                                    placeholder="Postal Code" name="postal_code">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Highest Upload Mark </label>
+                                <input value="{{setting.highest_upload_mark}}" type="text" class="form-control"
+                                    placeholder="Highest Possible Mark Value", name="highest_upload_mark">
                             </div>
 
                             <div class="form-group mb-4 text-end float-right">
@@ -201,6 +207,10 @@
                                 <tr>
                                     <td>Address Line 2</td>
                                     <td>{{setting.address2}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Highest Possible Upload Mark</td>
+                                    <td>{{setting.highest_upload_mark}}</td>
                                 </tr>
                             </tbody>
                         </table>
