@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load student_tags %}
 
 
 {% block stylelinks %}
@@ -97,16 +98,23 @@
                                     <tr>
                                         <td>{{forloop.counter}}</td>
                                         <td><a  style="color: blue" href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.matricule}}</a></td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}"
-                                                    class="avatar avatar-sm me-2"><img
-                                                        class="avatar-img rounded-circle"
-                                                        src="{{ student.profile_photo.url}}"
-                                                        alt="User Image"></a>
-                                                <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.user.get_fullname}}</a>
-                                            </h2>
-                                        </td>
+                                        
+
+                                        {% if student.profile_photo %}
+                                            <td>
+                                                <h2 class="table-avatar">
+                                                    <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}"
+                                                        class="avatar avatar-sm me-2">
+                                                        <img class="avatar-img rounded-circle"
+                                                            src="{{ student.profile_photo.url|check_image_exists }}"
+                                                            alt="User Image">
+                                                    </a>
+                                                    <a href="{% url 'students:student-detail' pkid=student.pkid matricule=student.matricule%}">{{student.user.get_fullname}}</a>
+                                                </h2>
+                                            </td>
+                                        {% else %}
+                                            <h2>something else</h2>
+                                        {% endif %}
                                         <td>{{student.current_class.class_name}}</td>
                                         <td>{{ student.user.dob|date:"j M Y" }}</td>
                                         <td>{{ student.parent.full_name }}</td>
