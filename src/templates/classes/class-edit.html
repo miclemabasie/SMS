@@ -50,12 +50,12 @@
                            <input type="text" value="{{class.class_master}}" name="class_master" class="form-control">
                         </div>
                      </div>
-                     <div class="col-12 col-sm-6">
+                     {% comment %} <div class="col-12 col-sm-6">
                         <div class="form-group">
                            <label>Class Prefect</label>
                            <input type="text" value="{{class.class_prefect}}" name="class_prefect" class="form-control">
                         </div>
-                     </div>
+                     </div> {% endcomment %}
 
                      <div class="col-12 col-sm-6">
                         <div class="form-group">
@@ -71,6 +71,17 @@
                            <input type="text" value="{{class.pass_avg}}" name="promotion_average" class="form-control">
                         </div>
                      </div>
+
+                     <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Deparment<span style="color: red;">*</span></label>
+                            <select name="department" class="form-control" required>
+                              {% for department in departments %}
+                              <option value="{{department.pkid}}" {% if class.department.pkid == department.pkid %}selected{% endif %}>{{department.name}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </div>
                       <div class="col-12">
                          <button type="submit" class="btn btn-primary">Edit Class</button>
                       </div>

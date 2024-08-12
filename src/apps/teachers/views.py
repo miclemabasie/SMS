@@ -33,6 +33,7 @@ from apps.students.forms import VerifyPinForm
 from apps.students.models import (
     TEACHERSERVICE,
     Class,
+    Department,
     Mark,
     StudentProfile,
     Subject,
@@ -378,7 +379,15 @@ def class_add_view(request, *args, **kwargs):
         class_master = request.POST.get("class_master")
         class_prefect = request.POST.get("class_prefect")
         class_code = request.POST.get("class_code")
+        department_pkid = request.POST.get("department")
         promotion_avg = request.POST.get("promotion_average")
+        if department_pkid:
+            department_pkid = int(department_pkid)
+        try:
+            department = Department.objects.get(pkid=department_pkid)
+        except Department.DoesNotExist:
+            messages.error(request, "Department Does not exist.")
+            return redirect(reverse("class-list"))
 
         print(class_prefect, class_master)
 
@@ -395,7 +404,8 @@ def class_add_view(request, *args, **kwargs):
             if promotion_avg:
                 promotion_avg = int(promotion_avg)
                 klass.pass_avg = promotion_avg
-
+            if department:
+                klass.department = department
             klass.save()
         save_and_add_flag = request.POST.get("save_and_add")
 
@@ -405,9 +415,9 @@ def class_add_view(request, *args, **kwargs):
             return redirect(reverse("class-add"))
         messages.success(request, "Class Added")
         return redirect(reverse("class-list"))
-
+    departments = Department.objects.all()
     template_name = "classes/class-add.html"
-    context = {"section": "class-area"}
+    context = {"section": "class-area", "departments": departments}
 
     return render(request, template_name, context)
 
@@ -557,6 +567,14 @@ def class_edit_view(request, pkid, *args, **kwargs):
         class_prefect = request.POST.get("class_prefect")
         promotion_avg = request.POST.get("promotion_average")
         class_code = request.POST.get("class_code")
+        department_pkid = request.POST.get("department")
+        if department_pkid:
+            department_pkid = int(department_pkid)
+        try:
+            department = Department.objects.get(pkid=department_pkid)
+        except Department.DoesNotExist:
+            messages.error(request, "Deparment Does not exist.")
+            return redirect(reverse("class-list"))
 
         print(class_prefect, class_master)
 
@@ -566,6 +584,7 @@ def class_edit_view(request, pkid, *args, **kwargs):
         klass.class_prefect = class_prefect
         klass.pass_avg = promotion_avg
         klass.class_code = class_code
+        klass.department = department
 
         klass.save()
         save_and_add_flag = request.POST.get("save_and_add")
@@ -574,9 +593,9 @@ def class_edit_view(request, pkid, *args, **kwargs):
             return redirect(reverse("class-add"))
         messages.success(request, "Updated class.")
         return redirect(reverse("class-list"))
-
+    departments = Department.objects.all()
     template_name = "classes/class-edit.html"
-    context = {"section": "class-area", "class": klass}
+    context = {"section": "class-area", "class": klass, "departments": departments}
 
     return render(request, template_name, context)
 

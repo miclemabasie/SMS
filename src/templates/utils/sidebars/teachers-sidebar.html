@@ -18,11 +18,11 @@
           <a href="{% url 'students:marks' %} "><i class="fas fa-chart-line"></i> <span>Marks</span></a>
         </li>
 
-        
+{% comment %}         
         <li class="{% if section == 'reports-area' %}active{% endif %}">
             <a href="{% url 'reports:reports' %}"><i class="fas fa-book-reader"></i> <span>Generate Reports</span></a>
           </li>
-  
+   {% endcomment %}
 
         <li class="submenu {% if section == 'attendance-area' %}active{% endif %}">
           <a href="#"><i class="fas fa-user-check"></i> <span>Attendance</span> <span class="menu-arrow"></span></a>

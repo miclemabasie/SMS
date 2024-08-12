@@ -28,11 +28,20 @@ class DOMAINCHOICES(models.TextChoices):
 User = get_user_model()
 
 
+class Department(TimeStampedUUIDModel):
+    name = models.CharField(
+        verbose_name="Department", max_length=200
+    )
+
+
 class Class(TimeStampedUUIDModel):
     class_name = models.CharField(verbose_name=_("Class Name"), max_length=200)
     grade_level = models.CharField(verbose_name=_("Class Level"), max_length=200)
     class_master = models.CharField(
         verbose_name=_("Class Master"), max_length=200, blank=True, null=True
+    )
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, blank=True, null=True
     )
     class_prefect = models.CharField(
         verbose_name=_("Class Prefect"), max_length=200, blank=True, null=True
