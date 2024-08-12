@@ -328,7 +328,7 @@ def download_marksheet(request, subject_pkid, class_pkid, *args, **kwargs):
     # Get the class for which the mark sheet needs to be downloaded}|
 
     klass = get_object_or_404(Class, pkid=class_pkid)
-
+    logger.info(f"IDs: {subject_pkid}-{class_pkid}")
     current_academic_session = AcademicYear.objects.filter(is_current=True).first()
     current_exam_session = ExaminationSession.objects.filter(is_current=True).first()
     if request.method == "POST":
@@ -368,6 +368,7 @@ def download_marksheet(request, subject_pkid, class_pkid, *args, **kwargs):
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
         filename = f"{klass.grade_level}-{klass.class_name}-{subject.name}.xlsx"
+        logger.info(f"Filename: {filename}, Grade: {klass.grade_level}, ClassName: {klass.class_name}, Subject: {subject.name}")
         response["Content-Disposition"] = f"attachment; filename={filename}"
 
         # Save the workbook to the response

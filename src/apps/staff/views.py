@@ -42,6 +42,8 @@ def admin_dashboard(request):
         "classes": classes,
     }
 
+    logger.info("This is some test info")
+
     # Generate data about school attendance
     attendance_list_tuples = []
     student_paid_list_tuples = []

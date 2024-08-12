@@ -28,7 +28,12 @@ DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
 
 
-ALLOWED_HOSTS = ["139.162.208.182", "localhost", "127.0..0.1", "francetoday.wftest.co.uk"]
+ALLOWED_HOSTS = [
+    "139.162.208.182",
+    "localhost",
+    "127.0..0.1",
+    "francetoday.wftest.co.uk",
+]
 
 # Application definition
 
@@ -147,10 +152,13 @@ import logging.config
 
 from django.utils.log import DEFAULT_LOGGING
 
-logger = logging.getLogger(__name__)
+import logging
+import logging.config
+from django.utils.log import DEFAULT_LOGGING
+
+# Logger configuration
 LOG_FILE_NAME = "sms.log"
 LOG_LEVEL = "INFO"
-
 
 logging.config.dictConfig(
     {
@@ -164,9 +172,12 @@ logging.config.dictConfig(
             "django.server": DEFAULT_LOGGING["formatters"]["django.server"],
         },
         "handlers": {
-            "console": {"class": "logging.StreamHandler", "formatter": "console"},
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "console",
+            },
             "file": {
-                "level": "INFO",
+                "level": LOG_LEVEL,
                 "class": "logging.FileHandler",
                 "formatter": "file",
                 "filename": f"logs/{LOG_FILE_NAME}",
@@ -174,8 +185,16 @@ logging.config.dictConfig(
             "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
         },
         "loggers": {
-            "": {"level": "INFO", "handlers": ["console", "file"], "propagate": False},
-            "apps": {"level": "INFO", "handlers": ["console"], "propagate": False},
+            "": {
+                "level": LOG_LEVEL,
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
+            "apps": {
+                "level": LOG_LEVEL,
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
             "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
         },
     }
