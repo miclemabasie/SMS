@@ -33,12 +33,12 @@
                         <div class="col">
                             <h3 class="page-title">Subjects</h3>
                         </div>
-                        <div class="col-auto text-end float-end ms-auto download-grp">
+                        {% comment %} <div class="col-auto text-end float-end ms-auto download-grp">
                             
                             <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#add_subject">
                                 <i class="fas fa-plus"></i>
                             </a>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
                 </div>
 
@@ -77,37 +77,12 @@
                                         class="fas fa-upload"></i> Upload File</a>                                           
                                     </div>
                                     <div class="col-auto text-end float-end ms-auto download-grp">
-                                        <a href="#" style="color: white;" data-bs-toggle="modal" data-bs-target="#download_class_{{class.pkid}}" class="btn btn-outline-primary me-2"><i
+                                        <a href="#" style="color: white;" data-bs-toggle="modal" data-bs-target="#download_class_{{subject.pkid}}" class="btn btn-outline-primary me-2"><i
                                         class="fas fa-download"></i> Download List</a>                                           
                                     </div>
-
                                 </td>
                                 
                             </tr>
-                            <div class="modal custom-modal fade" id="delete_subject_{{subject.pkid}}" role="dialog">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-body">
-                                            <div class="form-header">
-                                                <h3>Delete Subject ({{subject.name}})</h3>
-                                                <p>Are you sure want to delete?</p>
-                                            </div>
-                                            <div class="modal-btn delete-action">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <a href="{% url 'staff:subjects-delete' pkid=subject.pkid %}"
-                                                            class="btn btn-primary paid-continue-btn">Delete</a>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <a href="javascript:void(0);" data-bs-dismiss="modal"
-                                                            class="btn btn-primary paid-cancel-btn">Cancel</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             {% comment %} Modal to upload student marks {% endcomment %}
                             <div class="modal custom-modal fade" id="upload_marks_{{subject.pkid}}" role="dialog">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -162,7 +137,7 @@
                             </div>
 
                             {% comment %} Modal to download student list {% endcomment %}
-                            <div class="modal custom-modal fade" id="download_class_{{class.pkid}}" role="dialog">
+                            <div class="modal custom-modal fade" id="download_class_{{subject.pkid}}" role="dialog">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-body">
@@ -202,55 +177,6 @@
 
 
 
-<div class="modal custom-modal fade" id="add_subject" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header">
-                    <h3>Add Subject</h3>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <form action="{% url 'staff:subject-add' %}" method="post">
-                            {% csrf_token %}
-                            <div class="row">
-                                <div class="col-12">
-                                    <h5 class="form-title"><span>Subject Information</span></h5>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group local-forms">
-                                        <label>Subject Name <span class="login-danger">*</span></label>
-                                        <input name="subject_name" type="text" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group local-forms">
-                                        <label>Subject Code <span class="login-danger">*</span></label>
-                                        <input name="subject_code" type="text" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group local-forms">
-                                        <label>Subject Coeff <span class="login-danger">*</span></label>
-                                        <input name="subject_coeff" type="text" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-12 row">
-                                    <div class="student-submit col-6">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                    <div class="student-submit col-6 ml-5">
-                                        <a href="" data-bs-dismiss="modal" class="btn btn-danger">Cancel</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 {% endblock content %}
