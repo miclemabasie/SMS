@@ -28,6 +28,7 @@ from .models import (
     StudentProfile,
     StudentTempCreateProfile,
     Subject,
+    Department,
     TeacherProfile,
     TeacherTempCreateProfile,
 )
@@ -61,10 +62,11 @@ def list_student_view(request):
 
     queryset = StudentProfile.objects.all()
     classes = Class.objects.all()
-
+    departments = Department.objects.all()
     template_name = "students/list.html"
     context = {
         "section": "student-area",
+        "deparments": departments,
         "students": queryset,
         "classes": classes,
     }
@@ -233,12 +235,24 @@ def add_student_view(request):
         else:
             messages.error(request, "Student already exist.")
             return redirect(reverse("students:student-list"))
-
+    departments = Department.objects.all()
     template_name = "students/add.html"
 
-    context = {"section": "student-area", "classes": classes}
+    context = {
+        "section": "student-area",
+        "classes": classes,
+        "departments": departments,
+    }
 
     return render(request, template_name, context)
+
+
+def get_classes_by_department(request):
+    department_id = request.GET.get("department_id")
+    classes = Class.objects.filter(department_id=department_id).values(
+        "id", "class_name"
+    )
+    return JsonResponse(list(classes), safe=False)
 
 
 @login_required

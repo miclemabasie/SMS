@@ -29,9 +29,11 @@ User = get_user_model()
 
 
 class Department(TimeStampedUUIDModel):
-    name = models.CharField(
-        verbose_name="Department", max_length=200
-    )
+    name = models.CharField(verbose_name="Department", max_length=200)
+
+    @property
+    def get_all_classes(self):
+        return self.classes.all()
 
 
 class Class(TimeStampedUUIDModel):
@@ -41,7 +43,11 @@ class Class(TimeStampedUUIDModel):
         verbose_name=_("Class Master"), max_length=200, blank=True, null=True
     )
     department = models.ForeignKey(
-        Department, on_delete=models.CASCADE, blank=True, null=True
+        Department,
+        related_name="classes",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
     class_prefect = models.CharField(
         verbose_name=_("Class Prefect"), max_length=200, blank=True, null=True

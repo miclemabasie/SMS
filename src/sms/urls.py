@@ -6,6 +6,7 @@ from django.urls import include, path
 
 from apps.scelery.views import form_view
 from apps.teachers import views
+from apps.students.views import get_classes_by_department
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -44,6 +45,11 @@ urlpatterns = [
     path("leave/", include("apps.leave.urls", namespace="leave")),
     # testing
     path("form/", form_view, name="form"),
+    path(
+        "get-classes/",
+        get_classes_by_department,
+        name="get_classes_by_department",
+    ),
 ]
 
 # if settings.DEBUG:

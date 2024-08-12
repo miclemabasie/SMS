@@ -94,18 +94,25 @@
                           </div>
                       </div>
                       <div class="col-12 col-sm-6">
-                          <div class="form-group">
-                              <label>Domain Section<span style="color: red;">*</span></label>
-                              <select name="domain" class="form-control" required>
-                                  <option value="" disabled selected>Select domain</option>
-                                  <option value="Other">Other</option>
-                                  <option value="Industrial">Industrial</option>
-                                  <option value="Commercial">Commercial</option>
-                                  <option value="Science">Science</option>
-                                  <option value="Arts">Arts</option>
-                              </select>
-                          </div>
-                      </div>
+                        <div class="form-group">
+                            <label for="student_class">Select Department:<span style="color: red;">*</span></label>
+                            <select id="department" name="department" class="form-control" required>
+                                <option value="" disabled selected>Select department</option>
+                                {% for department in departments %}
+                                    <option value="{{ department.pkid }}">{{ department.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label for="student_class">Select Class:<span style="color: red;">*</span></label>
+                            <select id="class" name="class" class="form-control" required>
+                                <option value="" disabled selected>Select class</option>
+                            </select>
+                        </div>
+                    </div>
                       <div class="col-12 col-sm-6">
                           <div class="form-group">
                               <label>Student Image</label>
@@ -177,3 +184,33 @@
 <script src="{% static 'assets/js/popper.min.js' %}"></script>
 {% endblock scripttags %}
 
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const departmentSelect = document.getElementById('department');
+        const classSelect = document.getElementById('class');
+
+        departmentSelect.addEventListener('change', function() {
+            const departmentId = this.value;
+
+            if (departmentId) {
+                fetch(`/get-classes/?department_id=${departmentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        classSelect.innerHTML = '<option value="" disabled selected>Select class</option>';
+                        data.forEach(classObj => {
+                            const option = document.createElement('option');
+                            option.value = classObj.id;
+                            option.textContent = classObj.class_name;
+                            classSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching classes:', error));
+            } else {
+                classSelect.innerHTML = '<option value="" disabled selected>Select class</option>';
+            }
+        });
+    });
+</script>
+
+{% endblock script %}
