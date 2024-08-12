@@ -141,7 +141,7 @@ def add_student_view(request):
         parent_email = request.POST.get("parent-email")
         parent_address = request.POST.get("parent-address")
         parent_role = request.POST.get("parent-role")
-        st_class = request.POST.get("student_class")
+        st_class = request.POST.get("class")
 
         # Check if student pin is valid
         # should not be greater or less than 4 in length
@@ -155,6 +155,7 @@ def add_student_view(request):
             return redirect(reverse("students:student-add"))
 
         # Get class in which student is part of
+        print("for the class", st_class)
         student_class = get_object_or_404(Class, pkid=int(st_class))
 
         # Create parent for student
@@ -250,7 +251,7 @@ def add_student_view(request):
 def get_classes_by_department(request):
     department_id = request.GET.get("department_id")
     classes = Class.objects.filter(department_id=department_id).values(
-        "id", "class_name"
+        "pkid", "class_name"
     )
     return JsonResponse(list(classes), safe=False)
 
@@ -261,6 +262,7 @@ def edit_student_profile(request, pkid, matricule):
 
     if request.method == "POST":
         st_class = request.POST.get("student_class")
+        print("for the class", st_class)
         student_class = get_object_or_404(Class, pkid=int(st_class))
 
         st_fname = request.POST.get("first_name")
@@ -272,6 +274,7 @@ def edit_student_profile(request, pkid, matricule):
         st_phone = request.POST.get("phone")
         st_domain = request.POST.get("domain")
         st_image = request.FILES.get("profile_photo")
+
 
         # Parse date string from form
         dob = datetime.strptime(st_dob, "%Y-%m-%d").date()
@@ -296,6 +299,7 @@ def edit_student_profile(request, pkid, matricule):
         student.address = st_address
         student.domain = st_domain
 
+
         student.save()
         return redirect(
             reverse(
@@ -306,12 +310,14 @@ def edit_student_profile(request, pkid, matricule):
 
     # Get and associate a parent to the request.
     parent = student.parent
+    departments = Department.objects.all()
     template_name = "students/edit.html"
     context = {
         "section": "student_area",
         "student_profile": student,
         "dob": str(student.user.dob.date()),
         "classes": Class.objects.all(),
+        "departments": departments,
     }
 
     return render(request, template_name, context)

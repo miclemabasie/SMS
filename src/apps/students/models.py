@@ -183,6 +183,7 @@ class StudentProfile(TimeStampedUUIDModel):
         choices=DOMAINCHOICES.choices,
         default=DOMAINCHOICES.OTHER,
         max_length=20,
+        blank=True, null=True
     )
     specialty = models.CharField(max_length=200, default="Civil Engineering")
     is_activated = models.BooleanField(default=True)

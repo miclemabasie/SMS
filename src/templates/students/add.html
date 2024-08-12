@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block stylelinks %}
 <link rel="stylesheet" href="{% static 'assets/plugins/select2/css/select2.min.css' %}">
-
 <link rel="stylesheet" href="{% static 'assets/plugins/icons/flags/flags.css' %}">
 <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
 {% endblock stylelinks %}
-
 
 {% block content %}
 <div class="content container-fluid">
@@ -52,11 +49,10 @@
                           </div>
                       </div>
                       <div class="col-12 col-sm-6">
-                          <div class="form-group" name="gender">
+                          <div class="form-group">
                               <label>Gender<span style="color: red;">*</span></label>
                               <select class="form-control" name="selected_gender" required>
                                   <option value="" disabled selected>Select gender</option>
-                                  <option value="Other">Other</option>
                                   <option value="Female">Female</option>
                                   <option value="Male">Male</option>
                               </select>
@@ -65,20 +61,7 @@
                       <div class="col-12 col-sm-6">
                           <div class="form-group">
                               <label>Date of Birth<span style="color: red;">*</span></label>
-                              <div>
-                                  <input type="date" name="dob" class="form-control" required>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="col-12 col-sm-6">
-                          <div class="form-group">
-                              <label for="student_class">Select Class:<span style="color: red;">*</span></label>
-                              <select name="student_class" class="form-control" required>
-                                  <option value="" disabled selected>Select class</option>
-                                  {% for class_instance in classes %}
-                                      <option value="{{ class_instance.pkid }}">{{ class_instance.class_name }}</option>
-                                  {% endfor %}
-                              </select>
+                              <input type="date" name="dob" class="form-control" required>
                           </div>
                       </div>
                       <div class="col-12 col-sm-6">
@@ -94,25 +77,24 @@
                           </div>
                       </div>
                       <div class="col-12 col-sm-6">
-                        <div class="form-group">
-                            <label for="student_class">Select Department:<span style="color: red;">*</span></label>
-                            <select id="department" name="department" class="form-control" required>
-                                <option value="" disabled selected>Select department</option>
-                                {% for department in departments %}
-                                    <option value="{{ department.pkid }}">{{ department.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                
-                    <div class="col-12 col-sm-6">
-                        <div class="form-group">
-                            <label for="student_class">Select Class:<span style="color: red;">*</span></label>
-                            <select id="class" name="class" class="form-control" required>
-                                <option value="" disabled selected>Select class</option>
-                            </select>
-                        </div>
-                    </div>
+                          <div class="form-group">
+                              <label for="department">Select Department:<span style="color: red;">*</span></label>
+                              <select id="department" name="department" class="form-control" required>
+                                  <option value="" disabled selected>Select department</option>
+                                  {% for department in departments %}
+                                      <option value="{{ department.pkid }}">{{ department.name }}</option>
+                                  {% endfor %}
+                              </select>
+                          </div>
+                      </div>
+                      <div class="col-12 col-sm-6">
+                          <div class="form-group">
+                              <label for="class">Select Class:<span style="color: red;">*</span></label>
+                              <select id="class" name="class" class="form-control" required>
+                                  <option value="" disabled selected>Select class</option>
+                              </select>
+                          </div>
+                      </div>
                       <div class="col-12 col-sm-6">
                           <div class="form-group">
                               <label>Student Image</label>
@@ -177,9 +159,6 @@
  </div>
 {% endblock content %}
 
-
-
-
 {% block scripttags %}
 <script src="{% static 'assets/js/popper.min.js' %}"></script>
 {% endblock scripttags %}
@@ -189,28 +168,41 @@
     document.addEventListener('DOMContentLoaded', function() {
         const departmentSelect = document.getElementById('department');
         const classSelect = document.getElementById('class');
+        const loadingIndicator = document.createElement('div');
+
+        loadingIndicator.id = 'loading';
+        loadingIndicator.textContent = 'Loading...';
+        loadingIndicator.style.display = 'none';
+        loadingIndicator.style.fontSize = '1.2em';
+        loadingIndicator.style.color = '#007bff';
+        loadingIndicator.style.marginTop = '10px';
+        departmentSelect.parentElement.appendChild(loadingIndicator);
 
         departmentSelect.addEventListener('change', function() {
             const departmentId = this.value;
 
             if (departmentId) {
+                loadingIndicator.style.display = 'block';
                 fetch(`/get-classes/?department_id=${departmentId}`)
                     .then(response => response.json())
                     .then(data => {
                         classSelect.innerHTML = '<option value="" disabled selected>Select class</option>';
                         data.forEach(classObj => {
                             const option = document.createElement('option');
-                            option.value = classObj.id;
+                            option.value = classObj.pkid;
                             option.textContent = classObj.class_name;
                             classSelect.appendChild(option);
                         });
+                        loadingIndicator.style.display = 'none';
                     })
-                    .catch(error => console.error('Error fetching classes:', error));
+                    .catch(error => {
+                        console.error('Error fetching classes:', error);
+                        loadingIndicator.style.display = 'none';
+                    });
             } else {
                 classSelect.innerHTML = '<option value="" disabled selected>Select class</option>';
             }
         });
     });
 </script>
-
 {% endblock script %}
