@@ -79,7 +79,7 @@ class ClassFactory(DjangoModelFactory):
     grade_level = fuzzy.FuzzyChoice(["Form 1", "Form 2", "Form 3", "Form 4", "Form 5"])
     class_name = fuzzy.FuzzyChoice(["Science", "Arts", "Commercial", "General"])
     class_code = factory.Sequence(lambda n: f"CLS-{n:04d}")
-    pass_avg = fuzzy.FuzzyInteger(50, 100)  # Promotion average
+    pass_avg = fuzzy.FuzzyInteger(8, 12)  # Promotion average
 
     # Relationships
     department = SubFactory(DepartmentFactory)

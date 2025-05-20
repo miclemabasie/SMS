@@ -11,7 +11,6 @@ from .models import AcademicYear, ExaminationSession, Term
 
 @login_required
 def create_academic_year(request):
-
     if request.method == "POST":
         # Extract the infomation from the forms
         session_name = request.POST.get("academic_session_name")
