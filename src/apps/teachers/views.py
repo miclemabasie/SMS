@@ -948,14 +948,14 @@ def upload_teachers_from_file(request, *args, **kwargs):
     # Get all the available subjects
     subjects = Subject.objects.all()
 
-    if request.method == "POST" and request.FILES["teachers_file"]:
+    if request.method == "POST" and request.FILES.get("teachers_file"):
         teachers_file = request.FILES["teachers_file"]
 
         wb = load_workbook(filename=teachers_file)
         ws = wb.get_sheet_by_name("teachers")
 
         # Check if all the required attributes are available in the file
-        for row in ws.iter_rows(min_row=2, values_only=True):
+        for row_num, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
             first_name, last_name, email, gender, phone, address = (
                 row[0],
                 row[1],
@@ -967,10 +967,10 @@ def upload_teachers_from_file(request, *args, **kwargs):
             attributes = [first_name, last_name, gender, phone]
             for value in attributes:
                 if not value:
-                    messages.error(request, "Invalid file, missing information")
+                    messages.error(request, f"Invalid file, missing information on row {row_num}")
                     return redirect(reverse("teachers:upload-teachers-from-file"))
 
-        for row in ws.iter_rows(min_row=2, values_only=True):
+        for row_num, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
             (
                 first_name,
                 last_name,
@@ -1007,84 +1007,76 @@ def upload_teachers_from_file(request, *args, **kwargs):
             ) = row
 
             print(
-                f"fistname {first_name}, lastname {last_name}, email {email} gender {gender} phone {phone} address {address}"
+                f"firstname {first_name}, lastname {last_name}, email {email} gender {gender} phone {phone} address {address}"
             )
 
-            # Create user
+            # Handle cases where email might be missing or duplicated
             if not email:
-                intial_string = first_name
-                email = f"{intial_string}{random.randint(1, 10)}@gmail.com"
-                print(email)
-            user, created = User.objects.get_or_create(
-                username=f"{first_name}",
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-            )
-
-            if created:
-                user.save()
-                print(user)
-                print("user was saved")
-
-            # Create teacher profile instance
-            if gender.lower() == "m" or gender.lower() == "male":
-                gender = "Male"
+                email = f"{first_name.lower()}{random.randint(1, 1000)}@gmail.com"
+                print(f"Generated email: {email}")
             else:
-                gender = "Female"
+                # Check if the email already exists
+                if User.objects.filter(email=email).exists():
+                    messages.error(request, f"User with email {email} already exists at row {row_num}.")
+                    continue
 
-            teacher, created = TeacherProfile.objects.get_or_create(
-                user=user,
-                gender=gender,
-                phone_number=str(phone),
-                address=address if address else "",
-                country=country if country else "CM",
-                location=location if location else "",
-                main_subject=main_subject if main_subject else "",
-                number_of_absences=number_of_absences if number_of_absences else 0,
-                region_of_origin=region_of_origin if region_of_origin else "",
-                division_of_origin=division_of_origin if division_of_origin else "",
-                sub_division_of_origin=(
-                    sub_division_of_origin if sub_division_of_origin else ""
-                ),
-                date_recruitement_public_service=(
-                    date_recruitement_public_service
-                    if date_recruitement_public_service
-                    else ""
-                ),
-                corps=corps if corps else "",
-                career_grade=career_grade if career_grade else "",
-                payroll_grade=payroll_grade if payroll_grade else "",
-                career_category=career_category if career_category else "",
-                payroll_category_solde=(
-                    payroll_category_solde if payroll_category_solde else ""
-                ),
-                career_index=career_index if career_index else "",
-                payroll_index=payroll_index if payroll_index else "",
-                career_echelon=career_echelon if career_echelon else "",
-                payroll_echelon=payroll_echelon if payroll_echelon else "",
-                service=service if service else TEACHERSERVICE.OTHER,
-                appointed_structure=appointed_structure if appointed_structure else "",
-                town=town if town else "",
-                possition_rank=possition_rank if possition_rank else "",
-                longivity_of_post=longivity_of_post if longivity_of_post else "",
-                longivity_in_administration=(
-                    longivity_in_administration if longivity_in_administration else ""
-                ),
-                appointment_decision_reference=(
-                    appointment_decision_reference
-                    if appointment_decision_reference
-                    else ""
-                ),
-                indemnity_situation=indemnity_situation if indemnity_situation else "",
-                remark=remark if remark else "",
-            )
+            try:
+                user, created = User.objects.get_or_create(
+                    username=f"{first_name.lower()}{last_name.lower()}",
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    is_teacher=True,
+                )
 
-            if created:
-                teacher.save()
-                teacher.user.is_teacher = True
-                send_account_creation_email(request, teacher.user)
-            else:
+                if created:
+                    user.save()
+                    print(f"User {user.username} was saved.")
+
+                # Create or update the teacher profile
+                gender = "Male" if gender.lower() in ["m", "male"] else "Female"
+                teacher, created = TeacherProfile.objects.update_or_create(
+                    user=user,
+                    defaults={
+                        "gender": gender,
+                        "phone_number": str(phone),
+                        "address": address or "",
+                        "country": country or "CM",
+                        "location": location or "",
+                        "main_subject": main_subject or "",
+                        "number_of_absences": number_of_absences or 0,
+                        "region_of_origin": region_of_origin or "",
+                        "division_of_origin": division_of_origin or "",
+                        "sub_division_of_origin": sub_division_of_origin or "",
+                        "date_recruitement_public_service": date_recruitement_public_service or "",
+                        "corps": corps or "",
+                        "career_grade": career_grade or "",
+                        "payroll_grade": payroll_grade or "",
+                        "career_category": career_category or "",
+                        "payroll_category_solde": payroll_category_solde or "",
+                        "career_index": career_index or "",
+                        "payroll_index": payroll_index or "",
+                        "career_echelon": career_echelon or "",
+                        "payroll_echelon": payroll_echelon or "",
+                        "service": service or TEACHERSERVICE.OTHER,
+                        "appointed_structure": appointed_structure or "",
+                        "town": town or "",
+                        "possition_rank": possition_rank or "",
+                        "longivity_of_post": longivity_of_post or "",
+                        "longivity_in_administration": longivity_in_administration or "",
+                        "appointment_decision_reference": appointment_decision_reference or "",
+                        "indemnity_situation": indemnity_situation or "",
+                        "remark": remark or "",
+                    },
+                )
+
+                if created:
+                    teacher.save()
+                    send_account_creation_email(request, teacher.user)
+
+            except Exception as e:
+                logger.error(f"Error processing row {row_num}: {e}")
+                messages.error(request, f"Error processing row {row_num}.")
                 continue
 
         messages.success(request, "Teachers have been uploaded successfully.")

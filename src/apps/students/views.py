@@ -275,7 +275,6 @@ def edit_student_profile(request, pkid, matricule):
         st_domain = request.POST.get("domain")
         st_image = request.FILES.get("profile_photo")
 
-
         # Parse date string from form
         dob = datetime.strptime(st_dob, "%Y-%m-%d").date()
         specific_time = time(8, 51, 2)
@@ -298,7 +297,6 @@ def edit_student_profile(request, pkid, matricule):
         student.phone_number = st_phone
         student.address = st_address
         student.domain = st_domain
-
 
         student.save()
         return redirect(
@@ -368,7 +366,9 @@ def download_marksheet(request, subject_pkid, class_pkid, *args, **kwargs):
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
         filename = f"{klass.grade_level}-{klass.class_name}-{subject.name}.xlsx"
-        logger.info(f"Filename: {filename}, Grade: {klass.grade_level}, ClassName: {klass.class_name}, Subject: {subject.name}")
+        logger.info(
+            f"Filename: {filename}, Grade: {klass.grade_level}, ClassName: {klass.class_name}, Subject: {subject.name}"
+        )
         response["Content-Disposition"] = f"attachment; filename={filename}"
 
         # Save the workbook to the response
@@ -966,29 +966,21 @@ def upload_students_from_file(request, *args, **kwargs):
     """
     View to upload students from an Excel file and save them to the database.
     """
-    # Fetch all classes from the database to display in the form
     classes = Class.objects.all()
 
-    # Check if the request method is POST and a file is uploaded
     if request.method == "POST" and request.FILES.get("students_file"):
-        # Get the uploaded file from the request
         students_file = request.FILES["students_file"]
 
         try:
-            # Load the uploaded workbook
             wb = load_workbook(filename=students_file)
-            # Get the first sheet in the workbook
             ws = wb.active
         except Exception as e:
-            # If there's an error reading the file, show an error message and redirect
             messages.error(request, f"Error reading the file: {e}")
             return redirect(reverse("students:upload-students-from-file"))
 
-        # Iterate through each row in the worksheet starting from the second row
         for row_number, row in enumerate(
             ws.iter_rows(min_row=2, values_only=True), start=2
         ):
-            # Extract values from the row
             (
                 first_name,
                 last_name,
@@ -1005,23 +997,18 @@ def upload_students_from_file(request, *args, **kwargs):
                 parent_address,
             ) = row[:13]
 
-            # Check if essential fields are present
-            if not all([first_name, last_name, gender, phone, email]):
-                # If any essential field is missing, show an error message with the row number and redirect
+            if not all([first_name, last_name, gender, phone]):
                 messages.error(
                     request, f"Invalid file, missing information at row {row_number}"
                 )
-                return redirect(reverse("students:upload-students-from-file"))
+                continue  # Skip the row but continue processing the rest
 
-            # Format the date of birth
             dob = format_date(dob)
-            # If email is not provided, generate a random email
+
             if not email:
                 email = f"{first_name}{random.randint(1, 1000)}@gmail.com"
 
             try:
-                # Get or create a User object based on the username and other details
-                print(first_name)
                 user, created = User.objects.get_or_create(
                     username=f"{first_name}_{last_name}",
                     first_name=first_name,
@@ -1029,71 +1016,56 @@ def upload_students_from_file(request, *args, **kwargs):
                     email=email,
                 )
                 if created:
-                    # If the user was created, save the user and log the event
                     user.dob = dob
                     user.save()
                     logger.info(f"User {user.username} created")
 
-                # Normalize gender values
                 gender = "Male" if gender.lower() in ["m", "male"] else "Female"
 
                 try:
-                    # Fetch the selected class from the database using the provided ID
                     klass = Class.objects.get(class_code=class_code)
                 except Class.DoesNotExist:
-                    # If the class does not exist, show an error message and redirect to the form
                     messages.error(request, f"Class not found at row {row_number}")
-                    return redirect(reverse("students:upload-students-from-file"))
-                # Get or create a StudentProfile object for the user
+                    klass = None
+                    # Skip the row but continue processing the rest
+
                 student, created = StudentProfile.objects.get_or_create(
                     user=user,
                     defaults={
                         "gender": gender,
                         "phone_number": str(phone),
-                        "address": address
-                        or faker.address(),  # Use faker address if not provided
+                        "address": address or faker.address(),
                         "pob": pob,
                         "specialty": specialty,
                     },
                 )
 
                 if created:
-                    # If the student profile was created, save it and update user role
-                    student.current_class = klass
+                    if klass:
+                        student.current_class = klass
                     student.save()
                     user.is_student = True
                     user.save()
-
-                    # Create the parent profile and PIN for the student
                     create_student_parent(
                         parent_name, parent_phone, parent_address, student
                     )
-                    # create_student_pin(student, 1111)
-                    # Send an account creation email to the user
                     send_account_creation_email(request, user)
                 else:
-                    # Log a warning if the student profile already exists
                     student.current_class = klass
                     student.save()
                     logger.warning(
                         f"Student profile for user {user.username} already exists"
                     )
             except Exception as e:
-                # Log any errors that occur and show an error message with the row number
                 logger.error(f"Error processing row {row_number}: {e}")
                 messages.error(
                     request, f"There was an error processing row {row_number}."
                 )
-                return redirect(reverse("students:upload-students-from-file"))
+                continue  # Skip the row but continue processing the rest
 
-        # Show a success message after processing all rows and redirect
-        messages.success(
-            request,
-            f"Students have been uploaded for the class {klass.grade_level}-{klass.class_name}",
-        )
+        messages.success(request, "Students have been uploaded successfully.")
         return redirect(reverse("students:upload-students-from-file"))
 
-    # Render the form template with the available classes
     context = {
         "section": "marks-area",
         "classes": classes,
