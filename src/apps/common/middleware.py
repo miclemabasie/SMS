@@ -26,10 +26,16 @@ class CheckSetupMiddleware:
         # check if the settings have been initialized
         if not Setting.objects.exists():
             return redirect(reverse("settings:settings-home"))
+
         if not AcademicYear.objects.exists():
             return redirect(reverse("settings:setting-sessions"))
+        if not AcademicYear.active_year_exists():
+            return redirect(reverse("settings:setting-sessions"))
+
         if not Term.objects.exists():
             return redirect(reverse("settings:setting-terms"))
+        if not Term.active_term_exists():
+            return redirect(reverse("settings:setting-sessions"))
 
         response = self.get_response(request)
         return response

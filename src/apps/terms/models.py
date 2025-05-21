@@ -35,6 +35,10 @@ class AcademicYear(TimeStampedUUIDModel):
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def active_year_exists():
+        return AcademicYear.objects.filter(is_current=True).exists()
+
 
 class TermChoices(models.TextChoices):
     FIRST_TERM = "First Term", _("First Term")
@@ -64,6 +68,9 @@ class Term(TimeStampedUUIDModel):
 
     def __str__(self):
         return f"{self.term} - {self.academic_year.name}"
+
+    def active_term_exists():
+        return Term.objects.filter(is_current=True).exists()
 
 
 class ExaminationSession(TimeStampedUUIDModel):
