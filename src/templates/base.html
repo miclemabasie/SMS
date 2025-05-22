@@ -36,6 +36,8 @@
             
             {% if request.user.is_admin or request.user.is_staff %}
                 {% include "./utils/sidebars/admin-sidebar.html" %}
+            {% elif request.user.is_superuser or request.user.is_staff %}
+                {% include "./utils/sidebars/admin-sidebar.html" %}
             {% elif request.user.is_teacher %}
                 {% include "./utils/sidebars/teachers-sidebar.html" %}
 

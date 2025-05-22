@@ -5,12 +5,11 @@ from django.utils import timezone
 from factory import Faker, fuzzy, SubFactory, LazyAttribute, post_generation
 from faker import Faker as FakerFaker
 from apps.users.factories import UserFactory
-from apps.teachers.factories import ClassFactory
+from apps.academics.factories import ClassFactory
 from .models import StudentProfile, ParentProfile
 from django.contrib.auth import get_user_model
 from .utils import (
     create_student_pin,
-    send_account_creation_email,
 )
 
 
@@ -71,9 +70,9 @@ class StudentProfileFactory(factory.django.DjangoModelFactory):
             pin = fake.numerify(text="####")
             create_student_pin(self, pin)
 
-    # Handle view-specific logic
-    @classmethod
-    def _after_postgeneration(cls, instance, create, results=None):
-        super()._after_postgeneration(instance, create, results)
-        if create:
-            send_account_creation_email(None, instance.user)
+    # # Handle view-specific logic
+    # @classmethod
+    # def _after_postgeneration(cls, instance, create, results=None):
+    #     super()._after_postgeneration(instance, create, results)
+    #     if create:
+    #         send_account_creation_email(None, instance.user)

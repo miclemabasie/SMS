@@ -3,7 +3,12 @@ from datetime import datetime, time
 from django.utils import timezone
 from factory import Faker, fuzzy, post_generation
 from faker import Faker as FakerFaker
-from .models import TeacherProfile, User
+from apps.students.models import TeacherProfile
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+
 
 fake = FakerFaker()
 

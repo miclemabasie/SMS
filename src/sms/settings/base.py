@@ -74,6 +74,7 @@ LOCAL_APPS = [
     "apps.attendance.apps.AttendanceConfig",
     "apps.leave.apps.LeaveConfig",
     "apps.scelery.apps.SceleryConfig",
+    "apps.academics.apps.AcademicsConfig",
 ]
 
 
@@ -91,6 +92,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 

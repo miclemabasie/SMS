@@ -84,9 +84,9 @@
                                 <div class="form-group">
                                     <label for="class">Select Class:<span style="color: red;">*</span></label>
                                     <select id="class" name="student_class" class="form-control" required>
-                                        {% if student_profile.current_class %}
-                                        <option value="{{ class_instance.pkid }}" selected>{{ student_profile.current_class.grade_level }}-{{ student_profile.current_class.class_name }}</option>
-                                        {% endif %}
+                                        {% for class in classes %}
+                                            <option value="{{ class.pkid }}" {% if student_profile.current_class.pkid == class.pkid %}selected{% endif %}>{{class.grade_level}}-{{ class.class_name }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>

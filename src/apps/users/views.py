@@ -17,7 +17,6 @@ def login_view(request):
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user=user)
-                print("user information")
                 if remember_me:
                     request.session.set_expiry(1209600)  # 2 weeks
                 else:
@@ -33,6 +32,8 @@ def login_view(request):
                 if user.is_student:
                     request.session["user_type"] = "student"
                     return redirect(reverse("students:student-dashboard"))
+                else:
+                    return redirect(reverse("settings:settings-home"))
             else:
                 form.add_error(None, "Invalid email or password")
         # If form is not valid, it will be passed back with errors

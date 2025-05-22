@@ -6,11 +6,14 @@ from django.db import transaction
 from apps.users.factories import UserFactory
 from apps.students.factories import StudentProfileFactory
 from apps.teachers.factories import TeacherProfileFactory
-from apps.teachers.factories import ClassFactory, DepartmentFactory
+from apps.academics.factories import ClassFactory, DepartmentFactory, SubjectFactory
 from apps.settings.factories import SettingFactory
+from apps.staff.factories import AdminProfileFactory
 
 
 class Command(BaseCommand):
+
+    # make sure the accademic year and term are created
     help = "Seed database with factory-generated data in batches"
 
     def add_arguments(self, parser):
@@ -29,17 +32,18 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         valid_models = {
-            "users": UserFactory,
+            "admins": AdminProfileFactory,
             "teachers": TeacherProfileFactory,
             "students": StudentProfileFactory,
             "departments": DepartmentFactory,
             "classes": ClassFactory,
-            "settings": SettingFactory,
+            "subjects": SubjectFactory,
         }
 
-        selected_models = (
-            options["models"].split(",") if options["models"] else valid_models.keys()
-        )
+        # selected_models = (
+        #     options["models"].split(",") if options["models"] else valid_models.keys()
+        # )
+        selected_models = valid_models.keys()
         batch_size = options["batch_size"]
 
         created_counts = {}
@@ -57,6 +61,18 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SQL_KEYWORD(f"→ Creating {batch_size} {model_name}...")
             )
+            if model_name == "admins":
+                batch_size = 5
+            elif model_name == "departments":
+                batch_size = 3
+            elif model_name == "classes":
+                batch_size = 10
+            elif model_name == "subjects":
+                batch_size = 20
+            elif model_name == "teachers":
+                batch_size = 10
+            elif model_name == "students":
+                batch_size = 100
 
             created_counts[model_name] = factory.create_batch(batch_size)
             self.stdout.write(
