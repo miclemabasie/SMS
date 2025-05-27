@@ -13,6 +13,7 @@ def login_view(request):
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
             remember_me = request.POST.get("remember_me") == "yes"
+            print(email, password)
 
             user = authenticate(request, email=email, password=password)
             if user:

@@ -13,8 +13,13 @@ from django.urls import reverse
 from PyPDF2 import PdfMerger
 from xhtml2pdf import pisa
 
-from apps.students.models import (Class, ClassAcademicRecord, Mark,
-                                  StudentProfile, Subject)
+from apps.students.models import (
+    Class,
+    ClassAcademicRecord,
+    Mark,
+    StudentProfile,
+    Subject,
+)
 from apps.terms.models import AcademicYear, ExaminationSession, Term
 
 from .class_master_report import ClassMasterReport
@@ -324,94 +329,3 @@ def download_class_master_report(request, class_pkid):
     if pisa_status.err:
         return HttpResponse("We had some errors <pre>" + html + "</pre>")
     return response
-
-
-# @login_required
-# def create_report_cards(request):
-#     if request.method == "POST":
-#         ftime = time()
-#         selected_class_id = request.POST.get("selected_class_id")
-
-#         # get class
-
-#         classes = Class.objects.filter(pkid=selected_class_id)
-#         term = Term.objects.get(is_current=True)
-
-#         if classes.exists():
-#             klass = classes.first()
-#         else:
-#             messages.error(request, "No class found with given id.")
-#             return redirect(reverse("reports:reports"))
-
-#         # Get all students for the class
-#         students = StudentProfile.objects.filter(current_class=klass)
-
-#         academic_year = AcademicYear.objects.filter(is_current=True).first()
-#         # get the current term
-#         term = Term.objects.filter(is_current=True).first()
-
-#         sessions = ExaminationSession.objects.filter(term=term)
-
-#         # Initialize a BytesIO object to write PDF content
-#         pdf_file = BytesIO()
-#         pdf_merger = PdfMerger()
-#         total_avgs = 0
-#         class_performance = []
-#         for s in students:
-#             s_marks = calculate_marks(s)["term_avg"]
-#             total_avgs += s_marks
-#             class_performance.append((s, s_marks))
-
-#         class_performance = sorted(
-#             class_performance,
-#             key=lambda x: x[1],
-#             reverse=True,
-#         )
-
-#         # calculate class avg
-#         class_avg = (total_avgs * 20) / (len(students) * 20)
-
-#         for student in students:
-#             student_marks = calculate_marks(student)
-#             student_ranking = [
-#                 rank + 1
-#                 for rank, (s, _) in enumerate(class_performance)
-#                 if s.pkid == student.pkid
-#             ][0]
-
-#             print("marks ", student_marks)
-
-#             # call the method to save the student report data to the database
-
-#             pdf_data = {
-#                 "marks": student_marks["data"],
-#                 "student_data": student_marks,
-#                 "term": term,
-#                 "term_name": term.term.upper(),
-#                 "sessions": sessions,
-#                 "year": academic_year,
-#                 "student_rank": student_ranking,
-#                 "class_total": len(students),
-#                 "class_avg": round(class_avg, 2),
-#             }
-#             context = {"data": pdf_data}
-#             template_path = "reports/report-card-generation-template.html"
-#             template = get_template(template_path)
-#             html = template.render(context)
-#             pisa_status = pisa.CreatePDF(html, dest=pdf_file)
-#             if pisa_status.err:
-#                 return HttpResponse("Error generating PDF")
-#             pdf_merger.append(BytesIO(pdf_file.getvalue()))
-#             pdf_file.seek(0)
-
-#         response = HttpResponse(content_type="application/pdf")
-#         response["Content-Disposition"] = (
-#             f'attachment; filename="{klass.grade_level}-{klass.class_name}-report-cards.pdf"'
-#         )
-#         pdf_merger.write(response)
-#         ltime = time()
-#         print(f"Time taken is: {ltime - ftime}")
-
-#         return response
-#     else:
-#         return redirect("reports:reports")

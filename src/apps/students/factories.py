@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from .utils import (
     create_student_pin,
 )
-
+from apps.students.models import Class
 
 User = get_user_model()
 
@@ -51,8 +51,9 @@ class StudentProfileFactory(factory.django.DjangoModelFactory):
         model = StudentProfile
 
     user = factory.SubFactory(StudentUserFactory)
-    parent = factory.SubFactory(ParentProfileFactory)
-    current_class = factory.SubFactory(ClassFactory)
+    parent = ParentProfile.objects.order_by("?").first()
+    # randomly select a class from the database
+    current_class = Class.objects.order_by("?").first()
 
     # Required fields
     gender = fuzzy.FuzzyChoice(["M", "F", "Other"])

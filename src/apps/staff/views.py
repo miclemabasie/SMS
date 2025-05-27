@@ -42,8 +42,6 @@ def admin_dashboard(request):
         "classes": classes,
     }
 
-    logger.info("This is some test info")
-
     # Generate data about school attendance
     attendance_list_tuples = []
     student_paid_list_tuples = []
@@ -62,7 +60,7 @@ def admin_dashboard(request):
             # calculate percentage of students who have paid fieds in the class
             if not std.is_owing:
                 total_student_paid_per_class += 1
-            print(std)
+
             # get all the attendance record of every student
             std_attendance_present = Attendance.objects.filter(
                 student=std, is_present=True
@@ -70,8 +68,6 @@ def admin_dashboard(request):
             std_attendance_absent = Attendance.objects.filter(
                 student=std, is_present=False
             )
-            print(std_attendance_present)
-            print(std_attendance_absent)
             total_present += std_attendance_present.count()
             total_absent += std_attendance_absent.count()
         attendance_list_tuples.append((total_present, total_absent))
@@ -82,7 +78,6 @@ def admin_dashboard(request):
     this is example output of the above operation
     ['Form 4-Science', 'Form 5-Kyle Miles', 'Form 6-S2', 'Form 7-S1', 'form1-Form 1 a', 'Form 4-Arts'] [(0, 0), (0, 0), (7, 1), (0, 0), (0, 0), (0, 0)]
     """
-    print("new testing", student_paid_list_tuples)
     # Calculate percentage of attendance
     attendance_list = []
     for att in attendance_list_tuples:
@@ -110,8 +105,6 @@ def admin_dashboard(request):
         else:
             paid_list.append(0)
 
-    print(paid_list)
-
     template_name = "dashboards/staff/dashboard.html"
     context = {
         "section": "admin-area",
@@ -122,6 +115,8 @@ def admin_dashboard(request):
         "attendance_list": attendance_list,
         "student_count_per_class": student_total_list_perclass,
     }
+
+    print("this is the context", context)
 
     return render(request, template_name, context)
 

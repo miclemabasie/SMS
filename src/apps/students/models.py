@@ -183,7 +183,8 @@ class StudentProfile(TimeStampedUUIDModel):
         choices=DOMAINCHOICES.choices,
         default=DOMAINCHOICES.OTHER,
         max_length=20,
-        blank=True, null=True
+        blank=True,
+        null=True,
     )
     specialty = models.CharField(max_length=200, default="Civil Engineering")
     is_activated = models.BooleanField(default=True)
@@ -324,6 +325,13 @@ class Mark(TimeStampedUUIDModel):
     remark = models.CharField(
         max_length=255, verbose_name=_("Remark"), blank=True, null=True
     )
+
+    def get_teacher(self):
+        if self.teacher:
+            print("there is a teacher")
+            return self.teacher.user.first_name
+        else:
+            return "Teacher"
 
 
 class TEACHERSERVICE(models.TextChoices):

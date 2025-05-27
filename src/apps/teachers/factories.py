@@ -5,6 +5,7 @@ from factory import Faker, fuzzy, SubFactory, post_generation
 from faker import Faker as FakerFaker
 from apps.students.models import TeacherProfile, TEACHERSERVICE
 from apps.users.factories import UserFactory
+from apps.students.models import Subject
 from factory.django import DjangoModelFactory
 
 from django.contrib.auth import get_user_model
@@ -22,9 +23,7 @@ class TeacherProfileFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     gender = fuzzy.FuzzyChoice(["M", "F", "Other"])
     phone_number = Faker("phone_number")
-    # main_subject = fuzzy.FuzzyChoice(
-    #     ["Mathematics", "Physics", "Chemistry", "Biology", "English", "History"]
-    # )
+    main_subject = Subject.objects.order_by("?").first()
     address = Faker("street_address")
 
     # Regional information

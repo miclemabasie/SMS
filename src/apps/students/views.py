@@ -179,6 +179,7 @@ def add_student_view(request):
         st_phone = request.POST.get("phone")
         st_domain = request.POST.get("domain")
         st_image = request.FILES.get("profile_photo")
+        matricule = request.POST.get("matricule")
 
         # Create the user instance
         # construct a valid date out of the html date
@@ -214,6 +215,7 @@ def add_student_view(request):
         # Create student instance
 
         student, created = StudentProfile.objects.get_or_create(
+            matricule=matricule,
             user=user,
             parent=student_parent,
             current_class=student_class,
@@ -274,6 +276,7 @@ def edit_student_profile(request, pkid, matricule):
         st_phone = request.POST.get("phone")
         st_domain = request.POST.get("domain")
         st_image = request.FILES.get("profile_photo")
+        st_matricule = request.POST.get("matricule")
 
         # Parse date string from form
         dob = datetime.strptime(st_dob, "%Y-%m-%d").date()
@@ -297,6 +300,13 @@ def edit_student_profile(request, pkid, matricule):
         student.phone_number = st_phone
         student.address = st_address
         student.domain = st_domain
+
+        if request.user.is_admin:
+            student.matricule = st_matricule
+        else:
+            messages.warning(
+                request, "Cannot change matricule without administrative rights."
+            )
 
         student.save()
         return redirect(

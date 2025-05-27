@@ -6,9 +6,9 @@ from .models import AdminProfile
 
 
 class AdminProfileAdmin(admin.ModelAdmin):
-    list_display = ["id", "pkid", "user", "gender", "phone_number", "country"]
+    list_display = ["pkid", "user", "gender", "phone_number", "country"]
     list_filter = ["gender", "country"]
-    list_display_links = ["id", "pkid", "user"]
+    list_display_links = ["pkid", "user"]
 
 
 admin.site.register(AdminProfile, AdminProfileAdmin)

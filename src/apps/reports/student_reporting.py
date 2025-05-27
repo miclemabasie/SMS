@@ -188,7 +188,7 @@ class ClassPerformanceReport:
             if not subject_mark_session1.exists():
                 score1 = "/"
             else:
-                teacher = subject_mark_session1.first().teacher.user.first_name
+                teacher = subject_mark_session1.first().get_teacher()
                 score1 = subject_mark_session1.first().score
 
             subject_mark_session2 = Mark.objects.filter(

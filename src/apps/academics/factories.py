@@ -36,7 +36,7 @@ class ClassFactory(DjangoModelFactory):
     pass_avg = fuzzy.FuzzyInteger(8, 12)  # Promotion average
 
     # Relationships
-    department = SubFactory(DepartmentFactory)
+    department = Department.objects.order_by("?").first()
 
     # # Optional fields with realistic defaults
     # class_master = factory.SubFactory(
@@ -79,12 +79,8 @@ class SubjectFactory(DjangoModelFactory):
     description = Faker("paragraph", nb_sentences=3)
     coef = fuzzy.FuzzyInteger(1, 5)  # More realistic coefficient range
 
-    # Conditional class relationship (70% chance of having a class)
-    klass = Maybe(
-        fuzzy.FuzzyChoice([True, False]),
-        yes_declaration=SubFactory("apps.academics.factories.ClassFactory"),
-        no_declaration=None,
-    )
+    # # Conditional class relationship (70% chance of having a class)
+    klass = Class.objects.order_by("?").first()
 
     # # Conditional teacher assignment (50% chance)
     assigned_to = Maybe(
@@ -97,9 +93,9 @@ class SubjectFactory(DjangoModelFactory):
     has_class = LazyAttribute(lambda o: o.klass is not None)
     assigned = LazyAttribute(lambda o: o.assigned_to is not None)
 
-    @factory.post_generation
-    def add_to_class(self, create, extracted, **kwargs):
-        """Post-generation hook to handle class-subject relationships"""
-        if create and self.klass:
-            self.klass.subjects.add(self)
-            self.klass.save()
+    # @factory.post_generation
+    # def add_to_class(self, create, extracted, **kwargs):
+    #     """Post-generation hook to handle class-subject relationships"""
+    #     if create and self.klass:
+    #         self.klass.subjects.add(self)
+    #         self.klass.save()

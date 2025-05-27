@@ -32,12 +32,12 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         valid_models = {
-            "admins": AdminProfileFactory,
-            "teachers": TeacherProfileFactory,
-            "students": StudentProfileFactory,
             "departments": DepartmentFactory,
             "classes": ClassFactory,
             "subjects": SubjectFactory,
+            "admins": AdminProfileFactory,
+            "teachers": TeacherProfileFactory,
+            "students": StudentProfileFactory,
         }
 
         # selected_models = (
