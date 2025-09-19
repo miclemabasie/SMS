@@ -9,7 +9,7 @@ endif
 build:
 	docker compose up --build -d --remove-orphans
 
-up: 
+up:	
 	docker compose up -d
 
 down:
@@ -18,14 +18,18 @@ down:
 show-logs:
 	docker compose logs
 
-show-logs-follow:
-	docker compose logs --follow
 
 migrate:
 	docker compose exec web python manage.py migrate
 
 makemigrations:
 	docker compose exec web python manage.py makemigrations
+
+check:
+	docker compose exec web python manage.py check
+
+migrate_elasticsearch:
+	docker compose exec web python manage.py search_index --rebuild
 
 createsuperuser:
 	docker compose exec web python manage.py createsuperuser
@@ -36,17 +40,21 @@ collectstatic:
 django-check:
 	docker compose exec web python manage.py check
 
-shell:
+init_db:
+	docker compose exec web python manage.py db_init 30
+
+shell:	
 	docker compose exec web python manage.py shell_plus
 
 down-v:
-	docker compose down -v
+	docker compose down -v 
 
 volume:
-	docker compose inspect lma_postgres_data
+	docker volume inspect sms-app_postgres_data
 
-lma_db:
-	docker compose exect postgres-db psql -U postgres -d lma
+
+rental-db:
+	docker compose exec postgres-db psql --username=miclem --dbname=sms
 
 test:
 	docker compose exec web pytest -p no:warnings --cov=.
@@ -60,12 +68,11 @@ flake8:
 black-check:
 	docker compose exec web black --check --exclude=migrations .
 
-blcak-diff:
+black-diff:
 	docker compose exec web black --diff --exclude=migrations .
 
-black: 
+black:
 	docker compose exec web black --exclude=migrations .
-
 
 isort-check:
 	docker compose exec web isort . --check-only --skip env --skip migrations
@@ -77,7 +84,12 @@ isort:
 	docker compose exec web isort . --skip env --skip migrations
 
 lint: 
-	flake8 black isort
+	flake8 black-check isort-check
+
+config:
+	docker compose config
 
 watch:
 	docker compose exec web watchmedo shell-command --patterns="*.py" --recursive --command='make lint test' .
+
+

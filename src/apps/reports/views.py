@@ -3,7 +3,6 @@ import tempfile
 from io import BytesIO
 from time import time
 
-import pdfkit
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse

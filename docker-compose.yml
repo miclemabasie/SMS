@@ -1,0 +1,98 @@
+services:
+    web: 
+        build:
+            context: .
+            dockerfile: ./docker/local/django/Dockerfile
+
+        command: /start
+        volumes:
+            - .:/src
+            - static_volume:/src/staticfiles
+            - media_volume:/src/mediafiles
+        
+        env_file:
+            - src/.env
+        depends_on:
+            - postgres-db
+            - redis
+
+        networks:
+            - sms-network
+
+    postgres-db: 
+        image: postgres:16-alpine
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        env_file:
+            - src/.env
+
+        networks:
+            - sms-network
+
+    redis:
+        image: redis:6.0.9-alpine
+        container_name: redis
+        ports:
+        - "6379:6379"
+        networks:
+        - sms-network
+
+    celery_worker:
+        build:
+            context: .
+            dockerfile: ./docker/local/django/Dockerfile
+        command: /start-celeryworker
+        volumes:
+            - .:/src
+        env_file:
+            - src/.env
+        depends_on:
+            - redis
+            - postgres-db
+        networks:
+            - sms-network
+
+    flower:
+        build: 
+            context: .
+            dockerfile: ./docker/local/django/Dockerfile
+        command: /start-flower
+        volumes:
+            - .:/src
+        env_file:
+            - src/.env
+        ports:
+            - 5557:5555
+        depends_on:
+            - redis
+            - postgres-db
+        networks:
+            - sms-network
+             
+
+    nginx:
+        restart: always
+        depends_on:
+            - web
+        build: 
+            context: ./docker/local/nginx
+            dockerfile: Dockerfile
+        ports:
+            - 80:80
+        networks:
+            - sms-network
+        # volumes:
+        #     - /etc/letsencrypt:/etc/letsencrypt
+    
+
+networks:
+    sms-network:
+        driver: bridge
+
+volumes:
+    postgres_data:
+    static_volume:
+    media_volume:    
+
