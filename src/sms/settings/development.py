@@ -39,8 +39,8 @@ DATABASES = {
         "NAME": env("POSTGRES_DB"),
         "USER": env("POSTGRES_USER"),
         "PASSWORD": env("POSTGRES_PASSWORD"),
-        "HOST": env("POSTGRES_HOST"),
-        "PORT": env("POSTGRES_PORT"),
+        "HOST": env("PG_HOST"),
+        "PORT": env("PG_PORT"),
     }
 }
 
@@ -82,5 +82,5 @@ def show_toolbar(request):
 # ...
 
 # Celery settings
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"

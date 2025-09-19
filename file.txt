@@ -1,0 +1,281 @@
+.
+├── accounts
+├── accounts copy
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── __init__.py
+│   ├── managers.py
+│   ├── models.py
+│   ├── tests.py
+│   └── views.py
+├── CONTRIBUTING.md
+├── docker
+│   └── local
+│       ├── django
+│       │   ├── celery
+│       │   │   ├── flower
+│       │   │   │   └── start
+│       │   │   └── worker
+│       │   │       └── start
+│       │   ├── Dockerfile
+│       │   ├── entrypoint
+│       │   └── start
+│       └── nginx
+│           ├── default.conf
+│           └── Dockerfile
+├── docker-compose.yml
+├── dump.rdb
+├── file.txt
+├── flow.drawio
+├── koosseryDesk.md
+├── logs.md
+├── makefile
+├── README.md
+├── redis.txt
+├── report.txt
+├── requirements.txt
+├── src
+│   ├── 2db.sqlite3
+│   ├── apps
+│   │   ├── academics
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── factories.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tests.py
+│   │   │   └── views.py
+│   │   ├── announcements
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tests.py
+│   │   │   └── views.py
+│   │   ├── attendance
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── templatetags
+│   │   │   │   ├── custom_filters.py
+│   │   │   │   └── __init__.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── common
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── __init__.py
+│   │   │   ├── management
+│   │   │   │   └── commands
+│   │   │   ├── middleware.py
+│   │   │   ├── models.py
+│   │   │   ├── utils.py
+│   │   │   └── views.py
+│   │   ├── core
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── __init__.py
+│   │   │   ├── management
+│   │   │   │   └── commands
+│   │   │   │       ├── generate_data.py
+│   │   │   │       ├── rename.py
+│   │   │   │       └── seed_data.py
+│   │   │   ├── models.py
+│   │   │   └── views.py
+│   │   ├── fees
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── __init__.py
+│   │   ├── leave
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── profiles
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── exceptions.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── renderers.py
+│   │   │   ├── serializers.py
+│   │   │   ├── signals.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── reports
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── class_master_report.py
+│   │   │   ├── controller.py
+│   │   │   ├── factories.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── student_reporting.py
+│   │   │   ├── tasks.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   ├── utils.py
+│   │   │   └── views.py
+│   │   ├── scelery
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── celery.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tasks.py
+│   │   │   ├── templates
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── settings
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── factories.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── staff
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── factories.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── students
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── factories.py
+│   │   │   ├── forms.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── studenst.csv
+│   │   │   ├── templatetags
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── student_tags.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   ├── utils.py
+│   │   │   └── views.py
+│   │   ├── teachers
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── class_urls.py
+│   │   │   ├── factories.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   ├── terms
+│   │   │   ├── admin.py
+│   │   │   ├── apps.py
+│   │   │   ├── factories.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── templatetags
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── session_tags.py
+│   │   │   ├── tests.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
+│   │   └── users
+│   │       ├── admin.py
+│   │       ├── apps.py
+│   │       ├── factories.py
+│   │       ├── forms.py
+│   │       ├── __init__.py
+│   │       ├── managers.py
+│   │       ├── models.py
+│   │       ├── serializers.py
+│   │       ├── urls.py
+│   │       └── views.py
+│   ├── conftest.py
+│   ├── data.json
+│   ├── db-final.sqlite3
+│   ├── db-new.sqlite3
+│   ├── db.sqlite3
+│   ├── dumpdata.sql
+│   ├── dump.rdb
+│   ├── gunicorn_config.py
+│   ├── gunicorn.service
+│   ├── htmlcov
+│   │   ├── coverage_html.js
+│   │   ├── favicon_32.png
+│   │   ├── keybd_closed.png
+│   │   ├── keybd_open.png
+│   │   ├── status.json
+│   │   └── style.css
+│   ├── logs
+│   │   └── sms.log
+│   ├── manage.py
+│   ├── pytest.ini
+│   ├── requirements.txt
+│   ├── setup.cfg
+│   ├── sms
+│   │   ├── asgi.py
+│   │   ├── celery.py
+│   │   ├── __init__.py
+│   │   ├── management
+│   │   │   └── commands
+│   │   ├── settings
+│   │   │   ├── base.py
+│   │   │   ├── development.py
+│   │   │   ├── __init__.py
+│   │   │   └── production.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── templates
+│   │   ├── accounts
+│   │   ├── attendance
+│   │   │   ├── attendance.js
+│   │   │   └── viewatt.js
+│   │   ├── classes
+│   │   ├── dashboards
+│   │   │   ├── staff
+│   │   │   │   ├── sections
+│   │   │   │   └── test.js
+│   │   │   ├── student
+│   │   │   │   └── sections
+│   │   │   └── teachers
+│   │   │       └── sections
+│   │   ├── emails
+│   │   ├── leave
+│   │   ├── payments
+│   │   ├── registration
+│   │   ├── reports
+│   │   ├── scripts
+│   │   ├── settings
+│   │   ├── staff
+│   │   ├── students
+│   │   ├── subjects
+│   │   ├── teachers
+│   │   └── utils
+│   │       ├── sidebars
+│   │       └── staff
+│   └── tests
+│       ├── factories.py
+│       ├── __init__.py
+│       ├── profiles
+│       │   ├── __init__.py
+│       │   └── test_models.py
+│       └── users
+│           ├── __init__.py
+│           └── test_models.py
+└── z.md
+
+69 directories, 209 files

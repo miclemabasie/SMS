@@ -7,8 +7,8 @@ services:
         command: /start
         volumes:
             - .:/src
-            - static_volume:/src/staticfiles
-            - media_volume:/src/mediafiles
+            - static_volume:/app/src/staticfiles
+            - media_volume:/app/src/mediafiles
         
         env_file:
             - src/.env
@@ -81,6 +81,9 @@ services:
             dockerfile: Dockerfile
         ports:
             - 80:80
+        volumes:
+            - static_volume:/app/src/staticfiles  # Match Django container path
+            - media_volume:/app/src/mediafiles    # Match Django container path
         networks:
             - sms-network
         # volumes:
